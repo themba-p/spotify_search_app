@@ -1,0 +1,11 @@
+﻿<Application
+    x:Class="Spotify_search_helper.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Spotify_search_helper"
+    xmlns:vm="using:Spotify_search_helper.ViewModels">
+
+    <Application.Resources>
+        <vm:ViewModelLocator xmlns:vm="using:Spotify_search_helper.ViewModels" x:Key="Locator" />
+    </Application.Resources>
+</Application>
