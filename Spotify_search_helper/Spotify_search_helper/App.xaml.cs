@@ -39,11 +39,9 @@ namespace Spotify_search_helper
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
-
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
-            if (rootFrame == null)
+            if (!(Window.Current.Content is Frame rootFrame))
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
@@ -70,7 +68,10 @@ namespace Spotify_search_helper
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();
+
+                this.DebugSettings.EnableFrameRateCounter = false;
             }
+
         }
 
         /// <summary>
@@ -82,6 +83,7 @@ namespace Spotify_search_helper
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
+
 
         /// <summary>
         /// Invoked when application execution is being suspended.  Application state is saved

@@ -3,9 +3,31 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Spotify_search_helper"
-    xmlns:vm="using:Spotify_search_helper.ViewModels">
+    xmlns:vm="using:Spotify_search_helper.ViewModels"
+    RequestedTheme="Dark">
 
     <Application.Resources>
-        <vm:ViewModelLocator xmlns:vm="using:Spotify_search_helper.ViewModels" x:Key="Locator" />
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <Color x:Key="Status-bar-color">#fff</Color>
+                    <Color x:Key="Status-bar-foreground">#000</Color>
+                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#fff"/>
+                    <SolidColorBrush x:Key="ItemPrimaryForeground" Color="#000"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <Color x:Key="Status-bar-color">#000</Color>
+                    <Color x:Key="Status-bar-foreground">#FFDDDDDD</Color>
+                    <SolidColorBrush x:Key="PrimaryThemeBrush" Color="#1DB954"/>
+                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#000"/>
+                    <SolidColorBrush x:Key="ItemBackgroundThemeBrush" Color="#090909"/>
+                    <SolidColorBrush x:Key="SecondaryItemBackgroundThemeBrush" Color="#141414"/>
+                    <SolidColorBrush x:Key="ItemPrimaryForeground" Color="#fff"/>
+                    <SolidColorBrush x:Key="ItemSecondaryForeground" Color="#C6C6C6"/>
+                    <SolidColorBrush x:Key="ItemTertiaryForeground" Color="#6B6B6B"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+            <vm:ViewModelLocator xmlns:vm="using:Spotify_search_helper.ViewModels" x:Key="Locator" />
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

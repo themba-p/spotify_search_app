@@ -13,6 +13,9 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
+using Microsoft.Toolkit.Uwp.UI.Extensions;
+using Windows.UI;
+
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace Spotify_search_helper.Views
@@ -25,6 +28,19 @@ namespace Spotify_search_helper.Views
         public MainPage()
         {
             this.InitializeComponent();
+
+            // Reset app back to normal.
+            StatusBarExtensions.SetIsVisible(this, false);
+
+            ApplicationViewExtensions.SetTitle(this, string.Empty);
+
+            var lightGreyBrush = (Color)Application.Current.Resources["Status-bar-foreground"];
+            var brandColor = (Color)Application.Current.Resources["Status-bar-color"];
+
+            TitleBarExtensions.SetButtonBackgroundColor(this, brandColor);
+            TitleBarExtensions.SetButtonForegroundColor(this, lightGreyBrush);
+            TitleBarExtensions.SetBackgroundColor(this, brandColor);
+            TitleBarExtensions.SetForegroundColor(this, lightGreyBrush);
         }
     }
 }
