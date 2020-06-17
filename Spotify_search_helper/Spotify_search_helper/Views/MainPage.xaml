@@ -5,11 +5,364 @@
     xmlns:local="using:Spotify_search_helper.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    DataContext="{Binding SartPageInstance, Source={StaticResource Locator}}"
+    xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI.Extensions"
+    xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
+    xmlns:ToolkitBehaviors="using:Microsoft.Toolkit.Uwp.UI.Animations.Behaviors"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    DataContext="{Binding StartPageInstance, Source={StaticResource Locator}}"
+    extensions:ApplicationViewExtensions.Title="Spotify Companion"
+    extensions:StatusBarExtensions.BackgroundColor="#000"
+    extensions:StatusBarExtensions.BackgroundOpacity="0.8"
+    extensions:StatusBarExtensions.ForegroundColor="#fff"
+    extensions:StatusBarExtensions.IsVisible="True"
+    extensions:TitleBarExtensions.BackgroundColor="#000"
+    extensions:TitleBarExtensions.ForegroundColor="#fff"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Page.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <Style x:Key="CategoryContainerStyle" TargetType="ListViewItem">
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="BorderBrush" Value="{x:Null}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            <Setter Property="TabNavigation" Value="Local"/>
+            <Setter Property="IsHoldingEnabled" Value="True"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+            <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}"/>
+            <Setter Property="AllowDrop" Value="False"/>
+            <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}"/>
+            <Setter Property="FocusVisualMargin" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <Grid x:Name="ContentBorder" extensions:Mouse.Cursor="Hand" Margin="0 0 16 16" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="24" FocusVisualMargin="{TemplateBinding FocusVisualMargin}" Control.IsTemplateFocusTarget="True" RenderTransformOrigin="0.5,0.5">
+                            <Grid.RenderTransform>
+                                <ScaleTransform x:Name="ContentBorderScale"/>
+                            </Grid.RenderTransform>
+                            
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Opacity" To="0.3"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Opacity" To="1"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerDownThemeAnimation TargetName="ContentPresenter"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="DisabledStates">
+                                    <VisualState x:Name="Enabled"/>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="Opacity" To="{ThemeResource ListViewItemDisabledThemeOpacity}"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="DataVirtualizationStates">
+                                    <VisualState x:Name="DataAvailable"/>
+                                    <VisualState x:Name="DataPlaceholder">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextBlock" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderRect" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Rectangle x:Name="BorderBackground" Fill="{StaticResource ItemBackgroundThemeBrush}" Opacity="0" IsHitTestVisible="False" Control.IsTemplateFocusTarget="True"/>
+                            <Grid x:Name="ContentPresenterGrid" Background="Transparent" Margin="0,0,0,0">
+                                <Grid.RenderTransform>
+                                    <TranslateTransform x:Name="ContentPresenterTranslateTransform"/>
+                                </Grid.RenderTransform>
+                                <ContentPresenter x:Name="ContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentTransitions="{TemplateBinding ContentTransitions}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Grid>
+                            <TextBlock x:Name="PlaceholderTextBlock" AutomationProperties.AccessibilityView="Raw" Foreground="{x:Null}" IsHitTestVisible="False" Margin="{TemplateBinding Padding}" Opacity="0" Text="Xg"/>
+                            <Rectangle x:Name="PlaceholderRect" Fill="{ThemeResource ListViewItemPlaceholderBackground}" Visibility="Collapsed"/>
 
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Storyboard x:Name="ProfileHoverStoryboard">
+            <DoubleAnimation Duration="00:00:00.3000000" Storyboard.TargetName="ProfileBackground" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)" To="1.2" EnableDependentAnimation="True" From="1">
+                <DoubleAnimation.EasingFunction>
+                    <CircleEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Duration="00:00:00.3000000" Storyboard.TargetName="ProfileBackground" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)" To="1.2" EnableDependentAnimation="True" From="1">
+                <DoubleAnimation.EasingFunction>
+                    <CircleEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Duration="00:00:00.3000000" Storyboard.TargetName="ProfileBackground" Storyboard.TargetProperty="(UIElement.Opacity)" To="1" From="0.85"/>
+        </Storyboard>
+        <Storyboard x:Name="CategoryStoryboard">
+            <DoubleAnimation Duration="00:00:00.3000000" Storyboard.TargetName="grid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)" To="1.2" EnableDependentAnimation="True">
+                <DoubleAnimation.EasingFunction>
+                    <CircleEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Duration="00:00:00.3000000" Storyboard.TargetName="grid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)" To="1.2" EnableDependentAnimation="True">
+                <DoubleAnimation.EasingFunction>
+                    <CircleEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Duration="00:00:00.3000000" Storyboard.TargetName="grid" Storyboard.TargetProperty="(UIElement.Opacity)" To="1" From="0.85" EnableDependentAnimation="True">
+                <DoubleAnimation.EasingFunction>
+                    <CircleEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <ProgressBar Grid.ColumnSpan="100"
+                     IsIndeterminate="{Binding IsLoading}"
+                     Margin="0 0 0 0" 
+                     VerticalAlignment="Top"
+            Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+            <ProgressBar.Foreground>
+                <SolidColorBrush Color="#fff"/>
+            </ProgressBar.Foreground>
+        </ProgressBar>
+        
+        <Grid Height="109">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Margin="96 0 0 0" 
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center">
+                <Image Height="26.86" 
+                       Margin="0 0 8 0"
+                       Source="/Assets/logo_icon@3x.png"/>
+                <TextBlock Text="Trackify"
+                           FontSize="17"
+                           FontWeight="Bold"/>
+            </StackPanel>
+            <Grid DataContext="{Binding Profile}"
+                  extensions:Mouse.Cursor="Hand"
+                  Grid.Column="2"
+                  Height="64px"
+                  HorizontalAlignment="Right"
+                  Margin="0 0 96 0"
+                  Width="164" RenderTransformOrigin="0.5,0.5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="PointerEntered">
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=profileBgScaleUp}" MethodName="StartAnimation"/>
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=profileNameOffsetRight}" MethodName="StartAnimation"/>
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=signInOffsetRight}" MethodName="StartAnimation"/>
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=profilePhotoScaleUp}" MethodName="StartAnimation"/>
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=signInFadeOut}" MethodName="StartAnimation"/>
+                    </Core:EventTriggerBehavior>
+                    <Core:EventTriggerBehavior EventName="PointerExited">
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=profileBgScaleDown}" MethodName="StartAnimation"/>
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=profileNameOffsetLeft}" MethodName="StartAnimation"/>
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=signInOffsetLeft}" MethodName="StartAnimation"/>
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=profilePhotoScaleDown}" MethodName="StartAnimation"/>
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=signInFadeIn}" MethodName="StartAnimation"/>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+                <Grid Background="{StaticResource ItemBackgroundThemeBrush}" 
+                      Grid.RowSpan="10"
+                      Grid.ColumnSpan="10"
+                      CornerRadius="24"
+                      HorizontalAlignment="Stretch" 
+                      VerticalAlignment="Stretch">
+                    <Interactivity:Interaction.Behaviors>
+                        <ToolkitBehaviors:Scale x:Name="profileBgScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.1" ScaleY="1.1" CenterX="82" CenterY="32" EasingMode="EaseOut" EasingType="Cubic" />
+                        <ToolkitBehaviors:Scale x:Name="profileBgScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="82" CenterY="32" EasingMode="EaseOut" EasingType="Cubic"/>
+                    </Interactivity:Interaction.Behaviors>
+                </Grid>
+                <Grid Background="{ThemeResource SecondaryItemBackgroundThemeBrush}"
+                      CornerRadius="24"
+                      Height="40px"
+                      Margin="12, 0, 0, 0"
+                      Width="40px">
+                    <Interactivity:Interaction.Behaviors>
+                        <ToolkitBehaviors:Scale x:Name="profilePhotoScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.2" ScaleY="1.2" CenterX="20" CenterY="20" EasingMode="EaseOut"  EasingType="Cubic" />
+                        <ToolkitBehaviors:Scale x:Name="profilePhotoScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="20" CenterY="20" EasingMode="EaseOut"   EasingType="Cubic"/>
+                    </Interactivity:Interaction.Behaviors>
+
+                    <Image Source="{Binding Image}"
+                           Stretch="UniformToFill"/>
+                </Grid>
+                <StackPanel Grid.Column="1"
+                            Margin="12 0 16 0"
+                            VerticalAlignment="Center"
+                            MaxWidth="140">
+                    <TextBlock Text="Sign in as"
+                               FontSize="12"
+                               FontWeight="Normal"
+                               Foreground="{ThemeResource ItemTertiaryForeground}">
+                        <Interactivity:Interaction.Behaviors>
+                            <ToolkitBehaviors:Offset x:Name="signInOffsetRight" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="6" OffsetY="12" EasingMode="EaseOut" EasingType="Cubic" />
+                            <ToolkitBehaviors:Fade x:Name="signInFadeOut"  Duration="300" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                            <ToolkitBehaviors:Fade x:Name="signInFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                            <ToolkitBehaviors:Offset x:Name="signInOffsetLeft"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                            </Interactivity:Interaction.Behaviors>
+                    </TextBlock>
+                    <TextBlock Text="{Binding DisplayName, FallbackValue=Unknown}"
+                               TextTrimming="CharacterEllipsis"
+                               FontSize="17"
+                               FontWeight="Medium"
+                               Foreground="{ThemeResource ItemPrimaryForeground}"
+                               Margin="0 2 0 0">
+                        <Interactivity:Interaction.Behaviors>
+                                <ToolkitBehaviors:Offset x:Name="profileNameOffsetRight" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="6" OffsetY="-8" EasingMode="EaseOut"  EasingType="Cubic" />
+                                <ToolkitBehaviors:Offset x:Name="profileNameOffsetLeft"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0"  EasingMode="EaseOut"   EasingType="Cubic"/>
+                            </Interactivity:Interaction.Behaviors>
+                    </TextBlock>
+                </StackPanel>
+            </Grid>
+        </Grid>
+        <ListView ItemsSource="{Binding CategoryList}"
+                  ItemContainerStyle="{StaticResource CategoryContainerStyle}"
+                  MaxHeight="600"
+                  Grid.RowSpan="100"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  ScrollViewer.VerticalScrollMode="Enabled"
+                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                >
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid CornerRadius="24"
+                          Height="200px" 
+                          VerticalAlignment="Stretch" 
+                          HorizontalAlignment="Stretch"
+                          Width="250px">
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="PointerEntered">
+                                <Core:CallMethodAction TargetObject="{Binding ElementName=GridScaleUp}" MethodName="StartAnimation"/>
+                                <Core:CallMethodAction TargetObject="{Binding ElementName=categoryTitleOffsetRight}" MethodName="StartAnimation"/>
+                                <Core:CallMethodAction TargetObject="{Binding ElementName=categoryDescriptionOffsetRight}" MethodName="StartAnimation"/>
+                                <Core:CallMethodAction TargetObject="{Binding ElementName=categoryDescriptionFadeOut}" MethodName="StartAnimation"/>
+                                <Core:CallMethodAction TargetObject="{Binding ElementName=categoryIconScaleUp}" MethodName="StartAnimation"/>
+                                <Core:CallMethodAction TargetObject="{Binding ElementName=chevOffsetRight}" MethodName="StartAnimation"/>
+                                <Core:CallMethodAction TargetObject="{Binding ElementName=chevFadeIn}" MethodName="StartAnimation"/>
+                            </Core:EventTriggerBehavior>
+                            <Core:EventTriggerBehavior EventName="PointerExited">
+                                <Core:CallMethodAction TargetObject="{Binding ElementName=GridScaleDown}" MethodName="StartAnimation"/>
+                                <Core:CallMethodAction TargetObject="{Binding ElementName=categoryTitleOffsetLeft}" MethodName="StartAnimation"/>
+                                <Core:CallMethodAction TargetObject="{Binding ElementName=categoryDescriptionOffsetLeft}" MethodName="StartAnimation"/>
+                                <Core:CallMethodAction TargetObject="{Binding ElementName=categoryDescriptionFadeIn}" MethodName="StartAnimation"/>
+                                <Core:CallMethodAction TargetObject="{Binding ElementName=categoryIconScaleDown}" MethodName="StartAnimation"/>
+                                <Core:CallMethodAction TargetObject="{Binding ElementName=chevOffsetLeft}" MethodName="StartAnimation"/>
+                                <Core:CallMethodAction TargetObject="{Binding ElementName=chevFadeOut}" MethodName="StartAnimation"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                        <Grid Background="{StaticResource ItemBackgroundThemeBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Interactivity:Interaction.Behaviors>
+                                <ToolkitBehaviors:Scale x:Name="GridScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.1" ScaleY="1.1" CenterX="125" CenterY="50" EasingMode="EaseOut" EasingType="Cubic" />
+                                <ToolkitBehaviors:Scale x:Name="GridScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="125" CenterY="50" EasingMode="EaseOut" EasingType="Cubic"/>
+                            </Interactivity:Interaction.Behaviors>
+                        </Grid>
+                        <StackPanel Margin="16 32 16 24"
+                                    VerticalAlignment="Bottom">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Interactivity:Interaction.Behaviors>
+                                    <ToolkitBehaviors:Offset x:Name="categoryTitleOffsetRight" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="24" EasingMode="EaseOut"  EasingType="Cubic" />
+                                    <ToolkitBehaviors:Offset x:Name="categoryTitleOffsetLeft"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0"  EasingMode="EaseOut"   EasingType="Cubic"/>
+                                </Interactivity:Interaction.Behaviors>
+                                <TextBlock Text="{Binding Title}"
+                                           VerticalAlignment="Center"
+                                       FontSize="24px"
+                                       Foreground="{ThemeResource ItemPrimaryForeground}"
+                                       FontWeight="Bold">
+
+                                </TextBlock>
+                                <Image Grid.Column="1" Height="12px" Margin="16 8 0 0" Source="/Assets/chevron.png" VerticalAlignment="Center" Opacity="0">
+                                    <Interactivity:Interaction.Behaviors>
+                                        <ToolkitBehaviors:Offset x:Name="chevOffsetRight" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="-10" OffsetY="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                        <ToolkitBehaviors:Offset x:Name="chevOffsetLeft"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="-10" OffsetY="0"  EasingMode="EaseOut"   EasingType="Cubic"/>
+                                        <ToolkitBehaviors:Fade x:Name="chevFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                        <ToolkitBehaviors:Fade x:Name="chevFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                    </Interactivity:Interaction.Behaviors>
+                                </Image>
+                            </Grid>
+                            <TextBlock Text="{Binding Description}"
+                                       FontSize="14px"
+                                       Foreground="{ThemeResource ItemSecondaryForeground}"
+                                       FontWeight="Normal"
+                                       TextWrapping="WrapWholeWords">
+                                <Interactivity:Interaction.Behaviors>
+                                <ToolkitBehaviors:Offset x:Name="categoryDescriptionOffsetRight" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="4" EasingMode="EaseOut" EasingType="Cubic" />
+                                <ToolkitBehaviors:Offset x:Name="categoryDescriptionOffsetLeft"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                              <ToolkitBehaviors:Fade x:Name="categoryDescriptionFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                <ToolkitBehaviors:Fade x:Name="categoryDescriptionFadeOut"  Duration="300" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                            </Interactivity:Interaction.Behaviors>
+                            </TextBlock>
+                        </StackPanel>
+                        <Grid Background="#000"
+                              CornerRadius="12"
+                              Height="48px"
+                              HorizontalAlignment="Left"
+                              Margin="16"
+                              VerticalAlignment="Top"
+                              Width="48px">
+                            <Interactivity:Interaction.Behaviors>
+                                <ToolkitBehaviors:Scale x:Name="categoryIconScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.2" ScaleY="1.2" CenterX="24" CenterY="24" EasingMode="EaseOut"  EasingType="Cubic" />
+                                <ToolkitBehaviors:Scale x:Name="categoryIconScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="24" CenterY="24" EasingMode="EaseOut"   EasingType="Cubic"/>
+                            </Interactivity:Interaction.Behaviors>
+                            <Image Width="20px" VerticalAlignment="Center" HorizontalAlignment="Center" Source="{Binding IconPath}" Stretch="Uniform"/>
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>
     </Grid>
 </Page>
