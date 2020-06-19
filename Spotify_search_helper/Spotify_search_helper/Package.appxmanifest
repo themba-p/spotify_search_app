@@ -32,7 +32,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="Spotify_search_helper.App">
       <uap:VisualElements
-        DisplayName="Spotify_search_helper"
+        DisplayName="Trackify"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="Spotify_search_helper"

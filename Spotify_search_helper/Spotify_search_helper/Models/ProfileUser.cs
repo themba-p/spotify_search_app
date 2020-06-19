@@ -22,7 +22,7 @@ namespace Spotify_search_helper.Models
         private string _id;
         public string Id
         {
-            get => _displayName;
+            get => _id;
             set => _ = SetProperty(_id, value, () => _id = value);
         }
 
