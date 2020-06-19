@@ -37,10 +37,17 @@ namespace Spotify_search_helper.Views
             var lightGreyBrush = (Color)Application.Current.Resources["Status-bar-foreground"];
             var brandColor = (Color)Application.Current.Resources["Status-bar-color"];
 
+            ApplicationViewExtensions.SetTitle(this, "Spotify Companion");
+            StatusBarExtensions.SetBackgroundOpacity(this, 0.8);
             TitleBarExtensions.SetButtonBackgroundColor(this, brandColor);
             TitleBarExtensions.SetButtonForegroundColor(this, lightGreyBrush);
             TitleBarExtensions.SetBackgroundColor(this, brandColor);
             TitleBarExtensions.SetForegroundColor(this, lightGreyBrush);
+        }
+
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ViewModels.MainPageViewModel.Current.FilterAdvancedCollectionView();
         }
     }
 }

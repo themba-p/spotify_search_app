@@ -41,13 +41,13 @@ namespace Spotify_search_helper.Data
             {
                 if(string.IsNullOrEmpty(clientId))
                 {
-                    Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_ID", "xxx");
+                    Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_ID", "");
                     clientId = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_ID");
                 }
 
                 if (string.IsNullOrEmpty(clientSecret))
                 {
-                    Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_SECRET", "xxx");
+                    Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_SECRET", "");
                     clientSecret = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_SECRET");
                 }
 
@@ -72,9 +72,6 @@ namespace Spotify_search_helper.Data
 
                     var config = SpotifyClientConfig.CreateDefault()
                       .WithAuthenticator(authenticator);
-
-                    /*_server.Dispose();
-                    Environment.Exit(0);*/
 
                     SpotifyClient = new SpotifyClient(config);
                 }

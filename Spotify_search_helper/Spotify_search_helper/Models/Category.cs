@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spotify_search_helper.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,23 @@ using System.Threading.Tasks;
 
 namespace Spotify_search_helper.Models
 {
-    public class Category
+    public class Category : NotificationBase
     {
         public Category() { }
+
+        public static readonly List<string> _personalizedPlaylistNames = new List<string>
+        {
+            "discover weekly",
+            "release radar",
+            "daily mix 1",
+            "daily mix 2",
+            "daily mix 3",
+            "daily mix 4",
+            "daily mix 5",
+            "daily mix 6",
+            "on repeat",
+            "repeat rewind",
+        };
 
         public Category(CategoryType type, string title, string description, string iconPath)
         {
@@ -18,35 +33,12 @@ namespace Spotify_search_helper.Models
             this.IconPath = iconPath;
         }
 
-        private CategoryType _type;
-        public CategoryType Type
-        {
-            get => _type;
-            set => _type = value;
-        }
+        public CategoryType Type { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string IconPath { get; set; }
 
-        private string _title;
-        public string Title
-        {
-            get => _title;
-            set => _title = value;
-        }
-
-        private string _description;
-        public string Description
-        {
-            get => _description;
-            set => _description = value;
-        }
-
-        private string _iconPath;
-        public string IconPath
-        {
-            get => _iconPath;
-            set => _iconPath = value;
-        }
-
-        public static List<Category> GetCategories()
+        public static List<Category> GetCategoryItems()
         {
             return new List<Category>
             {
@@ -56,11 +48,11 @@ namespace Spotify_search_helper.Models
                 "/Assets/playlist.png"),
                 new Category(CategoryType.Liked,
                 "Liked songs",
-                "Clone to new playlist or clear.",
+                "Create a new playlist from your liked songs, and clear.",
                 "/Assets/liked.png"),
                 new Category(CategoryType.MadeForYou,
-                "Made for you",
-                "Save Daily, Weekly mixes to library.",
+                "YouTube playlist from a Spotify playlist",
+                "Create a YouTube.",
                 "/Assets/made_for_you.png"),
                 new Category(CategoryType.Convert,
                 "Convert files",

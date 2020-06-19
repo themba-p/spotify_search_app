@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 
@@ -19,6 +20,13 @@ namespace Spotify_search_helper.ViewModels
             };
 
             await dialog.ShowAsync();
+        }
+
+        public static string CleanString(string str)
+        {
+            string newStr = Regex.Replace(str, @"<[^>]+>| ", " ").Trim();
+            newStr = Regex.Replace(newStr, "&(?!amp;)", "&amp;");
+            return newStr;
         }
     }
 }
