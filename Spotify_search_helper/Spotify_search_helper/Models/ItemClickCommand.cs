@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -28,8 +23,7 @@ namespace Spotify_search_helper.Models
         private static void OnCommandPropertyChanged(DependencyObject d,
         DependencyPropertyChangedEventArgs e)
         {
-            ListViewBase control = d as ListViewBase;
-            if (control != null)
+            if (d is ListViewBase control)
                 control.ItemClick += OnItemClick;
         }
 

@@ -76,8 +76,21 @@ namespace Spotify_search_helper.ViewModels
         {
             using (AdvancedCollectionView.DeferRefresh())
             {
+                List<string> alphabet = new List<string>();
                 foreach (var item in items)
+                {
+                    if (item.Title.Length > 0 && alphabet.Where(c => c.ToUpper() == item.Title[0].ToString().ToUpper()).FirstOrDefault() == null)
+                        alphabet.Add(item.Title[0].ToString().ToUpper());
+
                     AdvancedCollectionView.Add(item);
+                }
+
+                alphabet = alphabet.OrderBy(c => c).ToList();
+                foreach (var str in alphabet)
+                {
+                    if(Alphabet.Where(c => c.ToUpper().Equals(str.ToUpper())).FirstOrDefault() == null)
+                        Alphabet.Add(str);
+                }
             }
         }
 
@@ -189,7 +202,64 @@ namespace Spotify_search_helper.ViewModels
 
         #endregion
 
+        private void ScrollToPlaylistAlphabet(string alphabet)
+        {
+            if(AdvancedCollectionView != null && AdvancedCollectionView.Source != null)
+            {
+                var item = AdvancedCollectionView.Where(c => ((Playlist)c).Title.ToLower().StartsWith(alphabet.ToLower())).FirstOrDefault();
+                if(item != null) Views.MainPage.Current.ScrollToPlaylistAlphabet(item);
+            }
+        }
+
         #region Properties
+
+        private string _selectedPlaylistAlphabet;
+        public string SelectedPlaylistAlphabet
+        {
+            get => _selectedPlaylistAlphabet;
+            set
+            {
+                _selectedPlaylistAlphabet = value;
+                RaisePropertyChanged("SelectedPlaylistAlphabet");
+                if(!string.IsNullOrEmpty(value)) ScrollToPlaylistAlphabet(value);
+            }
+        }
+
+        private double _expandedSelectPlaylistWidth = 352;
+        public double ExpandedSelectPlaylistWidth
+        {
+            get => _expandedSelectPlaylistWidth;
+            set
+            {
+                _expandedSelectPlaylistWidth = value;
+                RaisePropertyChanged("ExpandedSelectPlaylistWidth");
+            }
+        }
+
+        private bool _isPopupActive;
+        public bool IsPopupActive
+        {
+            get => _isPopupActive;
+            set
+            {
+                if (!value && IsSelectedPlaylistExpanded) IsSelectedPlaylistExpanded = false;
+                _isPopupActive = value;
+                RaisePropertyChanged("IsPopupActive");
+            }
+        }
+
+        private bool _isSelectedPlaylistExpanded;
+        public bool IsSelectedPlaylistExpanded
+        {
+            get => _isSelectedPlaylistExpanded;
+            set
+            {
+                _isSelectedPlaylistExpanded = value;
+                RaisePropertyChanged("IsSelectedPlaylistExpanded");
+
+                if (!value) Views.MainPage.Current.ScrollSelectedPlaylistViewToTop();
+            }
+        }
 
         private bool _isSelectAllChecked;
         public bool IsSelectAllChecked
@@ -267,6 +337,17 @@ namespace Spotify_search_helper.ViewModels
             }
         }
 
+        private Category _activeCategory;
+        public Category ActiveCategory
+        {
+            get { return _activeCategory; }
+            set
+            {
+                _activeCategory = value;
+                RaisePropertyChanged("ActiveCategory");
+            }
+        }
+
         private bool _hasSelectedItems;
         public bool HasSelectedItems
         {
@@ -281,9 +362,57 @@ namespace Spotify_search_helper.ViewModels
             set { _profile = value; RaisePropertyChanged("Profile"); }
         }
 
+        private bool _isPlaylistView;
+        public bool IsPlaylistView
+        {
+            get { return _isPlaylistView; }
+            set { _isPlaylistView = value; RaisePropertyChanged("IsPlaylistView"); }
+        }
+
+        private bool _isCompactCategory;
+        public bool IsCompactCategory
+        {
+            get { return _isCompactCategory; }
+            set { _isCompactCategory = value; RaisePropertyChanged("IsCompactCategory"); }
+        }
+
         #endregion
 
         #region Methods
+
+        private void Home()
+        {
+            IsPlaylistView = false;
+            IsCompactCategory = false;
+        }
+
+        private void SwitchCategory(Category category)
+        {
+            if (category != null)
+            {
+                //change
+                IsCompactCategory = true;
+
+                ActiveCategory = category;
+                PageTitle = category.Title;
+
+                switch (category.Type)
+                {
+                    case CategoryType.Playlist:
+                        IsPlaylistView = true;
+                        break;
+                    case CategoryType.Liked:
+                        IsPlaylistView = false;
+                        break;
+                    case CategoryType.MadeForYou:
+                        IsPlaylistView = false;
+                        break;
+                    case CategoryType.Convert:
+                        IsPlaylistView = false;
+                        break;
+                }
+            }
+        }
 
         private void AddToSelected(IEnumerable<Playlist> items)
         {
@@ -315,6 +444,20 @@ namespace Spotify_search_helper.ViewModels
 
         #region collections
 
+        private ObservableCollection<string> _alphabet = new ObservableCollection<string>();
+        //{
+        //    "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"
+        //};
+        public ObservableCollection<string> Alphabet
+        {
+            get => _alphabet;
+            set
+            {
+                _alphabet = value;
+                RaisePropertyChanged("Alphabet");
+            }
+        }
+
         private void SelectedPlaylistCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (SelectedPlaylistCollection.Count > 0)
@@ -323,6 +466,13 @@ namespace Spotify_search_helper.ViewModels
             {
                 HasSelectedItems = false;
                 IsSelectAllChecked = false;
+
+                if (IsSelectedPlaylistExpanded)
+                {
+                    IsSelectedPlaylistExpanded = false;
+                    IsPopupActive = false;
+                }
+                
             }
 
             //update selected state
@@ -392,6 +542,32 @@ namespace Spotify_search_helper.ViewModels
 
         #region Commands
 
+        private RelayCommand<string> _toggleExpandedPlaylistSelectedCommand;
+        public RelayCommand<string> ToggleExpandedPlaylistSelectedCommand
+        {
+
+            get
+            {
+                if (_toggleExpandedPlaylistSelectedCommand == null)
+                {
+                    _toggleExpandedPlaylistSelectedCommand = new RelayCommand<string>((show) =>
+                    {
+                        if (show.ToLower().Equals("true"))
+                        {
+                            IsPopupActive = true;
+                            IsSelectedPlaylistExpanded = true;
+                        }
+                        else
+                        {
+                            IsPopupActive = false;
+                            IsSelectedPlaylistExpanded = false;
+                        }
+                    });
+                }
+                return _toggleExpandedPlaylistSelectedCommand;
+            }
+        }
+
         private RelayCommand<Playlist> _addPlaylistToSelectedCommand;
         public RelayCommand<Playlist> AddPlaylistToSelectedCommand
         {
@@ -443,6 +619,38 @@ namespace Spotify_search_helper.ViewModels
                     });
                 }
                 return _clearPlaylistToSelectedCommand;
+            }
+        }
+
+        private RelayCommand<Category> _categoryItemClickedCommand;
+        public RelayCommand<Category> CategoryItemClickedCommand
+        {
+            get
+            {
+                if (_categoryItemClickedCommand == null)
+                {
+                    _categoryItemClickedCommand = new RelayCommand<Category>((item) =>
+                    {
+                        SwitchCategory(item);
+                    });
+                }
+                return _categoryItemClickedCommand;
+            }
+        }
+
+        private RelayCommand<Category> _closeButtonCommand;
+        public RelayCommand<Category> CloseButtonCommand
+        {
+            get
+            {
+                if (_closeButtonCommand == null)
+                {
+                    _closeButtonCommand = new RelayCommand<Category>((item) =>
+                    {
+                        Home();
+                    });
+                }
+                return _closeButtonCommand;
             }
         }
 

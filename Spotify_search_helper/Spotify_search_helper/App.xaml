@@ -21,7 +21,7 @@
                     <Color x:Key="Status-bar-foreground">#FFDDDDDD</Color>
                     <SolidColorBrush x:Key="BorderThemeBrush" Color="#1A1A1A"/>
                     <SolidColorBrush x:Key="PrimaryThemeBrush" Color="#1DB954"/>
-                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#000"/>
+                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#000000"/>
                     <SolidColorBrush x:Key="ItemBackgroundThemeBrush" Color="#090909"/>
                     <SolidColorBrush x:Key="SecondaryItemBackgroundThemeBrush" Color="#141414"/>
                     <SolidColorBrush x:Key="ItemPrimaryForeground" Color="#fff"/>
@@ -34,7 +34,7 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
             <vm:ViewModelLocator xmlns:vm="using:Spotify_search_helper.ViewModels" x:Key="Locator" />
-            <SolidColorBrush x:Key="BrandColorThemeBrush" Color="#1DB954"/>
+            <SolidColorBrush x:Key="BrandColorThemeBrush" Color="#1a2df1"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
