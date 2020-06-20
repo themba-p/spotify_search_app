@@ -1,20 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 using Microsoft.Toolkit.Uwp.UI.Extensions;
 using Windows.UI;
+using Windows.UI.Composition;
+using Windows.UI.Xaml.Input;
+using System.Numerics;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -25,9 +18,12 @@ namespace Spotify_search_helper.Views
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        public static MainPage Current;
+
         public MainPage()
         {
             this.InitializeComponent();
+            Current = this;
 
             // Reset app back to normal.
             StatusBarExtensions.SetIsVisible(this, false);
@@ -36,7 +32,7 @@ namespace Spotify_search_helper.Views
 
             var lightGreyBrush = (Color)Application.Current.Resources["Status-bar-foreground"];
             var brandColor = (Color)Application.Current.Resources["Status-bar-color"];
-
+            
             ApplicationViewExtensions.SetTitle(this, "Spotify Companion");
             StatusBarExtensions.SetBackgroundOpacity(this, 0.8);
             TitleBarExtensions.SetButtonBackgroundColor(this, brandColor);
@@ -49,5 +45,24 @@ namespace Spotify_search_helper.Views
         {
             ViewModels.MainPageViewModel.Current.FilterAdvancedCollectionView();
         }
+
+        public void ScrollSelectedPlaylistViewToTop()
+        {
+            try
+            {
+                if (SelectedPlaylistViewExpanded.Items != null)
+                    SelectedPlaylistViewExpanded.ScrollIntoView(SelectedPlaylistViewExpanded.Items.FirstOrDefault());
+            }
+            catch (Exception)
+            {
+                //
+            }
+        }
+
+        public void ScrollToPlaylistAlphabet(object item)
+        {
+            PlaylistContentView.ScrollIntoView(item);
+        }
     }
+
 }

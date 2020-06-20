@@ -1,9 +1,5 @@
 ﻿using Spotify_search_helper.ViewModels;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Spotify_search_helper.Models
 {
@@ -48,11 +44,11 @@ namespace Spotify_search_helper.Models
                 "/Assets/playlist.png"),
                 new Category(CategoryType.Liked,
                 "Liked songs",
-                "Create a new playlist from your liked songs, and clear.",
+                "Clear or clone your liked songs.",
                 "/Assets/liked.png"),
                 new Category(CategoryType.MadeForYou,
-                "YouTube playlist from a Spotify playlist",
-                "Create a YouTube.",
+                "Video playlist",
+                "Videos from Spotify playlists.",
                 "/Assets/made_for_you.png"),
                 new Category(CategoryType.Convert,
                 "Convert files",
