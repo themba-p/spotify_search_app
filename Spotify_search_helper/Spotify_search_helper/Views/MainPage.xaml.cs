@@ -39,6 +39,13 @@ namespace Spotify_search_helper.Views
             TitleBarExtensions.SetButtonForegroundColor(this, lightGreyBrush);
             TitleBarExtensions.SetBackgroundColor(this, brandColor);
             TitleBarExtensions.SetForegroundColor(this, lightGreyBrush);
+
+            this.Loaded += MainPage_Loaded;
+        }
+
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            ViewModels.MainPageViewModel.Current.LoadTheme();
         }
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -61,7 +68,20 @@ namespace Spotify_search_helper.Views
 
         public void ScrollToPlaylistAlphabet(object item)
         {
-            PlaylistContentView.ScrollIntoView(item);
+            PlaylistContentView.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
+            
+        }
+
+        public void ToggleDarkTheme(bool isEnabled)
+        {
+            if (isEnabled)
+            {
+                this.Frame.RequestedTheme = ElementTheme.Dark;
+            }
+            else
+            {
+                this.Frame.RequestedTheme = ElementTheme.Light;
+            }
         }
     }
 

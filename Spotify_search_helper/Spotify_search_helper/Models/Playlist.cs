@@ -7,7 +7,8 @@ namespace Spotify_search_helper.Models
     {
         public Playlist() { }
 
-        public Playlist(string id, string title, string description, string owner,string ownerId, ImageSource image, PlaylistCategoryType categoryType)
+        public Playlist(string id, string title, string description, string owner,string ownerId, 
+            ImageSource image, PlaylistCategoryType categoryType, string uri, int itemsCount)
         {
             this.Id = id;
             this.Title = title;
@@ -16,6 +17,8 @@ namespace Spotify_search_helper.Models
             this.OwnerId = ownerId;
             this.Image = image;
             this.CategoryType = categoryType;
+            this.Uri = uri;
+            this.ItemsCount = itemsCount;
         }
 
         public string Id { get; set; }
@@ -24,6 +27,8 @@ namespace Spotify_search_helper.Models
         public string Owner { get; set; }
         public ImageSource Image { get; set; }
         public string OwnerId { get; set; }
+        public string Uri { get; set; }
+        public int ItemsCount { get; set; }
         public PlaylistCategoryType CategoryType { get; set; }
 
         private bool _isSelected;

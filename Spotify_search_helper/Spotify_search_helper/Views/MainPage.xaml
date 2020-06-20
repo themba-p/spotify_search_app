@@ -16,10 +16,13 @@
     xmlns:Controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     DataContext="{Binding StartPageInstance, Source={StaticResource Locator}}"
     
-    mc:Ignorable="d" RequestedTheme="Dark"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    mc:Ignorable="d"
+    >
 
     <Page.Resources>
+        <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
+        <converters:EmptyObjectToObjectConverter x:Key="EmptyObjectNegationVisibilityConverter" EmptyValue="Visible" NotEmptyValue="Collapsed"/>
+        <converters:EmptyObjectToObjectConverter x:Key="EmptyObjectVisibilityConverter" EmptyValue="Collapsed" NotEmptyValue="Visible"/>
         <converters:EmptyCollectionToObjectConverter x:Key="CollectionVisibilityConverter" EmptyValue="Collapsed" NotEmptyValue="Visible"/>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converters:BoolToObjectConverter x:Key="BoolToVisibilityInverseConverter" TrueValue="Collapsed" FalseValue="Visible"/>
@@ -1599,7 +1602,7 @@
             <Setter Property="TabNavigation" Value="Local"/>
             <Setter Property="IsHoldingEnabled" Value="True"/>
             <Setter Property="Padding" Value="0"/>
-            <Setter Property="Margin" Value="0 0 0 4"/>
+            <Setter Property="Margin" Value="0 0 0 0"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="MinWidth" Value="0"/>
@@ -1686,7 +1689,7 @@
             </Setter>
         </Style>
     </Page.Resources>
-    <Grid>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="108"/>
             <RowDefinition Height="*"/>
@@ -1696,15 +1699,11 @@
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition MinWidth="320" Width="*"/>
         </Grid.ColumnDefinitions>
-        <ProgressBar Grid.ColumnSpan="100"
-                     IsIndeterminate="{Binding IsLoading}"
-                     Margin="0 0 0 0" 
-                     VerticalAlignment="Top"
-            Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
-            <ProgressBar.Foreground>
-                <SolidColorBrush Color="#fff"/>
-            </ProgressBar.Foreground>
-        </ProgressBar>
+        <Grid.BackgroundTransition>
+            <BrushTransition />
+        </Grid.BackgroundTransition>
+
+        
         <StackPanel x:Name="LogoView" 
                     Margin="96 0 0 0" 
                     Orientation="Horizontal"
@@ -1715,6 +1714,7 @@
             <TextBlock Text="Trackify" FontSize="17" FontWeight="Bold"/>
         </StackPanel>
         <Grid x:Name="Profileview" 
+              Visibility="{Binding ElementName=page, Path=DataContext.Profile, Converter={StaticResource EmptyObjectVisibilityConverter}}"
               DataContext="{Binding Profile}"
               extensions:Mouse.Cursor="Hand"
               Grid.Column="2"
@@ -1743,12 +1743,12 @@
                     <Core:CallMethodAction TargetObject="{Binding ElementName=signInFadeIn}" MethodName="StartAnimation"/>
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
-            <Grid Background="{StaticResource ItemBackgroundThemeBrush}" 
-                Grid.RowSpan="10"
-                Grid.ColumnSpan="10"
-                CornerRadius="24"
-                HorizontalAlignment="Stretch" 
-                VerticalAlignment="Stretch">
+            <Grid Background="{ThemeResource ItemBackgroundThemeBrush}" 
+                    Grid.RowSpan="10"
+                    Grid.ColumnSpan="10"
+                    CornerRadius="24"
+                    HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Stretch">
                 <Interactivity:Interaction.Behaviors>
                     <ToolkitBehaviors:Scale x:Name="profileBgScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.1" ScaleY="1.1" CenterX="82" CenterY="32" EasingMode="EaseOut" EasingType="Cubic" />
                     <ToolkitBehaviors:Scale x:Name="profileBgScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="82" CenterY="32" EasingMode="EaseOut" EasingType="Cubic"/>
@@ -1847,7 +1847,8 @@
                                 <Core:CallMethodAction TargetObject="{Binding ElementName=chevFadeOut}" MethodName="StartAnimation"/>
                             </Core:EventTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
-                        <Grid Background="{StaticResource ItemBackgroundThemeBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid Background="{ThemeResource ItemBackgroundThemeBrush}" 
+                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <Interactivity:Interaction.Behaviors>
                                 <ToolkitBehaviors:Scale x:Name="GridScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.1" ScaleY="1.1" CenterX="125" CenterY="50" EasingMode="EaseOut" EasingType="Cubic" />
                                 <ToolkitBehaviors:Scale x:Name="GridScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="125" CenterY="50" EasingMode="EaseOut" EasingType="Cubic"/>
@@ -1893,7 +1894,7 @@
                             </Interactivity:Interaction.Behaviors>
                             </TextBlock>
                         </StackPanel>
-                        <Grid Background="#000"
+                        <Grid Background="{ThemeResource SecondaryItemBackgroundAltThemeBrush}"
                               CornerRadius="12"
                               Height="48px"
                               HorizontalAlignment="Left"
@@ -1942,6 +1943,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="model:Category">
                     <Grid CornerRadius="24"
+                          Background="{ThemeResource ItemBackgroundThemeBrush}"
                           Height="170px" 
                           VerticalAlignment="Stretch" 
                           HorizontalAlignment="Stretch"
@@ -1965,8 +1967,6 @@
                                 <Core:CallMethodAction TargetObject="{Binding ElementName=chevFadeOut}" MethodName="StartAnimation"/>
                             </Core:EventTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
-                        <Grid Background="{StaticResource ItemBackgroundThemeBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        </Grid>
                         <StackPanel Margin="16 32 16 24"
                                     VerticalAlignment="Bottom">
                             <Grid>
@@ -2008,7 +2008,7 @@
                             </Interactivity:Interaction.Behaviors>
                             </TextBlock>
                         </StackPanel>
-                        <Grid Background="#000"
+                        <Grid Background="{ThemeResource SecondaryItemBackgroundAltThemeBrush}"
                               CornerRadius="12"
                               Height="48px"
                               HorizontalAlignment="Left"
@@ -2030,7 +2030,19 @@
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
         </ListView>
-        
+
+        <StackPanel Margin="96 0 0 32" Orientation="Horizontal"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Left"
+                    Grid.RowSpan="10"
+                    Visibility="{Binding IsCompactCategory, Converter={StaticResource BoolToVisibilityInverseConverter}}">
+            <Grid Margin="0 0 12 0">
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE793;" FontSize="14" Visibility="{Binding IsDarkThemeEnabled, Converter={StaticResource BoolToVisibilityInverseConverter}}"/>
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="" FontSize="14" Visibility="{Binding IsDarkThemeEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
+            </Grid>
+            <ToggleSwitch Style="{StaticResource ToggleSwitchStyle1}" IsOn="{Binding IsDarkThemeEnabled, Mode=TwoWay}" OffContent="" OnContent="" Width="44" BackgroundSizing="InnerBorderEdge"/>
+        </StackPanel>
+
         <CheckBox IsChecked="{Binding IsCompactCategory}" Visibility="Collapsed">
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="Checked">
@@ -2199,6 +2211,9 @@
                                         <ColumnDefinition Width="2*"/>
                                         <ColumnDefinition MinWidth="320" Width="*"/>
                                     </Grid.ColumnDefinitions>
+                                    <Grid.BackgroundTransition>
+                                        <BrushTransition />
+                                    </Grid.BackgroundTransition>
                                     <Grid x:Name="PageNav"
                                           Height="60px"
                                           Margin="0 12 0 0"
@@ -2260,11 +2275,12 @@
                                         </Grid>
                                         <Button x:Name="SearchButton"
                                                 extensions:Mouse.Cursor="Hand"
-                                                Background="{StaticResource ItemBackgroundThemeBrush}"
+                                                Background="{ThemeResource SecondaryItemBackgroundAltThemeBrush}"
                                                 Grid.Column="1"
                                                 CornerRadius="12"
                                                 Height="48px"
-                                                Width="48px" Foreground="#FF676767" Style="{StaticResource ButtonRevealStyle}">
+                                                Width="48px" Foreground="#FF676767" 
+                                                Style="{StaticResource ButtonRevealStyle}">
                                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE721;"/>
                                         </Button>
                                     </Grid>
@@ -2300,6 +2316,15 @@
                                       Height="250"
                                       Width="250"
                                       VerticalAlignment="Top">
+                                    <Interactivity:Interaction.Behaviors>
+                                        <Core:EventTriggerBehavior EventName="PointerEntered">
+                                            <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewPlayBtnFadeIn}" MethodName="StartAnimation"/>
+                                        </Core:EventTriggerBehavior>
+                                        <Core:EventTriggerBehavior EventName="PointerExited">
+                                            <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewPlayBtnFadeOut}" MethodName="StartAnimation"/>
+                                        </Core:EventTriggerBehavior>
+                                    </Interactivity:Interaction.Behaviors>
+                                    
                                     <Grid CornerRadius="24" Background="{ThemeResource ItemBackgroundThemeBrush}">
                                         <Interactivity:Interaction.Behaviors>
                                             <ToolkitBehaviors:Scale x:Name="playlistThumbScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="0.95" ScaleY="0.95" CenterX="125" CenterY="125" EasingMode="EaseOut"  EasingType="Cubic" />
@@ -2311,9 +2336,10 @@
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Top">
                                         <Grid>
-                                            <Button Background="{ThemeResource SecondaryItemBackgroundThemeBrush}"
+                                            <Button Background="#000000"
                                                     CornerRadius="24"
                                                     Foreground="#ffffff"
+                                                    RequestedTheme="Dark"
                                                     Command="{Binding ElementName=PlaylistContentView, Path=DataContext.AddPlaylistToSelectedCommand}"
                                                     CommandParameter="{Binding}"
                                                     Height="32"
@@ -2326,6 +2352,7 @@
                                             <Button Background="{ThemeResource BrandColorThemeBrush}"
                                                     CornerRadius="24"
                                                     Foreground="#ffffff"
+                                                    RequestedTheme="Dark"
                                                     Command="{Binding ElementName=PlaylistContentView, Path=DataContext.RemovePlaylistToSelectedCommand}"
                                                     CommandParameter="{Binding}"
                                                     Height="32"
@@ -2337,9 +2364,11 @@
                                                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE73E;" FontSize="18"/>
                                             </Button>
                                         </Grid>
-                                        <Button Background="{ThemeResource SecondaryItemBackgroundThemeBrush}"
+                                        <Button Background="#000000"
                                                 CornerRadius="24"
+                                                Foreground="#ffffff"
                                                 Height="32"
+                                                RequestedTheme="Dark"
                                                 HorizontalContentAlignment="Center"
                                                 Margin="0 8 0 0"
                                                 VerticalContentAlignment="Center"
@@ -2347,13 +2376,44 @@
                                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE70F;" FontSize="12"/>
                                         </Button>
                                     </StackPanel>
+                                    <Button x:Name="PlaylistViewPlayBtn" BorderThickness="2" 
+                                                Background="{x:Null}" Opacity="0"
+                                                BorderBrush="WhiteSmoke"
+                                                Foreground="WhiteSmoke"
+                                                RequestedTheme="Dark"
+                                                CornerRadius="48"
+                                                Command="{Binding ElementName=page, Path=DataContext.PlayPlaylistCommand}"
+                                                CommandParameter="{Binding}"
+                                                Padding="0"
+                                            Margin="24"
+                                                Height="32"
+                                                Width="32"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Bottom">
+                                        <Interactivity:Interaction.Behaviors>
+                                            <ToolkitBehaviors:Scale x:Name="PlaylistViewPlayBtnScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.2" ScaleY="1.2" CenterX="16" CenterY="16" EasingMode="EaseOut"  EasingType="Cubic" />
+                                            <ToolkitBehaviors:Scale x:Name="PlaylistViewPlayBtnScaleNormal"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="16" CenterY="16" EasingMode="EaseOut"   EasingType="Cubic"/>
+                                            <ToolkitBehaviors:Fade x:Name="PlaylistViewPlayBtnFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                            <ToolkitBehaviors:Fade x:Name="PlaylistViewPlayBtnFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+
+                                            <Core:EventTriggerBehavior EventName="PointerEntered">
+                                                <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewPlayBtnScaleUp}" MethodName="StartAnimation"/>
+                                            </Core:EventTriggerBehavior>
+                                            <Core:EventTriggerBehavior EventName="PointerExited">
+                                                <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewPlayBtnScaleNormal}" MethodName="StartAnimation"/>
+                                            </Core:EventTriggerBehavior>
+                                        </Interactivity:Interaction.Behaviors>
+
+                                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE768;"/>
+                                    </Button>
                                 </Grid>
                                 <StackPanel Grid.Row="1"
                                             Margin="8 16 0 0">
                                     <Grid Opacity="0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="auto"/>
-                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="auto"/>
                                         </Grid.ColumnDefinitions>
                                         <Interactivity:Interaction.Behaviors>
                                             <ToolkitBehaviors:Fade x:Name="playlistMetaFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
@@ -2363,6 +2423,10 @@
                                         </Interactivity:Interaction.Behaviors>
                                         <TextBlock Text="by " FontSize="14" Margin="0 0 2 0"/>
                                         <TextBlock Text="{Binding Owner, FallbackValue=Unknown}" Grid.Column="1" FontSize="14" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}"/>
+                                        <StackPanel Grid.Column="2" Margin="8 0" Orientation="Horizontal">
+                                            <Ellipse Fill="{ThemeResource ItemPrimaryForeground}" Opacity="0.4" Height="4" Width="4" VerticalAlignment="Center" Margin="0 0 8 0"/>
+                                            <TextBlock Text="{Binding ItemsCount, FallbackValue=0}" FontSize="14" Foreground="{ThemeResource ItemSecondaryForeground}"/>
+                                        </StackPanel>
                                     </Grid>
                                     <TextBlock Text="{Binding Title, FallbackValue=Unknown}"
                                                FontSize="24"
@@ -2401,36 +2465,67 @@
                 </ListView>
                 
             </Grid>
-        </Grid>
-        <ListView x:Name="AlphabetPlaylistView"
-                  Grid.RowSpan="10"
-                  Grid.ColumnSpan="10"
-                  Padding="0 10"
-                  CornerRadius="8"
-                  Background="{ThemeResource ItemBackgroundThemeBrush}"
-                  ItemsSource="{Binding Alphabet}"
-                  IsItemClickEnabled="False"
-                  SelectionMode="Single"
-                  SelectedItem="{Binding SelectedPlaylistAlphabet, Mode=TwoWay}"
-                  Width="24"
-                  Foreground="{ThemeResource ItemPrimaryForeground}"
-                  HorizontalAlignment="Right"
-                  VerticalAlignment="Center"
-                  HorizontalContentAlignment="Center"
-                  VerticalContentAlignment="Center"
-                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                  Margin="0 24 24 24" 
-                  ItemContainerStyle="{StaticResource AlphabetListViewItemContainerStyle}"
-                  Visibility="{Binding IsCompactCategory, Converter={StaticResource BoolToVisibilityConverter}}">
+            <ListView x:Name="AlphabetPlaylistView"
+                      Grid.RowSpan="10"
+                      Grid.ColumnSpan="10"
+                      Padding="0 10"
+                      CornerRadius="8"
+                      ItemsSource="{Binding Alphabet}"
+                      IsItemClickEnabled="False"
+                      SelectionMode="Single"
+                      SelectedItem="{Binding SelectedPlaylistAlphabet, Mode=TwoWay}"
+                      Width="58"
+                      Foreground="{ThemeResource ItemPrimaryForeground}"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Center"
+                      HorizontalContentAlignment="Center"
+                      VerticalContentAlignment="Center"
+                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                      Margin="0 24 32 24" 
+                      ItemContainerStyle="{StaticResource AlphabetListViewItemContainerStyle}"
+                      Visibility="{Binding IsCompactCategory, Converter={StaticResource BoolToVisibilityConverter}}">
 
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Background="Transparent" Height="24" Width="24" extensions:Mouse.Cursor="Hand">
-                        <TextBlock Text="{Binding}" FontWeight="Medium" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                <Grid/>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Background="{ThemeResource BrandColorThemeBrush}"
+                                    CornerRadius="8" Opacity="0"
+                                    Margin="0"
+                                    Width="24"
+                                    Height="24">
+                                <Interactivity:Interaction.Behaviors>
+                                    <ToolkitBehaviors:Offset x:Name="letterBubbleOffsetX" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                    <ToolkitBehaviors:Offset x:Name="letterBubbleOffsetXX"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="6" OffsetY="0"  EasingMode="EaseOut"   EasingType="Cubic"/>
+                                    <ToolkitBehaviors:Fade x:Name="letterBubbleFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                    <ToolkitBehaviors:Fade x:Name="letterBubbleFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                    <ToolkitBehaviors:Scale x:Name="letterBubbleScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="16" CenterY="16" EasingMode="EaseOut"  EasingType="Cubic" />
+                                    <ToolkitBehaviors:Scale x:Name="letterBubbleScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="0.8" ScaleY="0.8" CenterX="16" CenterY="16" EasingMode="EaseOut"   EasingType="Cubic"/>
+                                </Interactivity:Interaction.Behaviors>
+
+                                <TextBlock Text="{Binding}" Foreground="#ffffff" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <Grid Background="Transparent" Height="20" Width="20" extensions:Mouse.Cursor="Hand" HorizontalAlignment="Right">
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="PointerEntered">
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=letterBubbleOffsetX}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=letterBubbleFadeIn}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=letterBubbleScaleUp}" MethodName="StartAnimation"/>
+                                    </Core:EventTriggerBehavior>
+                                    <Core:EventTriggerBehavior EventName="PointerExited">
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=letterBubbleOffsetXX}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=letterBubbleFadeOut}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=letterBubbleScaleDown}" MethodName="StartAnimation"/>
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                                <TextBlock Text="{Binding}" FontWeight="Medium" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    
         <Grid x:Name="PopupView"
               Grid.ColumnSpan="100"
               Grid.RowSpan="100"
@@ -2438,7 +2533,7 @@
             <Grid.Background>
                 <media:AcrylicBrush
                       BackgroundSource="Backdrop"
-                      TintColor="Black"
+                      TintColor="{ThemeResource TintColor}"
                       TintOpacity="0.95"
                       BlurAmount="12"/>
 
@@ -2456,7 +2551,7 @@
               Grid.ColumnSpan="100"
               Margin="24 0 0 24" Opacity="1" 
               VerticalAlignment="Bottom"
-              Visibility="{Binding HasSelectedItems, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}">
+              Visibility="{Binding HasSelectedItems, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsedzzz}">
             <!--Width="351"-->
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
@@ -2497,31 +2592,25 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="Selected" 
+                               Foreground="{ThemeResource ItemPrimaryForeground}"
                                FontSize="24"
                                FontWeight="Bold"
                                Margin="8 0 4 0"/>
-                    <TextBlock Text="("
-                               FontSize="14"
-                               FontWeight="Normal"
-                               Foreground="{StaticResource Grey-04}"
-                               Margin="0 4 0 0"
-                               VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding SelectedPlaylistCollection.Count, FallbackValue=0}"
                                FontSize="14"
                                FontWeight="Normal"
                                Foreground="{StaticResource Grey-04}"
                                Margin="0 4 0 0"
                                VerticalAlignment="Center"/>
-                    <TextBlock Text=")"
-                               FontSize="14"
-                               FontWeight="Normal"
-                               Foreground="{StaticResource Grey-04}"
-                               Margin="0 4 0 0"
-                               VerticalAlignment="Center"/>
+                    <StackPanel Margin="0 4 0 0" Orientation="Horizontal">
+                        <TextBlock Text="(" FontSize="14" Foreground="{StaticResource Grey-04}" VerticalAlignment="Center" Margin="4 0 0 0"/>
+                        <TextBlock Text="{Binding SelectedPlaylistsTracksCount, FallbackValue=0}" FontSize="14" Foreground="{StaticResource Grey-04}" VerticalAlignment="Center"/>
+                        <TextBlock Text="tracks)" FontSize="14" Foreground="{StaticResource Grey-04}" VerticalAlignment="Center" Margin="2 0 0 0"/>
+                    </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <Button extensions:Mouse.Cursor="Hand"
-                            Foreground="{StaticResource ItemPrimaryForeground}"
+                            Foreground="{ThemeResource ItemPrimaryForeground}"
                             Command="{Binding ClearPlaylistToSelectedCommand}"
                             Grid.Column="1"
                             Height="32px"
@@ -2535,7 +2624,7 @@
                             ToolTipService.ToolTip="Clear selected">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE711;" FontSize="18"/>
                     </Button>
-                    <Button Background="#000000" CornerRadius="24" Grid.Column="1" Height="32" Margin="16 0 8 0" Width="32" Style="{StaticResource ButtonRevealStyle}"
+                    <Button Background="{ThemeResource SecondaryItemBackgroundAltThemeBrush}" CornerRadius="24" Grid.Column="1" Height="32" Margin="16 0 8 0" Width="32" Style="{StaticResource ButtonRevealStyle}"
                             Command="{Binding ToggleExpandedPlaylistSelectedCommand}"
                             CommandParameter="False"
                             ToolTipService.ToolTip="Collapse"
@@ -2629,7 +2718,7 @@
                                             <Core:CallMethodAction TargetObject="{Binding ElementName=SelectedExpandedThumbScaleNormal}" MethodName="StartAnimation"/>
                                         </Core:EventTriggerBehavior>
                                     </Interactivity:Interaction.Behaviors>
-                                    <Grid Background="#000000" 
+                                    <Grid Background="{ThemeResource SecondaryItemBackgroundAltThemeBrush}" 
                                         CornerRadius="24"
                                         Height="100" 
                                         Width="100">
@@ -2642,7 +2731,12 @@
                                         <Button x:Name="SelectedExpandedPlayBtn" BorderThickness="2" 
                                                 Background="{x:Null}"
                                                 BorderBrush="WhiteSmoke"
+                                                Foreground="WhiteSmoke"
+                                                RequestedTheme="Dark"
                                                 CornerRadius="48"
+                                                Command="{Binding ElementName=page, Path=DataContext.PlayPlaylistCommand}"
+                                                CommandParameter="{Binding}"
+                                                Padding="0"
                                                 Height="32"
                                                 Width="32"
                                                 HorizontalAlignment="Center"
@@ -2659,7 +2753,7 @@
                                                 </Core:EventTriggerBehavior>
                                             </Interactivity:Interaction.Behaviors>
                                             
-                                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE768;" FontSize="14"/>
+                                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE768;"/>
                                         </Button>
                                     </Grid>
                                     <StackPanel Grid.Column="1"
@@ -2681,13 +2775,13 @@
                                         <TextBlock Text="{Binding Description, FallbackValue=No Description}"
                                                FontSize="14"
                                                Foreground="{ThemeResource ItemSecondaryForeground}"
-                                               MaxHeight="40"
+                                               MaxHeight="46"
                                                TextTrimming="CharacterEllipsis"
                                                TextWrapping="WrapWholeWords"
                                                ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}"/>
                                     </StackPanel>
                                     <Grid Grid.Column="2">
-                                        <Button Background="#000000" 
+                                        <Button Background="{ThemeResource SecondaryItemBackgroundAltThemeBrush}" 
                                                 CornerRadius="24"
                                                 Command="{Binding ElementName=PlaylistContentView, Path=DataContext.RemovePlaylistToSelectedCommand}"
                                                 CommandParameter="{Binding}"
@@ -2741,20 +2835,26 @@
                                 HorizontalContentAlignment="Center"
                                 Margin="0 0 4 0"
                                 VerticalAlignment="Stretch"
-                                VerticalContentAlignment="Center">
+                                VerticalContentAlignment="Center"
+                                Style="{StaticResource ButtonRevealStyle}"
+                                IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
                             <TextBlock Text="Merge"/>
                         </Button>
                         <Button x:Name="PlayPlaylistBtn"
                                 Grid.Column="1"
-                                Background="{ThemeResource ItemBackgroundThemeBrush}"
+                                Foreground="#ffffff"
+                                Background="{ThemeResource BrandColorThemeBrush}"
                                 CornerRadius="12"
+                                Command="{Binding ShuffleSelectedPlaylistsCommand}"
                                 FontSize="16"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Center"
                                 Margin="4 0"
                                 VerticalAlignment="Stretch"
-                                VerticalContentAlignment="Center">
-                            <TextBlock Text="Play all"/>
+                                VerticalContentAlignment="Center"
+                                Style="{StaticResource ButtonRevealStyle}"
+                                IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
+                            <TextBlock Text="Shuffle play"/>
                         </Button>
                         <Button x:Name="DeletePlaylistBtn"
                                 Grid.Column="2"
@@ -2765,7 +2865,9 @@
                                 HorizontalContentAlignment="Center"
                                 Margin="4 0 0 0"
                                 VerticalAlignment="Stretch"
-                                VerticalContentAlignment="Center">
+                                VerticalContentAlignment="Center"
+                                Style="{StaticResource ButtonRevealStyle}"
+                                IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
                             <TextBlock Text="Delete"/>
                         </Button>
                     </Grid>
@@ -2790,7 +2892,7 @@
                     <ToolkitBehaviors:Fade x:Name="SelectedPlaylistCompactViewFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
                 </Interactivity:Interaction.Behaviors>
 
-                <Grid Background="#090909"
+                <Grid Background="{ThemeResource ItemBackgroundThemeBrush}"
                       Grid.ColumnSpan="10"
                       CornerRadius="12"
                       VerticalAlignment="Stretch">
@@ -2811,7 +2913,7 @@
                     <Grid/>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="model:Playlist">
-                            <Grid Background="Black" CornerRadius="12" Height="48" Width="48">
+                            <Grid Background="{ThemeResource SecondaryItemBackgroundAltThemeBrush}" CornerRadius="12" Height="48" Width="48">
                                 <Interactivity:Interaction.Behaviors>
                                     <ToolkitBehaviors:Scale x:Name="SelectedPanelScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.1" ScaleY="1.1" CenterX="24" CenterY="24" EasingMode="EaseOut"  EasingType="Cubic" />
                                     <ToolkitBehaviors:Scale x:Name="SelectedPanelScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="24" CenterY="24" EasingMode="EaseOut"   EasingType="Cubic"/>
@@ -2833,7 +2935,9 @@
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                 </ListView>
-                <Button Background="#000000" CornerRadius="24" Grid.Column="1" Height="32" Margin="0 12 16 12" Width="32" Style="{StaticResource ButtonRevealStyle}"
+                <Button Background="{ThemeResource SecondaryItemBackgroundAltThemeBrush}" 
+                        CornerRadius="24" Grid.Column="1" Height="32" Margin="0 12 16 12" Width="32" 
+                        Style="{StaticResource ButtonRevealStyle}"
                         Command="{Binding ToggleExpandedPlaylistSelectedCommand}"
                         CommandParameter="True">
                     <Interactivity:Interaction.Behaviors>
@@ -2850,5 +2954,41 @@
                 </Button>
             </Grid>
         </Grid>
+
+        <Grid x:Name="NotLoggedInView"
+              Grid.ColumnSpan="100"
+              Grid.RowSpan="100"
+              Visibility="{Binding Profile, Converter={StaticResource EmptyObjectNegationVisibilityConverter}, FallbackValue=collapsed}">
+            <Grid.Background>
+                <media:AcrylicBrush
+                      BackgroundSource="Backdrop"
+                      TintColor="{ThemeResource TintColor}"
+                      TintOpacity="0.95"
+                      BlurAmount="12"/>
+            </Grid.Background>
+
+            <StackPanel MaxWidth="400" VerticalAlignment="Center">
+                <TextBlock Text="The app requires a Spotify premium account to function, please login with the button below to continue." FontSize="24" TextWrapping="WrapWholeWords"/>
+                <Button RequestedTheme="Dark" 
+                        Background="{ThemeResource BrandColorThemeBrush}"
+                        Margin="0 12" 
+                        Command="{Binding LoginCommand}"
+                        Padding="24 16" 
+                        CornerRadius="12" 
+                        Width="200"
+                        IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
+                    Login with Spotify
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <ProgressBar Grid.ColumnSpan="100"
+                     IsIndeterminate="{Binding IsLoading}"
+                     Foreground="{ThemeResource ItemPrimaryForeground}"
+                     Margin="0 0 0 0" 
+                     VerticalAlignment="Top"
+            Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+
+        </ProgressBar>
     </Grid>
 </Page>

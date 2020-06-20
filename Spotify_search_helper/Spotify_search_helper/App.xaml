@@ -10,11 +10,21 @@
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <Color x:Key="Status-bar-color">#fff</Color>
+                    <Color x:Key="Status-bar-color">#f1f1f1</Color>
                     <Color x:Key="Status-bar-foreground">#000</Color>
-                    <SolidColorBrush x:Key="BorderThemeBrush" Color="#1A1A1A"/>
-                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#fff"/>
+                    <SolidColorBrush x:Key="BorderThemeBrush" Color="#DCDCDC"/>
+                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#FFEAEAEA"/>
+                    <Color x:Key="TintColor">#FFEAEAEA</Color>
+                    <SolidColorBrush x:Key="ItemBackgroundThemeBrush" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="SecondaryItemBackgroundThemeBrush" Color="#E4E4E4"/>
+                    <SolidColorBrush x:Key="SecondaryItemBackgroundAltThemeBrush" Color="#E4E4E4"/>
                     <SolidColorBrush x:Key="ItemPrimaryForeground" Color="#000"/>
+                    <SolidColorBrush x:Key="ItemSecondaryForeground" Color="#6B6B6B"/>
+                    <SolidColorBrush x:Key="ItemTertiaryForeground" Color="#6B6B6B"/>
+                    <SolidColorBrush x:Key="InputBoxThemeBrush" Color="#767680" Opacity="0.06"/>
+                    <SolidColorBrush x:Key="InputBoxHoverThemeBrush" Color="#767680" Opacity="0.1"/>
+                    <SolidColorBrush x:Key="Grey-04" Color="#9A9A9A"/>
+                    <SolidColorBrush x:Key="ToggleSwitchKnobStroke" Color="#DCDCDC"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <Color x:Key="Status-bar-color">#000</Color>
@@ -22,8 +32,10 @@
                     <SolidColorBrush x:Key="BorderThemeBrush" Color="#1A1A1A"/>
                     <SolidColorBrush x:Key="PrimaryThemeBrush" Color="#1DB954"/>
                     <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#000000"/>
+                    <Color x:Key="TintColor">#000000</Color>
                     <SolidColorBrush x:Key="ItemBackgroundThemeBrush" Color="#090909"/>
                     <SolidColorBrush x:Key="SecondaryItemBackgroundThemeBrush" Color="#141414"/>
+                    <SolidColorBrush x:Key="SecondaryItemBackgroundAltThemeBrush" Color="#000000"/>
                     <SolidColorBrush x:Key="ItemPrimaryForeground" Color="#fff"/>
                     <SolidColorBrush x:Key="ItemSecondaryForeground" Color="#C6C6C6"/>
                     <SolidColorBrush x:Key="ItemTertiaryForeground" Color="#6B6B6B"/>
@@ -34,7 +46,7 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
             <vm:ViewModelLocator xmlns:vm="using:Spotify_search_helper.ViewModels" x:Key="Locator" />
-            <SolidColorBrush x:Key="BrandColorThemeBrush" Color="#1a2df1"/>
+            <SolidColorBrush x:Key="BrandColorThemeBrush" Color="#1131fd"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -8,12 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Windows.Storage;
 
 namespace Spotify_search_helper.ViewModels
 {
     public class MainPageViewModel : ViewModelBase
     {
         public static MainPageViewModel Current = null;
+        readonly ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
         public MainPageViewModel()
         {
             Current = this;
@@ -72,26 +75,51 @@ namespace Spotify_search_helper.ViewModels
             }
         }
 
+        readonly List<Playlist> _playlistCollectionCopy = new List<Playlist>();
+
         public void AddToCollection(IEnumerable<Playlist> items)
         {
+            _playlistCollectionCopy.AddRange(items);
             using (AdvancedCollectionView.DeferRefresh())
             {
-                List<string> alphabet = new List<string>();
                 foreach (var item in items)
                 {
-                    if (item.Title.Length > 0 && alphabet.Where(c => c.ToUpper() == item.Title[0].ToString().ToUpper()).FirstOrDefault() == null)
-                        alphabet.Add(item.Title[0].ToString().ToUpper());
-
                     AdvancedCollectionView.Add(item);
                 }
+            }
+            UpdateAlphabet(items);
+        }
 
-                alphabet = alphabet.OrderBy(c => c).ToList();
-                foreach (var str in alphabet)
+        private void UpdateAlphabet(IEnumerable<Playlist> items = null, bool reset = false)
+        {
+            List<string> alphabet = new List<string>();
+            if (Alphabet.Count > 0 && !reset)
+                alphabet = Alphabet.ToList();
+            else if (reset)
+            {
+                Alphabet.Clear();
+            }
+
+            if (items != null)
+            {
+                foreach (var item in items)
                 {
-                    if(Alphabet.Where(c => c.ToUpper().Equals(str.ToUpper())).FirstOrDefault() == null)
-                        Alphabet.Add(str);
+                    if (!string.IsNullOrEmpty(item.Title) && alphabet.Where(c => c.ToUpper() == item.Title[0].ToString().ToUpper()).FirstOrDefault() == null)
+                    {
+                        //check if is number
+                        if (int.TryParse(item.Title[0].ToString(), out int num))
+                        {
+                            if (alphabet.Where(c => c == "#").FirstOrDefault() == null)
+                                alphabet.Add("#");
+                        }
+                        else
+                            alphabet.Add(item.Title[0].ToString());
+                    }
                 }
             }
+
+            var list = alphabet.OrderBy(c => c).ToList();
+            Alphabet = new ObservableCollection<string>(list);
         }
 
         public void FilterAdvancedCollectionView()
@@ -104,6 +132,7 @@ namespace Spotify_search_helper.ViewModels
             if (AdvancedCollectionView == null)
                 return;
 
+            List<Playlist> _filteredCollection = new List<Playlist>();
             using (AdvancedCollectionView.DeferRefresh())
             {
                 if (SelectedPlaylistCategory != null && Profile != null)
@@ -111,10 +140,14 @@ namespace Spotify_search_helper.ViewModels
                     if (!string.IsNullOrEmpty(SearchText))
                     {
                         if (SelectedPlaylistCategory.CategoryType == PlaylistCategoryType.All)
+                        {
                             AdvancedCollectionView.Filter = c => (((Playlist)c).Title).Contains(SearchText, StringComparison.CurrentCultureIgnoreCase);
+                            _filteredCollection.AddRange(_playlistCollectionCopy.Where(c => c.Title.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)));
+                        }
                         else
                         {
                             AdvancedCollectionView.Filter = c => (((Playlist)c).Title).Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) && ((Playlist)c).CategoryType == SelectedPlaylistCategory.CategoryType;
+                            _filteredCollection.AddRange(_playlistCollectionCopy.Where(c => c.Title.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) && c.CategoryType == SelectedPlaylistCategory.CategoryType));
                         }
                     }
                     else
@@ -123,14 +156,17 @@ namespace Spotify_search_helper.ViewModels
                         {
                             //clear filters
                             AdvancedCollectionView.Filter = c => c != null; //bit of a hack to clear filters
+                            _filteredCollection.AddRange(_playlistCollectionCopy);
                         }
                         else
                         {
                             AdvancedCollectionView.Filter = c => ((Playlist)c).CategoryType == SelectedPlaylistCategory.CategoryType;
+                            _filteredCollection.AddRange(_playlistCollectionCopy.Where(c => c.CategoryType == SelectedPlaylistCategory.CategoryType));
                         }
                     }
                 }
             }
+            UpdateAlphabet(_filteredCollection, true);
         }
 
         #endregion
@@ -175,6 +211,43 @@ namespace Spotify_search_helper.ViewModels
 
         #region External Calls
 
+        private void ScrollToPlaylistAlphabet(string alphabet)
+        {
+            if (AdvancedCollectionView != null && AdvancedCollectionView.Source != null)
+            {
+                var item = AdvancedCollectionView.Where(c => ((Playlist)c).Title.ToLower().StartsWith(alphabet.ToLower())).FirstOrDefault();
+                if (item != null) Views.MainPage.Current.ScrollToPlaylistAlphabet(item);
+            }
+        }
+
+        private void ToggleTheme(bool isDarkThemeEnabled)
+        {
+            if (IsDarkThemeEnabled)
+                localSettings.Values["theme"] = "dark";
+            else
+                localSettings.Values["theme"] = "light";
+
+            Views.MainPage.Current.ToggleDarkTheme(isDarkThemeEnabled);
+        }
+
+        public void LoadTheme()
+        {
+            var theme = localSettings.Values["theme"] as string;
+
+            //settings not found, save the default dark theme
+            if (string.IsNullOrEmpty(theme))
+            {
+                IsDarkThemeEnabled = true;
+            }
+            else
+            {
+                if (theme == "light")
+                    IsDarkThemeEnabled = false;
+                else
+                    IsDarkThemeEnabled = true;
+            }
+        }
+
         public void UpdatePlaylistCategoryCounts()
         {
             if (AdvancedCollectionView != null)
@@ -202,16 +275,30 @@ namespace Spotify_search_helper.ViewModels
 
         #endregion
 
-        private void ScrollToPlaylistAlphabet(string alphabet)
+        #region Properties
+
+        private int _selectedPlaylistsTracksCount;
+        public int SelectedPlaylistsTracksCount
         {
-            if(AdvancedCollectionView != null && AdvancedCollectionView.Source != null)
+            get => _selectedPlaylistsTracksCount;
+            set
             {
-                var item = AdvancedCollectionView.Where(c => ((Playlist)c).Title.ToLower().StartsWith(alphabet.ToLower())).FirstOrDefault();
-                if(item != null) Views.MainPage.Current.ScrollToPlaylistAlphabet(item);
+                _selectedPlaylistsTracksCount = value;
+                RaisePropertyChanged("SelectedPlaylistsTracksCount");
             }
         }
 
-        #region Properties
+        private bool _isDarkThemeEnabled = true;
+        public bool IsDarkThemeEnabled
+        {
+            get => _isDarkThemeEnabled;
+            set
+            {
+                _isDarkThemeEnabled = value;
+                RaisePropertyChanged("IsDarkThemeEnabled");
+                ToggleTheme(value);
+            }
+        }
 
         private string _selectedPlaylistAlphabet;
         public string SelectedPlaylistAlphabet
@@ -221,7 +308,7 @@ namespace Spotify_search_helper.ViewModels
             {
                 _selectedPlaylistAlphabet = value;
                 RaisePropertyChanged("SelectedPlaylistAlphabet");
-                if(!string.IsNullOrEmpty(value)) ScrollToPlaylistAlphabet(value);
+                if (!string.IsNullOrEmpty(value)) ScrollToPlaylistAlphabet(value);
             }
         }
 
@@ -269,7 +356,7 @@ namespace Spotify_search_helper.ViewModels
             {
                 _isSelectAllChecked = value;
                 RaisePropertyChanged("IsSelectAllChecked");
-                if(value)
+                if (value)
                 {
                     List<Playlist> items = new List<Playlist>();
                     foreach (var item in AdvancedCollectionView)
@@ -358,7 +445,7 @@ namespace Spotify_search_helper.ViewModels
         private ProfileUser _profile;
         public ProfileUser Profile
         {
-            get => _profile; 
+            get => _profile;
             set { _profile = value; RaisePropertyChanged("Profile"); }
         }
 
@@ -379,6 +466,32 @@ namespace Spotify_search_helper.ViewModels
         #endregion
 
         #region Methods
+
+        private async void Login()
+        {
+            IsLoading = true;
+
+            await DataSource.Current.Initialize();
+
+            IsLoading = false;
+        }
+
+        private async void PlayItem(Playlist item)
+        {
+            IsLoading = true;
+            await DataSource.Current.PlaySpotifyItem(item.Uri);
+            IsLoading = false;
+        }
+
+        private async void PlayItems(IEnumerable<Playlist> items, bool shuffle = false)
+        {
+            IsLoading = true;
+
+            if (items != null && items.Count() > 0)
+                await DataSource.Current.PlaySpotifyItems(items.ToList(), shuffle);
+
+            IsLoading = false;
+        }
 
         private void Home()
         {
@@ -445,9 +558,6 @@ namespace Spotify_search_helper.ViewModels
         #region collections
 
         private ObservableCollection<string> _alphabet = new ObservableCollection<string>();
-        //{
-        //    "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"
-        //};
         public ObservableCollection<string> Alphabet
         {
             get => _alphabet;
@@ -472,16 +582,21 @@ namespace Spotify_search_helper.ViewModels
                     IsSelectedPlaylistExpanded = false;
                     IsPopupActive = false;
                 }
-                
+
             }
 
             //update selected state
+            int totalTracks = 0;
+
             if (e.NewItems != null)
             {
                 foreach (var item in e.NewItems)
                 {
                     if (item is Playlist playlist)
+                    {
                         playlist.IsSelected = true;
+
+                    }
                 }
             }
 
@@ -493,6 +608,13 @@ namespace Spotify_search_helper.ViewModels
                         playlist.IsSelected = false;
                 }
             }
+
+            foreach (var item in SelectedPlaylistCollection)
+            {
+                totalTracks += item.ItemsCount;
+            }
+
+            SelectedPlaylistsTracksCount = totalTracks;
         }
 
         public IncrementalLoadingCollection<PlaylistSource, Playlist> _myPlaylistSource;
@@ -510,10 +632,10 @@ namespace Spotify_search_helper.ViewModels
         public ObservableCollection<Playlist> SelectedPlaylistCollection
         {
             get => _selectedPlaylistCollection;
-            set 
-            { 
-                _selectedPlaylistCollection = value; 
-                RaisePropertyChanged("SelectedPlaylistCollection"); 
+            set
+            {
+                _selectedPlaylistCollection = value;
+                RaisePropertyChanged("SelectedPlaylistCollection");
             }
         }
 
@@ -527,7 +649,7 @@ namespace Spotify_search_helper.ViewModels
         ObservableCollection<Category> _categoryList = new ObservableCollection<Category>();
         public ObservableCollection<Category> CategoryList
         {
-            get => _categoryList; 
+            get => _categoryList;
             set { _categoryList = value; RaisePropertyChanged("CategoryList"); }
         }
 
@@ -541,6 +663,54 @@ namespace Spotify_search_helper.ViewModels
         #endregion
 
         #region Commands
+
+        private RelayCommand _loginCommand;
+        public RelayCommand LoginCommand
+        {
+            get
+            {
+                if (_loginCommand == null)
+                {
+                    _loginCommand = new RelayCommand(() =>
+                    {
+                        Login();
+                    });
+                }
+                return _loginCommand;
+            }
+        }
+
+        private RelayCommand<Playlist> _playPlaylistCommand;
+        public RelayCommand<Playlist> PlayPlaylistCommand
+        {
+            get
+            {
+                if (_playPlaylistCommand == null)
+                {
+                    _playPlaylistCommand = new RelayCommand<Playlist>((item) =>
+                    {
+                        PlayItem(item);
+                    });
+                }
+                return _playPlaylistCommand;
+            }
+        }
+
+        private RelayCommand _shuffleSelectedPlaylistsCommand;
+        public RelayCommand ShuffleSelectedPlaylistsCommand
+        {
+            get
+            {
+                if (_shuffleSelectedPlaylistsCommand == null)
+                {
+                    _shuffleSelectedPlaylistsCommand = new RelayCommand(() =>
+                    {
+                        PlayItems(SelectedPlaylistCollection);
+                    });
+                }
+                return _shuffleSelectedPlaylistsCommand;
+            }
+        }
 
         private RelayCommand<string> _toggleExpandedPlaylistSelectedCommand;
         public RelayCommand<string> ToggleExpandedPlaylistSelectedCommand
