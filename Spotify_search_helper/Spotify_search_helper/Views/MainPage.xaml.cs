@@ -24,7 +24,13 @@ namespace Spotify_search_helper.Views
         {
             this.InitializeComponent();
             Current = this;
+            Initialize();
 
+            this.Loaded += MainPage_Loaded;
+        }
+
+        private void Initialize()
+        {
             // Reset app back to normal.
             StatusBarExtensions.SetIsVisible(this, false);
 
@@ -32,25 +38,18 @@ namespace Spotify_search_helper.Views
 
             var lightGreyBrush = (Color)Application.Current.Resources["Status-bar-foreground"];
             var brandColor = (Color)Application.Current.Resources["Status-bar-color"];
-            
+
             ApplicationViewExtensions.SetTitle(this, "Spotify Companion");
             StatusBarExtensions.SetBackgroundOpacity(this, 0.8);
             TitleBarExtensions.SetButtonBackgroundColor(this, brandColor);
             TitleBarExtensions.SetButtonForegroundColor(this, lightGreyBrush);
             TitleBarExtensions.SetBackgroundColor(this, brandColor);
             TitleBarExtensions.SetForegroundColor(this, lightGreyBrush);
-
-            this.Loaded += MainPage_Loaded;
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             ViewModels.MainPageViewModel.Current.LoadTheme();
-        }
-
-        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            ViewModels.MainPageViewModel.Current.FilterAdvancedCollectionView();
         }
 
         public void ScrollSelectedPlaylistViewToTop()
@@ -82,6 +81,16 @@ namespace Spotify_search_helper.Views
             {
                 this.Frame.RequestedTheme = ElementTheme.Light;
             }
+        }
+
+        private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            ViewModels.MainPageViewModel.Current.FilterAdvancedCollectionView();
+        }
+
+        private void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            //Display details of playlist, Tracks, playlist info etc.
         }
     }
 

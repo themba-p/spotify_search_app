@@ -8,12 +8,16 @@
 
     <Application.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+            </ResourceDictionary.MergedDictionaries>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
                     <Color x:Key="Status-bar-color">#f1f1f1</Color>
                     <Color x:Key="Status-bar-foreground">#000</Color>
                     <SolidColorBrush x:Key="BorderThemeBrush" Color="#DCDCDC"/>
-                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#FFEAEAEA"/>
+                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#FFF1F1F1"/>
+                    <SolidColorBrush x:Key="PlaceHolderTextThemeBrush" Color="#FFC7C7C7"/>
                     <Color x:Key="TintColor">#FFEAEAEA</Color>
                     <SolidColorBrush x:Key="ItemBackgroundThemeBrush" Color="#FFFFFF"/>
                     <SolidColorBrush x:Key="SecondaryItemBackgroundThemeBrush" Color="#E4E4E4"/>
@@ -32,6 +36,7 @@
                     <SolidColorBrush x:Key="BorderThemeBrush" Color="#1A1A1A"/>
                     <SolidColorBrush x:Key="PrimaryThemeBrush" Color="#1DB954"/>
                     <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#000000"/>
+                    <SolidColorBrush x:Key="PlaceHolderTextThemeBrush" Color="#19C7C7C7" Opacity="0.05"/>
                     <Color x:Key="TintColor">#000000</Color>
                     <SolidColorBrush x:Key="ItemBackgroundThemeBrush" Color="#090909"/>
                     <SolidColorBrush x:Key="SecondaryItemBackgroundThemeBrush" Color="#141414"/>
