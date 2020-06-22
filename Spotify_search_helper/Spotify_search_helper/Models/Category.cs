@@ -39,8 +39,8 @@ namespace Spotify_search_helper.Models
             return new List<Category>
             {
                 new Category(CategoryType.Playlist,
-                "Manage playlists",
-                "Merge, Clone or bulk delete.",
+                "Playlists",
+                "Merge, clone, play or delete multiple playlist.",
                 "/Assets/playlist.png"),
                 new Category(CategoryType.Liked,
                 "Liked songs",

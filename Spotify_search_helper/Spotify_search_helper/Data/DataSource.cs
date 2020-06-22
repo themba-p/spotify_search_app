@@ -85,7 +85,7 @@ namespace Spotify_search_helper.Data
                 }
 
                 //update counts 
-                ViewModels.MainPageViewModel.Current.UpdatePlaylistCategoryCounts();
+                ViewModels.MainPageViewModel.Current.UpdatePlaylistCategoryCount();
             }
 
             ViewModels.MainPageViewModel.Current.IsLoading = false;

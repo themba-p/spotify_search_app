@@ -45,6 +45,7 @@ namespace Spotify_search_helper.ViewModels
 
             // Set up the AdvancedCollectionView with live shaping enabled to filter and sort the original list
             var sourceItems = await source.GetPlaylists();
+            if (sourceItems != null) _playlistCollectionCopy.AddRange(sourceItems);
             AdvancedCollectionView = new AdvancedCollectionView(sourceItems, true);
 
             // And sort ascending by the property "Title"
@@ -141,13 +142,18 @@ namespace Spotify_search_helper.ViewModels
                     {
                         if (SelectedPlaylistCategory.CategoryType == PlaylistCategoryType.All)
                         {
-                            AdvancedCollectionView.Filter = c => (((Playlist)c).Title).Contains(SearchText, StringComparison.CurrentCultureIgnoreCase);
-                            _filteredCollection.AddRange(_playlistCollectionCopy.Where(c => c.Title.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)));
+                            AdvancedCollectionView.Filter = c => (((Playlist)c).Title).Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) ||
+                            (((Playlist)c).Owner).Contains(SearchText, StringComparison.CurrentCultureIgnoreCase);
+                            _filteredCollection.AddRange(_playlistCollectionCopy.Where(c => c.Title.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) ||
+                            (((Playlist)c).Owner).Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)));
                         }
                         else
                         {
-                            AdvancedCollectionView.Filter = c => (((Playlist)c).Title).Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) && ((Playlist)c).CategoryType == SelectedPlaylistCategory.CategoryType;
-                            _filteredCollection.AddRange(_playlistCollectionCopy.Where(c => c.Title.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) && c.CategoryType == SelectedPlaylistCategory.CategoryType));
+                            AdvancedCollectionView.Filter = c => (((Playlist)c).Title).Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) ||
+                            (((Playlist)c).Owner).Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) && 
+                            ((Playlist)c).CategoryType == SelectedPlaylistCategory.CategoryType;
+                            _filteredCollection.AddRange(_playlistCollectionCopy.Where(c => c.Title.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase) ||
+                            (((Playlist)c).Owner).Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)  && c.CategoryType == SelectedPlaylistCategory.CategoryType));
                         }
                     }
                     else
@@ -167,6 +173,44 @@ namespace Spotify_search_helper.ViewModels
                 }
             }
             UpdateAlphabet(_filteredCollection, true);
+            UpdatePlaylistCategoryCount(_filteredCollection);
+            
+        }
+
+        public void UpdatePlaylistCategoryCount(IEnumerable<Playlist> items = null)
+        {
+            if(items != null)
+            {
+                foreach (var item in PlaylistCategoryList)
+                {
+                    if (item.CategoryType != PlaylistCategoryType.All)
+                    {
+                        item.Count = items.Where(c => c.CategoryType == item.CategoryType).Count();
+                        item.TracksCount = items.Where(x => x.CategoryType == item.CategoryType).Sum(c => c.ItemsCount);
+                    }
+                    else
+                    {
+                        item.Count = items.Count();
+                        item.TracksCount = items.Sum(c => c.ItemsCount);
+                    }
+                }
+            }
+            else
+            {
+                foreach (var item in PlaylistCategoryList)
+                {
+                    if (item.CategoryType != PlaylistCategoryType.All)
+                    {
+                        item.Count = _playlistCollectionCopy.Where(c => c.CategoryType == item.CategoryType).Count();
+                        item.TracksCount = _playlistCollectionCopy.Where(x => x.CategoryType == item.CategoryType).Sum(c => c.ItemsCount);
+                    }
+                    else
+                    {
+                        item.Count = _playlistCollectionCopy.Count();
+                        item.TracksCount = _playlistCollectionCopy.Sum(c => c.ItemsCount);
+                    }
+                }
+            }
         }
 
         #endregion
@@ -248,20 +292,6 @@ namespace Spotify_search_helper.ViewModels
             }
         }
 
-        public void UpdatePlaylistCategoryCounts()
-        {
-            if (AdvancedCollectionView != null)
-            {
-                foreach (var item in PlaylistCategoryList)
-                {
-                    if (item.CategoryType != PlaylistCategoryType.All)
-                        item.Count = AdvancedCollectionView.Where(c => ((Playlist)c).CategoryType == item.CategoryType).Count();
-                    else
-                        item.Count = AdvancedCollectionView.Count;
-                }
-            }
-        }
-
         public PlaylistCategoryType GetPlaylistCategory()
         {
             return SelectedPlaylistCategory != null ? SelectedPlaylistCategory.CategoryType : PlaylistCategoryType.All;
@@ -276,6 +306,7 @@ namespace Spotify_search_helper.ViewModels
         #endregion
 
         #region Properties
+        private const int _searchSuggestionsLimit = 5;
 
         private int _selectedPlaylistsTracksCount;
         public int SelectedPlaylistsTracksCount
@@ -392,10 +423,11 @@ namespace Spotify_search_helper.ViewModels
             get { return _searchText; }
             set
             {
-                //if category changes, clear list or should we rather use collectionViewSource?
-
                 _searchText = value;
                 RaisePropertyChanged("SearchText");
+                UpdateSearchSuggestions();
+
+                //if searchtext is cleared, show all items
             }
         }
 
@@ -467,6 +499,38 @@ namespace Spotify_search_helper.ViewModels
 
         #region Methods
 
+        private void UpdateSearchSuggestions()
+        {
+            //clear current list
+            SearchSuggestionCollection.Clear();
+
+            if (!string.IsNullOrEmpty(SearchText))
+            {
+                var matches = _playlistCollectionCopy.Where(c => c.Title.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                c.Owner.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase));
+
+                if (matches != null && matches.Count() > 0)
+                {
+                    //limit the number of results to return here
+                    foreach (var item in matches)
+                    {
+                        SearchSuggestionCollection.Add(item);
+                        if (SearchSuggestionCollection.Count >= _searchSuggestionsLimit)
+                            break;
+                    }
+                }
+                else
+                {
+                    //Show option to search online
+                    SearchSuggestionCollection.Add(new Playlist
+                    {
+                        Title = "No results found",
+                        CategoryType = PlaylistCategoryType.All
+                    });
+                }
+            }
+        }
+
         private async void Login()
         {
             IsLoading = true;
@@ -495,6 +559,13 @@ namespace Spotify_search_helper.ViewModels
 
         private void Home()
         {
+            //remove selected
+            var list = SelectedPlaylistCollection.ToList();
+            foreach (var pl in list)
+            {
+                SelectedPlaylistCollection.Remove(pl);
+            }
+
             IsPlaylistView = false;
             IsCompactCategory = false;
         }
@@ -556,6 +627,17 @@ namespace Spotify_search_helper.ViewModels
         #endregion
 
         #region collections
+
+        ObservableCollection<Playlist> _searchSuggestionCollection = new ObservableCollection<Playlist>();
+        public ObservableCollection<Playlist> SearchSuggestionCollection
+        {
+            get => _searchSuggestionCollection;
+            set
+            {
+                _searchSuggestionCollection = value;
+                RaisePropertyChanged("SearchSuggestionCollection");
+            }
+        }
 
         private ObservableCollection<string> _alphabet = new ObservableCollection<string>();
         public ObservableCollection<string> Alphabet

@@ -29,6 +29,13 @@ namespace Spotify_search_helper.Models
             set { SetProperty(this._count, value, () => this._count = value); }
         }
 
+        private int _tracksCount;
+        public int TracksCount
+        {
+            get { return _tracksCount; }
+            set { SetProperty(this._tracksCount, value, () => this._tracksCount = value); }
+        }
+
         public static List<PlaylistCategory> GetCategoryItems()
         {
             return new List<PlaylistCategory>

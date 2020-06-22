@@ -10,10 +10,11 @@
     xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
     xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
     xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
-      xmlns:ToolkitBehaviors="using:Microsoft.Toolkit.Uwp.UI.Animations.Behaviors"
+    xmlns:ToolkitBehaviors="using:Microsoft.Toolkit.Uwp.UI.Animations.Behaviors"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:Controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+      xmlns:winUiControls="using:Microsoft.UI.Xaml.Controls"
     DataContext="{Binding StartPageInstance, Source={StaticResource Locator}}"
     
     mc:Ignorable="d"
@@ -36,8 +37,9 @@
             <Setter Property="TabNavigation" Value="Local"/>
             <Setter Property="IsHoldingEnabled" Value="True"/>
             <Setter Property="Padding" Value="0"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+       
             <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
             <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}"/>
             <Setter Property="AllowDrop" Value="False"/>
@@ -46,7 +48,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListViewItem">
-                        <Grid x:Name="ContentBorder" extensions:Mouse.Cursor="Hand" Margin="0 0 16 16" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="24" FocusVisualMargin="{TemplateBinding FocusVisualMargin}" Control.IsTemplateFocusTarget="True" RenderTransformOrigin="0.5,0.5">
+                        <Grid x:Name="ContentBorder" extensions:Mouse.Cursor="Hand" Margin="0 0 0 0" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="24" FocusVisualMargin="{TemplateBinding FocusVisualMargin}" Control.IsTemplateFocusTarget="True" RenderTransformOrigin="0.5,0.5">
                             <Grid.RenderTransform>
                                 <ScaleTransform x:Name="ContentBorderScale"/>
                             </Grid.RenderTransform>
@@ -60,10 +62,10 @@
                                     </VisualState>
                                     <VisualState x:Name="PointerOver">
                                         <Storyboard>
-                                            <DoubleAnimation Duration="0" Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Opacity" To="0.3"/>
+                                            <!--<DoubleAnimation Duration="0" Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Opacity" To="0.3"/>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
+                                            </ObjectAnimationUsingKeyFrames>-->
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}"/>
                                             </ObjectAnimationUsingKeyFrames>
@@ -72,10 +74,10 @@
                                     </VisualState>
                                     <VisualState x:Name="Pressed">
                                         <Storyboard>
-                                            <DoubleAnimation Duration="0" Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Opacity" To="1"/>
+                                            <!--<DoubleAnimation Duration="0" Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Opacity" To="1"/>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
+                                            </ObjectAnimationUsingKeyFrames>-->
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}"/>
                                             </ObjectAnimationUsingKeyFrames>
@@ -105,15 +107,122 @@
                                     </VisualState>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <Rectangle x:Name="BorderBackground" Fill="{StaticResource ItemBackgroundThemeBrush}" Opacity="0" IsHitTestVisible="False" Control.IsTemplateFocusTarget="True"/>
-                            <Grid x:Name="ContentPresenterGrid" Background="Transparent" Margin="0,0,0,0">
-                                <Grid.RenderTransform>
-                                    <TranslateTransform x:Name="ContentPresenterTranslateTransform"/>
-                                </Grid.RenderTransform>
-                                <ContentPresenter x:Name="ContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentTransitions="{TemplateBinding ContentTransitions}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <Controls:DropShadowPanel BlurRadius="20.0" Margin="12" ShadowOpacity="0.08" OffsetX="3.0" OffsetY="8.0" Color="Black" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                                  Visibility="{Binding ElementName=page, Path=DataContext, Converter={StaticResource BoolToVisibilityInverseConverter}}">
+                                <Rectangle Fill="{ThemeResource ItemBackgroundThemeBrush}" RadiusX="24" RadiusY="24" HorizontalAlignment="Stretch" Height="160" Width="164"/>
+                            </Controls:DropShadowPanel>
+                            <Grid>
+                                <Rectangle x:Name="BorderBackground" Fill="{StaticResource ItemBackgroundThemeBrush}" Opacity="0" IsHitTestVisible="False" Control.IsTemplateFocusTarget="True"/>
+                                <Grid x:Name="ContentPresenterGrid" Background="Transparent" Margin="0">
+                                    <Grid.RenderTransform>
+                                        <TranslateTransform x:Name="ContentPresenterTranslateTransform"/>
+                                    </Grid.RenderTransform>
+                                    <ContentPresenter x:Name="ContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentTransitions="{TemplateBinding ContentTransitions}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                </Grid>
+                                <TextBlock x:Name="PlaceholderTextBlock" AutomationProperties.AccessibilityView="Raw" Foreground="{x:Null}" IsHitTestVisible="False" Margin="{TemplateBinding Padding}" Opacity="0" Text="Xg"/>
+                                <Rectangle x:Name="PlaceholderRect" Fill="{ThemeResource ListViewItemPlaceholderBackground}" Visibility="Collapsed"/>
                             </Grid>
-                            <TextBlock x:Name="PlaceholderTextBlock" AutomationProperties.AccessibilityView="Raw" Foreground="{x:Null}" IsHitTestVisible="False" Margin="{TemplateBinding Padding}" Opacity="0" Text="Xg"/>
-                            <Rectangle x:Name="PlaceholderRect" Fill="{ThemeResource ListViewItemPlaceholderBackground}" Visibility="Collapsed"/>
+
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="LargeCategoryContainerStyle" TargetType="ListViewItem">
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="BorderBrush" Value="{x:Null}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            <Setter Property="TabNavigation" Value="Local"/>
+            <Setter Property="IsHoldingEnabled" Value="True"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+
+            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+            <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}"/>
+            <Setter Property="AllowDrop" Value="False"/>
+            <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}"/>
+            <Setter Property="FocusVisualMargin" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <Grid x:Name="ContentBorder" extensions:Mouse.Cursor="Hand" Margin="0 0 0 0" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="24" FocusVisualMargin="{TemplateBinding FocusVisualMargin}" Control.IsTemplateFocusTarget="True" RenderTransformOrigin="0.5,0.5">
+                            <Grid.RenderTransform>
+                                <ScaleTransform x:Name="ContentBorderScale"/>
+                            </Grid.RenderTransform>
+
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <!--<DoubleAnimation Duration="0" Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Opacity" To="0.3"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>-->
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <!--<DoubleAnimation Duration="0" Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Opacity" To="1"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>-->
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerDownThemeAnimation TargetName="ContentPresenter"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="DisabledStates">
+                                    <VisualState x:Name="Enabled"/>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="Opacity" To="{ThemeResource ListViewItemDisabledThemeOpacity}"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="DataVirtualizationStates">
+                                    <VisualState x:Name="DataAvailable"/>
+                                    <VisualState x:Name="DataPlaceholder">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextBlock" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderRect" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Controls:DropShadowPanel BlurRadius="20.0" Margin="12" ShadowOpacity="0.08" OffsetX="3.0" OffsetY="8.0" Color="Black" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                                  Visibility="{Binding ElementName=page, Path=DataContext, Converter={StaticResource BoolToVisibilityInverseConverter}}">
+                                <Rectangle Fill="Transparent" RadiusX="24" RadiusY="24" HorizontalAlignment="Stretch" Height="192" Width="246"/>
+                            </Controls:DropShadowPanel>
+                            <Grid>
+                                <Rectangle x:Name="BorderBackground" Fill="{StaticResource ItemBackgroundThemeBrush}" Opacity="0" IsHitTestVisible="False" Control.IsTemplateFocusTarget="True"/>
+                                <Grid x:Name="ContentPresenterGrid" Background="Transparent" Margin="0">
+                                    <Grid.RenderTransform>
+                                        <TranslateTransform x:Name="ContentPresenterTranslateTransform"/>
+                                    </Grid.RenderTransform>
+                                    <ContentPresenter x:Name="ContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentTransitions="{TemplateBinding ContentTransitions}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                </Grid>
+                                <TextBlock x:Name="PlaceholderTextBlock" AutomationProperties.AccessibilityView="Raw" Foreground="{x:Null}" IsHitTestVisible="False" Margin="{TemplateBinding Padding}" Opacity="0" Text="Xg"/>
+                                <Rectangle x:Name="PlaceholderRect" Fill="{ThemeResource ListViewItemPlaceholderBackground}" Visibility="Collapsed"/>
+                            </Grid>
 
                         </Grid>
                     </ControlTemplate>
@@ -137,16 +246,16 @@
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
             <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
             <Setter Property="BorderBrush" Value="{ThemeResource BorderThemeBrush}"/>
-            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="CornerRadius" Value="12"/>
             <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
             <Setter Property="TabNavigation" Value="Local"/>
             <Setter Property="IsHoldingEnabled" Value="True"/>
             <Setter Property="Margin" Value="0 0 8 0"/>
-            <Setter Property="Padding" Value="16 0"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="0 0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
             <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
             <Setter Property="MinHeight" Value="0"/>
             <Setter Property="Height" Value="34px"/>
@@ -1628,7 +1737,7 @@
                                         <Storyboard>
                                             <DoubleAnimation Duration="0" Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Opacity" To="0.8"/>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="WhiteSmoke"/>
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ItemSecondaryForeground}"/>
                                             </ObjectAnimationUsingKeyFrames>
                                             <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter"/>
                                         </Storyboard>
@@ -1688,6 +1797,243 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="AutoSuggestBoxTextBoxStyle" TargetType="TextBox">
+            <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}"/>
+            <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Foreground" Value="{ThemeResource TextControlForeground}"/>
+            <Setter Property="Background" Value="{ThemeResource InputBoxThemeBrush}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource BorderThemeBrush}"/>
+            <Setter Property="SelectionHighlightColor" Value="{ThemeResource BrandColorThemeBrush}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
+            <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
+            <Setter Property="Padding" Value="{ThemeResource TextControlThemePadding}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <Grid.Resources>
+                                <Style x:Name="DeleteButtonStyle" TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid x:Name="ButtonLayoutGrid" Background="{ThemeResource TextControlButtonBackground}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{ThemeResource TextControlButtonBorderBrush}">
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <VisualState x:Name="Normal"/>
+                                                            <VisualState x:Name="PointerOver">
+                                                                <Storyboard>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBackgroundPointerOver}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBorderBrushPointerOver}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource BrandColorThemeBrush}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Pressed">
+                                                                <Storyboard>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource BrandColorThemeBrush}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource BrandColorThemeBrush}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="#ffffff"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Disabled">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Duration="0" Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Opacity" To="0"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                    <TextBlock x:Name="GlyphElement" AutomationProperties.AccessibilityView="Raw" FontStyle="Normal" FontFamily="{ThemeResource SymbolThemeFontFamily}" Foreground="{ThemeResource TextControlButtonForeground}" FontSize="{ThemeResource AutoSuggestBoxIconFontSize}" HorizontalAlignment="Center" Text="&#xE10A;" VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                <Style x:Name="QueryButtonStyle" TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BackgroundSizing="{TemplateBinding BackgroundSizing}" Background="{ThemeResource TextControlButtonBackground}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{ThemeResource TextControlButtonBorderBrush}" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentTransitions="{TemplateBinding ContentTransitions}" FontSize="{ThemeResource AutoSuggestBoxIconFontSize}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <VisualState x:Name="Normal"/>
+                                                            <VisualState x:Name="PointerOver">
+                                                                <Storyboard>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBackgroundPointerOver}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBorderBrushPointerOver}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource BrandColorThemeBrush}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Pressed">
+                                                                <Storyboard>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource BrandColorThemeBrush}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource BrandColorThemeBrush}"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="#ffffff"/>
+                                                                    </ObjectAnimationUsingKeyFrames>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Disabled">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Duration="0" Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Opacity" To="0"/>
+                                                                </Storyboard>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                </ContentPresenter>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Grid.Resources>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlHeaderForegroundDisabled}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBackgroundDisabled}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBorderBrushDisabled}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlForegroundDisabled}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource InputBoxHoverThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource InputBoxHoverThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlForegroundPointerOver}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Focused">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBackgroundFocused}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource BrandColorThemeBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlForegroundFocused}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement" Storyboard.TargetProperty="RequestedTheme">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Light"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="QueryButton" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonForeground}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="ButtonStates">
+                                    <VisualState x:Name="ButtonVisible">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DeleteButton" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="ButtonCollapsed"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border x:Name="BorderElement" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Grid.ColumnSpan="3" Grid.RowSpan="1" Grid.Row="1"/>
+                            <ContentPresenter x:Name="HeaderContentPresenter" ContentTemplate="{TemplateBinding HeaderTemplate}" Content="{TemplateBinding Header}" Grid.ColumnSpan="3" FontWeight="Normal" Foreground="{ThemeResource TextControlHeaderForeground}" Margin="{ThemeResource AutoSuggestBoxTopHeaderMargin}" Grid.Row="0" TextWrapping="Wrap" Visibility="Collapsed" x:DeferLoadStrategy="Lazy"/>
+                            <ScrollViewer x:Name="ContentElement" AutomationProperties.AccessibilityView="Raw" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}" IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}" IsTabStop="False" IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}" Margin="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" Grid.Row="1" VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" ZoomMode="Disabled"/>
+                            <ContentControl x:Name="PlaceholderTextContentPresenter" Content="{TemplateBinding PlaceholderText}" Grid.ColumnSpan="3" Foreground="{ThemeResource PlaceHolderTextThemeBrush}" IsTabStop="False" IsHitTestVisible="False" Margin="{TemplateBinding BorderThickness}" Padding="12 12 12 0" Grid.Row="1"/>
+                            <Button x:Name="DeleteButton" AutomationProperties.AccessibilityView="Raw" BorderThickness="{TemplateBinding BorderThickness}" Grid.Column="1" FontSize="{TemplateBinding FontSize}" IsTabStop="False" MinWidth="34" Grid.Row="1" Style="{StaticResource DeleteButtonStyle}" VerticalAlignment="Stretch" Visibility="Collapsed" Width="{TemplateBinding Height}"/>
+                            <Button x:Name="QueryButton" AutomationProperties.AccessibilityView="Raw" BorderThickness="{TemplateBinding BorderThickness}" Grid.Column="2" FontSize="{TemplateBinding FontSize}" IsTabStop="False" MinWidth="34" Grid.Row="1" Style="{StaticResource QueryButtonStyle}" VerticalAlignment="Stretch" Width="{TemplateBinding Height}"/>
+                            <ContentPresenter x:Name="DescriptionPresenter" AutomationProperties.AccessibilityView="Raw" Content="{TemplateBinding Description}" Grid.ColumnSpan="3" Foreground="{ThemeResource SystemControlDescriptionTextForegroundBrush}" Grid.Row="2" x:Load="False"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="AutoSuggestBoxStyle1" TargetType="AutoSuggestBox">
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="TextBoxStyle" Value="{StaticResource AutoSuggestBoxTextBoxStyle}"/>
+            <Setter Property="UseSystemFocusVisuals" Value="{ThemeResource IsApplicationFocusVisualKindReveal}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="AutoSuggestBox">
+                        <Grid x:Name="LayoutRoot">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="Orientation">
+                                    <VisualState x:Name="Landscape"/>
+                                    <VisualState x:Name="Portrait"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <TextBox x:Name="TextBox" Padding="12 12 12 0" ScrollViewer.BringIntoViewOnFocusChange="False" Description="{TemplateBinding Description}" DesiredCandidateWindowAlignment="BottomEdge" Header="{TemplateBinding Header}" Margin="0" PlaceholderText="{TemplateBinding PlaceholderText}" Style="{TemplateBinding TextBoxStyle}" UseSystemFocusVisuals="{TemplateBinding UseSystemFocusVisuals}" Width="{TemplateBinding Width}" Canvas.ZIndex="0"/>
+                            <Popup x:Name="SuggestionsPopup">
+                                <Border x:Name="SuggestionsContainer">
+                                    <ListView x:Name="SuggestionsList" Background="{ThemeResource AutoSuggestBoxSuggestionsListBackground}" BorderThickness="{ThemeResource AutoSuggestListBorderThemeThickness}" BorderBrush="{ThemeResource AutoSuggestBoxSuggestionsListBorderBrush}" DisplayMemberPath="{TemplateBinding DisplayMemberPath}" ItemContainerStyle="{TemplateBinding ItemContainerStyle}" ItemTemplate="{TemplateBinding ItemTemplate}" IsItemClickEnabled="True" ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}" MaxHeight="{ThemeResource AutoSuggestListMaxHeight}" Margin="{ThemeResource AutoSuggestListMargin}" Padding="{ThemeResource AutoSuggestListPadding}"/>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -1695,7 +2041,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="405" Width="*"/>
+            <ColumnDefinition MinWidth="420" Width="*"/>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition MinWidth="320" Width="*"/>
         </Grid.ColumnDefinitions>
@@ -1703,7 +2049,7 @@
             <BrushTransition />
         </Grid.BackgroundTransition>
 
-        
+
         <StackPanel x:Name="LogoView" 
                     Margin="96 0 0 0" 
                     Orientation="Horizontal"
@@ -1743,7 +2089,7 @@
                     <Core:CallMethodAction TargetObject="{Binding ElementName=signInFadeIn}" MethodName="StartAnimation"/>
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
-            <Grid Background="{ThemeResource ItemBackgroundThemeBrush}" 
+            <!--<Grid Background="{ThemeResource ItemBackgroundThemeBrush}" 
                     Grid.RowSpan="10"
                     Grid.ColumnSpan="10"
                     CornerRadius="24"
@@ -1753,7 +2099,18 @@
                     <ToolkitBehaviors:Scale x:Name="profileBgScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.1" ScaleY="1.1" CenterX="82" CenterY="32" EasingMode="EaseOut" EasingType="Cubic" />
                     <ToolkitBehaviors:Scale x:Name="profileBgScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="82" CenterY="32" EasingMode="EaseOut" EasingType="Cubic"/>
                 </Interactivity:Interaction.Behaviors>
-            </Grid>
+            </Grid>-->
+            <Controls:DropShadowPanel BlurRadius="12.0" Grid.RowSpan="10" HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Stretch"
+                    Grid.ColumnSpan="10" ShadowOpacity="0.06" OffsetX="6.0" OffsetY="6.0" Color="Black"
+                    Visibility="{Binding ElementName=page, Path=DataContext, Converter={StaticResource BoolToVisibilityInverseConverter}}">
+                <Interactivity:Interaction.Behaviors>
+                    <ToolkitBehaviors:Scale x:Name="profileBgScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.1" ScaleY="1.1" CenterX="82" CenterY="32" EasingMode="EaseOut" EasingType="Cubic" />
+                    <ToolkitBehaviors:Scale x:Name="profileBgScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="82" CenterY="32" EasingMode="EaseOut" EasingType="Cubic"/>
+                </Interactivity:Interaction.Behaviors>
+                <Rectangle Fill="{ThemeResource ItemBackgroundThemeBrush}" Width="164" Height="64" RadiusX="24" RadiusY="24"/>
+            </Controls:DropShadowPanel>
+            
             <Grid Background="{ThemeResource SecondaryItemBackgroundThemeBrush}"
                   CornerRadius="24"
                   Height="40px"
@@ -1799,7 +2156,7 @@
                   IsItemClickEnabled="True"
                   model:ItemClickCommand.Command="{Binding CategoryItemClickedCommand}"
                   ItemsSource="{Binding CategoryList}" 
-                  ItemContainerStyle="{StaticResource CategoryContainerStyle}"
+                  ItemContainerStyle="{StaticResource LargeCategoryContainerStyle}"
                   MaxHeight="600"
                   Grid.RowSpan="100"
                   Grid.ColumnSpan="10"
@@ -1823,7 +2180,8 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid CornerRadius="24"
-                          Height="200px" 
+                          Background="{ThemeResource ItemBackgroundThemeBrush}"
+                          Height="200px"
                           VerticalAlignment="Stretch" 
                           HorizontalAlignment="Stretch"
                           Width="250px">
@@ -1847,13 +2205,14 @@
                                 <Core:CallMethodAction TargetObject="{Binding ElementName=chevFadeOut}" MethodName="StartAnimation"/>
                             </Core:EventTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
-                        <Grid Background="{ThemeResource ItemBackgroundThemeBrush}" 
+
+                        <!--<Grid Background="{ThemeResource ItemBackgroundThemeBrush}" 
                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <Interactivity:Interaction.Behaviors>
                                 <ToolkitBehaviors:Scale x:Name="GridScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.1" ScaleY="1.1" CenterX="125" CenterY="50" EasingMode="EaseOut" EasingType="Cubic" />
                                 <ToolkitBehaviors:Scale x:Name="GridScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="125" CenterY="50" EasingMode="EaseOut" EasingType="Cubic"/>
                             </Interactivity:Interaction.Behaviors>
-                        </Grid>
+                        </Grid>-->
                         <StackPanel Margin="16 32 16 24"
                                     VerticalAlignment="Bottom">
                             <Grid>
@@ -1921,7 +2280,7 @@
                   model:ItemClickCommand.Command="{Binding CategoryItemClickedCommand}"
                   ItemsSource="{Binding CategoryList}"
                   ItemContainerStyle="{StaticResource CategoryContainerStyle}"
-                  MaxHeight="372"
+                  MaxHeight="412"
                   Grid.RowSpan="100"
                   Margin="24 0 24 0"
                   HorizontalAlignment="Center"
@@ -1942,9 +2301,9 @@
             <Grid/>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="model:Category">
-                    <Grid CornerRadius="24"
+                    <Grid Height="170px" 
+                          CornerRadius="24"
                           Background="{ThemeResource ItemBackgroundThemeBrush}"
-                          Height="170px" 
                           VerticalAlignment="Stretch" 
                           HorizontalAlignment="Stretch"
                           Width="169.5px">
@@ -1967,8 +2326,30 @@
                                 <Core:CallMethodAction TargetObject="{Binding ElementName=chevFadeOut}" MethodName="StartAnimation"/>
                             </Core:EventTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
-                        <StackPanel Margin="16 32 16 24"
-                                    VerticalAlignment="Bottom">
+
+                        <!--<Controls:DropShadowPanel BlurRadius="12.0" ShadowOpacity="0.08" OffsetX="6.0" OffsetY="12.0" Color="Black"
+                                                                  Visibility="{Binding ElementName=page, Path=DataContext, Converter={StaticResource BoolToVisibilityInverseConverter}}">
+                            <Rectangle Fill="{ThemeResource ItemBackgroundThemeBrush}" Width="170" Height="170" RadiusX="24" RadiusY="24"/>
+                        </Controls:DropShadowPanel>-->
+                        <Grid Margin="16 32 16 16" VerticalAlignment="Bottom">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <TextBlock Text="{Binding Description}"
+                                       Grid.Row="1"
+                                       FontSize="13px"
+                                       Foreground="{ThemeResource ItemSecondaryForeground}"
+                                       FontWeight="Normal"
+                                       TextWrapping="WrapWholeWords">
+                                <Interactivity:Interaction.Behaviors>
+                                <ToolkitBehaviors:Offset x:Name="categoryDescriptionOffsetRight" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="4" EasingMode="EaseOut" EasingType="Cubic" />
+                                <ToolkitBehaviors:Offset x:Name="categoryDescriptionOffsetLeft"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                              <ToolkitBehaviors:Fade x:Name="categoryDescriptionFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                <ToolkitBehaviors:Fade x:Name="categoryDescriptionFadeOut"  Duration="300" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                            </Interactivity:Interaction.Behaviors>
+                            </TextBlock>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -1995,19 +2376,7 @@
                                     </Interactivity:Interaction.Behaviors>
                                 </Image>
                             </Grid>
-                            <TextBlock Text="{Binding Description}"
-                                       FontSize="13px"
-                                       Foreground="{ThemeResource ItemSecondaryForeground}"
-                                       FontWeight="Normal"
-                                       TextWrapping="WrapWholeWords">
-                                <Interactivity:Interaction.Behaviors>
-                                <ToolkitBehaviors:Offset x:Name="categoryDescriptionOffsetRight" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="4" EasingMode="EaseOut" EasingType="Cubic" />
-                                <ToolkitBehaviors:Offset x:Name="categoryDescriptionOffsetLeft"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0" EasingMode="EaseOut"  EasingType="Cubic" />
-                              <ToolkitBehaviors:Fade x:Name="categoryDescriptionFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
-                                <ToolkitBehaviors:Fade x:Name="categoryDescriptionFadeOut"  Duration="300" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
-                            </Interactivity:Interaction.Behaviors>
-                            </TextBlock>
-                        </StackPanel>
+                        </Grid>
                         <Grid Background="{ThemeResource SecondaryItemBackgroundAltThemeBrush}"
                               CornerRadius="12"
                               Height="48px"
@@ -2047,10 +2416,10 @@
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="Checked">
                     <Core:CallMethodAction TargetObject="{Binding ElementName=PageSearchOffsetEnter}" MethodName="StartAnimation"/>
-                    
+
                     <Core:CallMethodAction TargetObject="{Binding ElementName=categoryCompactViewFadeIn}" MethodName="StartAnimation"/>
                     <Core:CallMethodAction TargetObject="{Binding ElementName=categoryCompactViewOffsetEnter}" MethodName="StartAnimation"/>
-                    
+
                     <Core:CallMethodAction TargetObject="{Binding ElementName=CategoryViewScaleUp}" MethodName="StartAnimation"/>
                     <Core:CallMethodAction TargetObject="{Binding ElementName=CategoryViewFadeOut}" MethodName="StartAnimation"/>
 
@@ -2062,10 +2431,10 @@
                 </Core:EventTriggerBehavior>
                 <Core:EventTriggerBehavior EventName="Unchecked">
                     <Core:CallMethodAction TargetObject="{Binding ElementName=PageSearchOffsetExit}" MethodName="StartAnimation"/>
-                    
+
                     <Core:CallMethodAction TargetObject="{Binding ElementName=categoryCompactViewFadeOut}" MethodName="StartAnimation"/>
                     <Core:CallMethodAction TargetObject="{Binding ElementName=categoryCompactViewOffsetExit}" MethodName="StartAnimation"/>
-                    
+
                     <Core:CallMethodAction TargetObject="{Binding ElementName=CategoryViewScaleDown}" MethodName="StartAnimation"/>
                     <Core:CallMethodAction TargetObject="{Binding ElementName=CategoryViewFadeIn}" MethodName="StartAnimation"/>
 
@@ -2087,7 +2456,7 @@
                 <ToolkitBehaviors:Offset x:Name="pageTitleOffsetEnter" Duration="300" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0" EasingMode="EaseOut"  EasingType="Cubic" />
                 <ToolkitBehaviors:Offset x:Name="pageTitleOffsetExit"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="-24"  EasingMode="EaseOut"   EasingType="Cubic"/>
             </Interactivity:Interaction.Behaviors>
-            
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -2100,7 +2469,7 @@
                        VerticalAlignment="Center"/>
             <Button x:Name="CloseButton"
                     Command="{Binding CloseButtonCommand}"
-                    Foreground="{StaticResource ItemPrimaryForeground}"
+                    Foreground="{ThemeResource ItemPrimaryForeground}"
                     extensions:Mouse.Cursor="Hand"
                     Grid.Column="1"
                     Height="48px"
@@ -2109,12 +2478,13 @@
                     Margin="0 12 0 0"
                     VerticalContentAlignment="Center"
                     VerticalAlignment="Center"
-                    Style="{StaticResource TextBlockButtonStyle}">
+                    Style="{StaticResource TextBlockButtonStyle}"
+                    ToolTipService.ToolTip="Close">
 
                 <Interactivity:Interaction.Behaviors>
                     <ToolkitBehaviors:Scale x:Name="closeButtonScaleUp" Duration="400" Delay="0" AutomaticallyStart="False" ScaleX="1.1" ScaleY="1.1" CenterX="24" CenterY="24" EasingMode="EaseOut"  EasingType="Cubic" />
                     <ToolkitBehaviors:Scale x:Name="closeButtonScaleDown"  Duration="400" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="24" CenterY="24" EasingMode="EaseOut"   EasingType="Cubic"/>
-                    
+
                     <Core:EventTriggerBehavior EventName="PointerEntered">
                         <Core:CallMethodAction TargetObject="{Binding ElementName=closeButtonScaleUp}" MethodName="StartAnimation"/>
                     </Core:EventTriggerBehavior>
@@ -2122,12 +2492,12 @@
                         <Core:CallMethodAction TargetObject="{Binding ElementName=closeButtonScaleDown}" MethodName="StartAnimation"/>
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
-                
+
                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE711;"/>
             </Button>
         </Grid>
         <Grid x:Name="PlaylistsContentView" 
-              Grid.Row="1" 
+              Grid.Row="1"
               Visibility="{Binding IsPlaylistView, Converter={StaticResource BoolToVisibilityConverter}}"
               Grid.Column="1"
               Grid.ColumnSpan="2">
@@ -2156,25 +2526,37 @@
                     <TextBlock Text="{Binding Title, FallbackValue=Items}" 
                                 FontSize="24"
                                 FontWeight="Bold"
-                                Margin="4 0 4 0"/>
-                    <TextBlock Text="("
-                                FontSize="16"
+                                Margin="4 0 8 0"/>
+                    <StackPanel Orientation="Horizontal"
+                                Margin="0 0 0 0">
+                        <TextBlock Text="{Binding Count, FallbackValue=0}"
+                                FontSize="24"
                                 FontWeight="Normal"
                                 Foreground="{StaticResource Grey-04}"
-                                Margin="2 2 0 0"
                                 VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding Count, FallbackValue=0}"
-                                FontSize="16"
+                        <TextBlock Text="("
+                                FontSize="24"
                                 FontWeight="Normal"
                                 Foreground="{StaticResource Grey-04}"
-                                Margin="0 2 0 0"
+                                Margin="4 0 0 0"
                                 VerticalAlignment="Center"/>
-                    <TextBlock Text=")"
-                                FontSize="16"
+                        <TextBlock Text="{Binding TracksCount, FallbackValue=0}"
+                                FontSize="24"
                                 FontWeight="Normal"
                                 Foreground="{StaticResource Grey-04}"
-                                Margin="0 2 0 0"
                                 VerticalAlignment="Center"/>
+                        <TextBlock Text="tracks"
+                                FontSize="24"
+                                FontWeight="Normal"
+                                Foreground="{StaticResource Grey-04}"
+                                Margin="2 0 0 0"
+                                VerticalAlignment="Center"/>
+                        <TextBlock Text=")"
+                                FontSize="24"
+                                FontWeight="Normal"
+                                Foreground="{StaticResource Grey-04}"
+                                VerticalAlignment="Center"/>
+                    </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <TextBlock Text="Select All"
@@ -2237,7 +2619,50 @@
                                             <ListView.ItemTemplate>
                                                 <DataTemplate x:DataType="model:PlaylistCategory">
                                                     <Grid>
-                                                        <TextBlock Text="{Binding Title, FallbackValue=Made For You}" FontSize="14" FontWeight="Normal"/>
+                                                        <Interactivity:Interaction.Behaviors>
+                                                            <Core:EventTriggerBehavior EventName="PointerEntered">
+                                                                <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistCategoryItemOffsetAA}" MethodName="StartAnimation"/>
+                                                                <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistCategoryItemOffsetB}" MethodName="StartAnimation"/>
+
+                                                                <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistCategoryItemFadeOutA}" MethodName="StartAnimation"/>
+                                                                <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistCategoryItemFadeInB}" MethodName="StartAnimation"/>
+                                                            </Core:EventTriggerBehavior>
+                                                            <Core:EventTriggerBehavior EventName="PointerExited">
+                                                                <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistCategoryItemOffsetA}" MethodName="StartAnimation"/>
+                                                                <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistCategoryItemOffsetBB}" MethodName="StartAnimation"/>
+
+                                                                <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistCategoryItemFadeInA}" MethodName="StartAnimation"/>
+                                                                <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistCategoryItemFadeOutB}" MethodName="StartAnimation"/>
+                                                            </Core:EventTriggerBehavior>
+                                                        </Interactivity:Interaction.Behaviors>
+
+                                                        <Grid Padding="16 0" Background="Transparent" Opacity="0">
+                                                            <Interactivity:Interaction.Behaviors>
+                                                                <ToolkitBehaviors:Offset x:Name="PlaylistCategoryItemOffsetB" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                                                <ToolkitBehaviors:Offset x:Name="PlaylistCategoryItemOffsetBB"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="8"  EasingMode="EaseOut"   EasingType="Cubic"/>
+                                                                <ToolkitBehaviors:Fade x:Name="PlaylistCategoryItemFadeInB" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                                                <ToolkitBehaviors:Fade x:Name="PlaylistCategoryItemFadeOutB"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                                            </Interactivity:Interaction.Behaviors>
+                                                            <StackPanel Orientation="Horizontal" 
+                                                                    
+                                                                    HorizontalAlignment="Center"
+                                                                    MinWidth="24"
+                                                                    VerticalAlignment="Center">
+
+                                                                <TextBlock Text="{Binding Count, FallbackValue=0}" FontSize="12"/>
+                                                                <TextBlock Text="Playlists" FontSize="12" Margin="2,0,0,0"/>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                        <Grid Padding="16 0" Background="Transparent">
+                                                            <Interactivity:Interaction.Behaviors>
+                                                                <ToolkitBehaviors:Offset x:Name="PlaylistCategoryItemOffsetA" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                                                <ToolkitBehaviors:Offset x:Name="PlaylistCategoryItemOffsetAA"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="-8"  EasingMode="EaseOut"   EasingType="Cubic"/>
+                                                                <ToolkitBehaviors:Fade x:Name="PlaylistCategoryItemFadeInA" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                                                <ToolkitBehaviors:Fade x:Name="PlaylistCategoryItemFadeOutA"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                                            </Interactivity:Interaction.Behaviors>
+                                                            <TextBlock Text="{Binding Title, FallbackValue=Made For You}" FontSize="14" FontWeight="Normal" VerticalAlignment="Center">
+                                                            </TextBlock>
+                                                        </Grid>
                                                     </Grid>
                                                 </DataTemplate>
                                             </ListView.ItemTemplate>
@@ -2248,7 +2673,7 @@
                                           Grid.Row="1" 
                                           Margin="0 0 0 20">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*" MaxWidth="504"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         <Interactivity:Interaction.Behaviors>
@@ -2257,7 +2682,7 @@
                                         </Interactivity:Interaction.Behaviors>
 
                                         <Grid Margin="0 0 8 0">
-                                            <TextBox Style="{StaticResource TextBoxStyle1}" x:Name="SearchBox"
+                                            <!--<TextBox x:Name="SearchBox"
                                                      Padding="12 8" 
                                                      PlaceholderForeground="#19FFFFFF"
                                                      PlaceholderText="Filter by playlist title or owner"
@@ -2271,9 +2696,23 @@
                                                      Height="48px"
                                                      FontSize="20"
                                                      Width="504"
-                                                     HorizontalAlignment="Left"/>
+                                                     HorizontalAlignment="Left"
+                                                     Style="{StaticResource TextBoxStyle1}"/>-->
+
+                                            <AutoSuggestBox Style="{StaticResource AutoSuggestBoxStyle1}" x:Name="SearchBox"
+                                                            PlaceholderText="Search playlists by name or author"
+                                                            Text="{Binding SearchText, Mode=TwoWay, FallbackValue=Hello }"   
+                                                            Padding="12 12 12 0"
+                                                            QueryIcon="Find"
+                                                            Height="48"
+                                                            ItemsSource="{Binding SearchSuggestionCollection}"
+                                                            VerticalAlignment="Center"
+                                                            HorizontalAlignment="Stretch"
+                                                            QuerySubmitted="SearchBox_QuerySubmitted"
+                                                            SuggestionChosen="SearchBox_SuggestionChosen"
+                                                            DisplayMemberPath="Title"/>
                                         </Grid>
-                                        <Button x:Name="SearchButton"
+                                        <!--<Button x:Name="SearchButton"
                                                 extensions:Mouse.Cursor="Hand"
                                                 Background="{ThemeResource SecondaryItemBackgroundAltThemeBrush}"
                                                 Grid.Column="1"
@@ -2282,7 +2721,7 @@
                                                 Width="48px" Foreground="#FF676767" 
                                                 Style="{StaticResource ButtonRevealStyle}">
                                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE721;"/>
-                                        </Button>
+                                        </Button>-->
                                     </Grid>
                                 </Grid>
                             </Grid>
@@ -2290,7 +2729,7 @@
                     </ListView.Header>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="model:Playlist">
-                            <Grid extensions:Mouse.Cursor="Hand"
+                            <!--<Grid extensions:Mouse.Cursor="Hand"
                                         Width="250" Background="Transparent">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="250"/>
@@ -2324,7 +2763,7 @@
                                             <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewPlayBtnFadeOut}" MethodName="StartAnimation"/>
                                         </Core:EventTriggerBehavior>
                                     </Interactivity:Interaction.Behaviors>
-                                    
+
                                     <Grid CornerRadius="24" Background="{ThemeResource ItemBackgroundThemeBrush}">
                                         <Interactivity:Interaction.Behaviors>
                                             <ToolkitBehaviors:Scale x:Name="playlistThumbScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="0.95" ScaleY="0.95" CenterX="125" CenterY="125" EasingMode="EaseOut"  EasingType="Cubic" />
@@ -2454,6 +2893,184 @@
                                         </Interactivity:Interaction.Behaviors>
                                     </TextBlock>
                                 </StackPanel>
+                            </Grid>-->                 
+                            <Grid extensions:Mouse.Cursor="Hand"
+                                        Width="250" Background="Transparent">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="250"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="PointerEntered">
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=playlistShadowScaleDown}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=playlistTitleOffsetUp}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=playlistDescriptionOffsetDown}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=playlistMetaFadeIn}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=playlistThumbScaleUp}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=playlistMetaOffsetX}" MethodName="StartAnimation"/>
+                                    </Core:EventTriggerBehavior>
+                                    <Core:EventTriggerBehavior EventName="PointerExited">
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=playlistShadowScaleUp}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=playlistTitleOffsetX}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=playlistDescriptionOffsetX}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=playlistMetaFadeOut}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=playlistThumbScaleDown}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=playlistMetaOffsetY}" MethodName="StartAnimation"/>
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                                <Grid Height="250" Width="250" VerticalAlignment="Top">
+                                        <Interactivity:Interaction.Behaviors>
+                                            <Core:EventTriggerBehavior EventName="PointerEntered">
+                                                <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewPlayBtnFadeIn}" MethodName="StartAnimation"/>
+                                            </Core:EventTriggerBehavior>
+                                            <Core:EventTriggerBehavior EventName="PointerExited">
+                                                <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewPlayBtnFadeOut}" MethodName="StartAnimation"/>
+                                            </Core:EventTriggerBehavior>
+                                        </Interactivity:Interaction.Behaviors>
+
+                                        <Controls:DropShadowPanel BlurRadius="12.0" ShadowOpacity="0.08" OffsetX="6.0" OffsetY="12.0" Color="Black"
+                                                                  Visibility="{Binding ElementName=page, Path=DataContext, Converter={StaticResource BoolToVisibilityInverseConverter}}">
+                                            <Interactivity:Interaction.Behaviors>
+                                                <ToolkitBehaviors:Scale x:Name="playlistShadowScaleDown" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="0.95" ScaleY="0.95" CenterX="125" CenterY="125" EasingMode="EaseOut"  EasingType="Cubic" />
+                                                <ToolkitBehaviors:Scale x:Name="playlistShadowScaleUp"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="125" CenterY="125" EasingMode="EaseOut"   EasingType="Cubic"/>
+                                            </Interactivity:Interaction.Behaviors>
+                                            
+                                            <Rectangle Fill="{ThemeResource ItemBackgroundThemeBrush}"  
+                                                       Width="250"
+                                                       Height="250"
+                                                       RadiusX="24"
+                                                       RadiusY="24"/>
+                                            </Controls:DropShadowPanel>
+
+                                        <Grid CornerRadius="24" Background="Transparent">
+                                            <Interactivity:Interaction.Behaviors>
+                                                <ToolkitBehaviors:Scale x:Name="playlistThumbScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="0.95" ScaleY="0.95" CenterX="125" CenterY="125" EasingMode="EaseOut"  EasingType="Cubic" />
+                                                <ToolkitBehaviors:Scale x:Name="playlistThumbScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="125" CenterY="125" EasingMode="EaseOut"   EasingType="Cubic"/>
+                                            </Interactivity:Interaction.Behaviors>
+                                            <Image Source="{Binding Image}" Stretch="UniformToFill"/>
+                                        </Grid>
+                                        <StackPanel Margin="16"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Top">
+                                            <Grid>
+                                                <Button Background="#000000"
+                                                    CornerRadius="24"
+                                                    Foreground="#ffffff"
+                                                    RequestedTheme="Dark"
+                                                    Command="{Binding ElementName=PlaylistContentView, Path=DataContext.AddPlaylistToSelectedCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Height="32"
+                                                    HorizontalContentAlignment="Center"
+                                                    VerticalContentAlignment="Center"
+                                                    Width="32"
+                                                    Visibility="{Binding Path=IsSelected, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}" Style="{StaticResource ButtonRevealStyle}">
+                                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE710;" FontSize="12"/>
+                                                </Button>
+                                                <Button Background="{ThemeResource BrandColorThemeBrush}"
+                                                    CornerRadius="24"
+                                                    Foreground="#ffffff"
+                                                    RequestedTheme="Dark"
+                                                    Command="{Binding ElementName=PlaylistContentView, Path=DataContext.RemovePlaylistToSelectedCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Height="32"
+                                                    Padding="0"
+                                                    HorizontalContentAlignment="Center"
+                                                    VerticalContentAlignment="Center"
+                                                    Width="32"
+                                                    Visibility="{Binding Path=IsSelected, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}">
+                                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE73E;" FontSize="18"/>
+                                                </Button>
+                                            </Grid>
+                                            <Button Background="#000000"
+                                                CornerRadius="24"
+                                                Foreground="#ffffff"
+                                                Height="32"
+                                                RequestedTheme="Dark"
+                                                HorizontalContentAlignment="Center"
+                                                Margin="0 8 0 0"
+                                                VerticalContentAlignment="Center"
+                                                Width="32" Style="{StaticResource ButtonRevealStyle}">
+                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE70F;" FontSize="12"/>
+                                            </Button>
+                                        </StackPanel>
+                                        <Button x:Name="PlaylistViewPlayBtn" BorderThickness="2" 
+                                                Background="{x:Null}" Opacity="0"
+                                                BorderBrush="WhiteSmoke"
+                                                Foreground="WhiteSmoke"
+                                                RequestedTheme="Dark"
+                                                CornerRadius="48"
+                                                Command="{Binding ElementName=page, Path=DataContext.PlayPlaylistCommand}"
+                                                CommandParameter="{Binding}"
+                                                Padding="0"
+                                            Margin="24"
+                                                Height="32"
+                                                Width="32"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Bottom">
+                                            <Interactivity:Interaction.Behaviors>
+                                                <ToolkitBehaviors:Scale x:Name="PlaylistViewPlayBtnScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.2" ScaleY="1.2" CenterX="16" CenterY="16" EasingMode="EaseOut"  EasingType="Cubic" />
+                                                <ToolkitBehaviors:Scale x:Name="PlaylistViewPlayBtnScaleNormal"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="16" CenterY="16" EasingMode="EaseOut"   EasingType="Cubic"/>
+                                                <ToolkitBehaviors:Fade x:Name="PlaylistViewPlayBtnFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                                <ToolkitBehaviors:Fade x:Name="PlaylistViewPlayBtnFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+
+                                                <Core:EventTriggerBehavior EventName="PointerEntered">
+                                                    <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewPlayBtnScaleUp}" MethodName="StartAnimation"/>
+                                                </Core:EventTriggerBehavior>
+                                                <Core:EventTriggerBehavior EventName="PointerExited">
+                                                    <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewPlayBtnScaleNormal}" MethodName="StartAnimation"/>
+                                                </Core:EventTriggerBehavior>
+                                            </Interactivity:Interaction.Behaviors>
+
+                                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE768;"/>
+                                        </Button>
+                                    </Grid>
+                                    <StackPanel Grid.Row="1"
+                                            Margin="8 16 0 0">
+                                    <Grid Opacity="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Interactivity:Interaction.Behaviors>
+                                            <ToolkitBehaviors:Fade x:Name="playlistMetaFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                            <ToolkitBehaviors:Fade x:Name="playlistMetaFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                            <ToolkitBehaviors:Offset x:Name="playlistMetaOffsetX" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="-8" EasingMode="EaseOut"  EasingType="Cubic" />
+                                            <ToolkitBehaviors:Offset x:Name="playlistMetaOffsetY"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0"  EasingMode="EaseOut"   EasingType="Cubic"/>
+                                        </Interactivity:Interaction.Behaviors>
+                                        <TextBlock Text="by " FontSize="14" Margin="0 0 2 0"/>
+                                        <TextBlock Text="{Binding Owner, FallbackValue=Unknown}" Grid.Column="1" FontSize="14" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}"/>
+                                        <StackPanel Grid.Column="2" Margin="8 0" Orientation="Horizontal">
+                                            <Ellipse Fill="{ThemeResource ItemPrimaryForeground}" Opacity="0.4" Height="4" Width="4" VerticalAlignment="Center" Margin="0 0 8 0"/>
+                                            <TextBlock Text="{Binding ItemsCount, FallbackValue=0}" FontSize="14" Foreground="{ThemeResource ItemSecondaryForeground}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <TextBlock Text="{Binding Title, FallbackValue=Unknown}"
+                                               FontSize="24"
+                                               FontWeight="Bold"
+                                               TextWrapping="NoWrap"
+                                               TextTrimming="CharacterEllipsis" 
+                                               ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}">
+                                        <Interactivity:Interaction.Behaviors>
+                                            <ToolkitBehaviors:Offset x:Name="playlistTitleOffsetUp" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="-8" EasingMode="EaseOut"  EasingType="Cubic" />
+                                            <ToolkitBehaviors:Offset x:Name="playlistTitleOffsetX"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0"  EasingMode="EaseOut"   EasingType="Cubic"/>
+                                        </Interactivity:Interaction.Behaviors>
+                                    </TextBlock>
+
+                                    <TextBlock Text="{Binding Description}"
+                                               FontSize="14" Margin="0 0 0 0"
+                                               Height="40"
+                                               TextWrapping="WrapWholeWords"
+                                               TextTrimming="CharacterEllipsis"
+                                               Foreground="{ThemeResource ItemSecondaryForeground}"
+                                               ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}">
+                                        
+                                        <Interactivity:Interaction.Behaviors>
+                                            <ToolkitBehaviors:Offset x:Name="playlistDescriptionOffsetDown" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="-8" EasingMode="EaseOut"  EasingType="Cubic" />
+                                            <ToolkitBehaviors:Offset x:Name="playlistDescriptionOffsetX"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0"  EasingMode="EaseOut"   EasingType="Cubic"/>
+                                        </Interactivity:Interaction.Behaviors>
+                                    </TextBlock>
+                                </StackPanel>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -2463,7 +3080,7 @@
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                 </ListView>
-                
+
             </Grid>
             <ListView x:Name="AlphabetPlaylistView"
                       Grid.RowSpan="10"
@@ -2481,7 +3098,7 @@
                       HorizontalContentAlignment="Center"
                       VerticalContentAlignment="Center"
                       ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                      Margin="0 24 32 24" 
+                      Margin="0 24 32 0" 
                       ItemContainerStyle="{StaticResource AlphabetListViewItemContainerStyle}"
                       Visibility="{Binding IsCompactCategory, Converter={StaticResource BoolToVisibilityConverter}}">
 
@@ -2525,7 +3142,7 @@
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>
-    
+
         <Grid x:Name="PopupView"
               Grid.ColumnSpan="100"
               Grid.RowSpan="100"
@@ -2538,7 +3155,7 @@
                       BlurAmount="12"/>
 
             </Grid.Background>
-            
+
             <CheckBox Style="{StaticResource PopupDismissCheckBoxStyle}" 
                       IsChecked="{Binding IsPopupActive, Mode=TwoWay}"
                       HorizontalAlignment="Stretch"
@@ -2551,7 +3168,7 @@
               Grid.ColumnSpan="100"
               Margin="24 0 0 24" Opacity="1" 
               VerticalAlignment="Bottom"
-              Visibility="{Binding HasSelectedItems, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsedzzz}">
+              Visibility="{Binding HasSelectedItems, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}">
             <!--Width="351"-->
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
@@ -2595,17 +3212,11 @@
                                Foreground="{ThemeResource ItemPrimaryForeground}"
                                FontSize="24"
                                FontWeight="Bold"
-                               Margin="8 0 4 0"/>
-                    <TextBlock Text="{Binding SelectedPlaylistCollection.Count, FallbackValue=0}"
-                               FontSize="14"
-                               FontWeight="Normal"
-                               Foreground="{StaticResource Grey-04}"
-                               Margin="0 4 0 0"
-                               VerticalAlignment="Center"/>
-                    <StackPanel Margin="0 4 0 0" Orientation="Horizontal">
-                        <TextBlock Text="(" FontSize="14" Foreground="{StaticResource Grey-04}" VerticalAlignment="Center" Margin="4 0 0 0"/>
-                        <TextBlock Text="{Binding SelectedPlaylistsTracksCount, FallbackValue=0}" FontSize="14" Foreground="{StaticResource Grey-04}" VerticalAlignment="Center"/>
-                        <TextBlock Text="tracks)" FontSize="14" Foreground="{StaticResource Grey-04}" VerticalAlignment="Center" Margin="2 0 0 0"/>
+                               Margin="8 0 0 0"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="(" FontSize="24" Foreground="{StaticResource Grey-04}" VerticalAlignment="Center" Margin="4 0 0 0"/>
+                        <TextBlock Text="{Binding SelectedPlaylistCollection.Count, FallbackValue=0}" FontSize="24" Foreground="{StaticResource Grey-04}" VerticalAlignment="Center"/>
+                        <TextBlock Text=")" FontSize="24" Foreground="{StaticResource Grey-04}" VerticalAlignment="Center" Margin="2 0 0 0"/>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
@@ -2681,7 +3292,7 @@
                             </Core:EventTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
                     </CheckBox>
-                    
+
                     <ListView x:Name="SelectedPlaylistViewExpanded"
                               Background="Transparent"
                               HorizontalContentAlignment="Left"
@@ -2694,7 +3305,7 @@
                             <ToolkitBehaviors:Offset x:Name="SelectedPlaylistExpandedViewOffsetB" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="48" EasingMode="EaseOut" EasingType="Cubic" />
                             <ToolkitBehaviors:Fade x:Name="SelectedPlaylistExpandedViewFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
                         </Interactivity:Interaction.Behaviors>
-                       
+
                         <Grid/>
                         <Grid/>
                         <Grid/>
@@ -2752,7 +3363,7 @@
                                                     <Core:CallMethodAction TargetObject="{Binding ElementName=SelectedExpandedPlayBtnScaleNormal}" MethodName="StartAnimation"/>
                                                 </Core:EventTriggerBehavior>
                                             </Interactivity:Interaction.Behaviors>
-                                            
+
                                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE768;"/>
                                         </Button>
                                     </Grid>
@@ -2825,8 +3436,8 @@
                             <ToolkitBehaviors:Fade x:Name="SelectedPlaylistExpandedViewButtonsFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
                             <!--<ToolkitBehaviors:Fade x:Name="SelectedPlaylistExpandedViewButtonsFadeOut"  Duration="300" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />-->
                         </Interactivity:Interaction.Behaviors>
-                      
-                        
+
+
                         <Button x:Name="MergePlaylistBtn"
                                 Background="{ThemeResource ItemBackgroundThemeBrush}"
                                 CornerRadius="12"
@@ -2892,12 +3503,19 @@
                     <ToolkitBehaviors:Fade x:Name="SelectedPlaylistCompactViewFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
                 </Interactivity:Interaction.Behaviors>
 
-                <Grid Background="{ThemeResource ItemBackgroundThemeBrush}"
+                <Controls:DropShadowPanel BlurRadius="12.0" Grid.RowSpan="10" HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Stretch"
+                    Grid.ColumnSpan="10" ShadowOpacity="0.06" OffsetX="6.0" OffsetY="6.0" Color="Black"
+                    Visibility="{Binding ElementName=page, Path=DataContext, Converter={StaticResource BoolToVisibilityInverseConverter}}">
+
+                    <Rectangle Fill="{ThemeResource ItemBackgroundThemeBrush}" Height="76" Width="{Binding ExpandedSelectPlaylistWidth, FallbackValue=352}" RadiusX="12" RadiusY="12"/>
+                </Controls:DropShadowPanel>
+                <!--<Grid Background="{ThemeResource ItemBackgroundThemeBrush}"
                       Grid.ColumnSpan="10"
                       CornerRadius="12"
                       VerticalAlignment="Stretch">
 
-                </Grid>
+                </Grid>-->
                 <ListView Padding="12 0"
                           Margin="0 0 12 0"
                           VerticalAlignment="Stretch"
