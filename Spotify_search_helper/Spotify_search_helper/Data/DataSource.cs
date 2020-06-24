@@ -20,14 +20,14 @@ namespace Spotify_search_helper.Data
         private Paging<SimplePlaylist> page;
         public ProfileUser Profile { get; set; }
 
-        public DataSource() 
+        public DataSource()
         {
             Current = this;
         }
 
         public async Task Initialize()
         {
-            if(await Authentication.GetClient() != null)
+            if (await Authentication.GetClient() != null)
                 ViewModels.MainPageViewModel.Current.IsLoading = false;
         }
 
@@ -73,7 +73,7 @@ namespace Spotify_search_helper.Data
         {
             ViewModels.MainPageViewModel.Current.IsLoading = true;
 
-            if(page != null && startIndex < page.Total)
+            if (page != null && startIndex < page.Total)
             {
                 while (startIndex < page.Total)
                 {
@@ -159,33 +159,15 @@ namespace Spotify_search_helper.Data
             }
         }
 
-        public async Task<bool> PlaySpotifyItem(string uri)
+        public async Task<bool> PlaySpotifyTracks(List<Track> tracks, int index)
         {
             try
             {
-                if (!string.IsNullOrEmpty(uri))
-                {
-                    var spotify = await Authentication.GetClient();
-                    //var error = spotify.Player.ResumePlayback(new List<string> { "spotify:track:4iV5W9uYEdYUVa79Axb7Rh" });
-
-                    if (spotify != null)
-                    {
-                        PlayerResumePlaybackRequest request = new PlayerResumePlaybackRequest
-                        {
-                            ContextUri = uri,
-                            //Uris = new List<string> { uri },
-                            OffsetParam = new PlayerResumePlaybackRequest.Offset { Position = 0 },
-                        };
-                        return await spotify.Player.ResumePlayback(request);
-                    }
-                    else
-                        ViewModels.Helpers.DisplayDialog("Cannot play item", "An error occured, could not play item. Please give it another shot and make sure your internet connection is working"); 
-                }
-                return false;
+                return await PlaySpotifyMedia(tracks.Select(c => c.Uri).ToList(), index);
             }
             catch (Exception e)
             {
-                ViewModels.Helpers.DisplayDialog("Cannot play item", e.Message);
+                ViewModels.Helpers.DisplayDialog("Cannot play items", e.Message);
                 return false;
             }
         }
@@ -194,76 +176,57 @@ namespace Spotify_search_helper.Data
         {
             try
             {
-                if (playlists != null && playlists.Count > 0)
+                var spotify = await Authentication.GetClient();
+
+                if (spotify != null)
                 {
-                    var spotify = await Authentication.GetClient();
 
-                    if (spotify != null)
+                    //get playlists tracks
+                    SimplePlaylist pl;
+                    FullPlaylist fpl = null;
+                    List<PlaylistTrack<IPlayableItem>> tracks = new List<PlaylistTrack<IPlayableItem>>();
+                    List<string> uris = new List<string>();
+
+                    foreach (var item in playlists)
                     {
+                        pl = _playlist.Where(c => c.Id == item.Id).FirstOrDefault();
 
-                        //get playlists tracks
-                        SimplePlaylist pl;
-                        FullPlaylist fpl = null;
-                        List<PlaylistTrack<IPlayableItem>> tracks = new List<PlaylistTrack<IPlayableItem>>();
-                        List<string> uris = new List<string>();
+                        if (pl == null)
+                            fpl = await spotify.Playlists.Get(item.Id);
 
-                        foreach (var item in playlists)
+                        if (fpl != null && fpl.Tracks != null && fpl.Tracks.Items != null)
                         {
-                            pl = _playlist.Where(c => c.Id == item.Id).FirstOrDefault();
-
-                            if (pl == null)
-                                fpl = await spotify.Playlists.Get(item.Id);
-
-                            if (fpl != null && fpl.Tracks != null && fpl.Tracks.Items != null)
-                            {
-                                tracks.AddRange(fpl.Tracks.Items);
-                            }
-                            else if (pl != null)
-                            {
-                                var r = await spotify.Playlists.GetItems(pl.Id);
-
-                                if (r != null && r.Items != null)
-                                    tracks.AddRange(r.Items);
-                            }
+                            tracks.AddRange(fpl.Tracks.Items);
                         }
-
-                        if (tracks.Count > 0)
+                        else if (pl != null)
                         {
-                            foreach (var item in tracks)
-                            {
-                                if (item.Track is FullTrack track)
-                                    uris.Add(track.Uri);
-                                if (item.Track is FullEpisode episode)
-                                    uris.Add(episode.Uri);
-                            }
-                        }
+                            var r = await spotify.Playlists.GetItems(pl.Id);
 
-                        ///var error = spotify.Player.ResumePlayback(uris: new List<string> { "spotify:track:4iV5W9uYEdYUVa79Axb7Rh" });
-
-                        if (uris.Count > 0)
-                        {
-                            PlayerResumePlaybackRequest request = new PlayerResumePlaybackRequest
-                            {
-                                Uris = uris,
-                                OffsetParam = new PlayerResumePlaybackRequest.Offset { Position = 0 },
-                            };
-                            var result = await spotify.Player.ResumePlayback(request);
-
-                            if (shuffle) await spotify.Player.SetShuffle(new PlayerShuffleRequest(true));
-                        }
-                        else
-                        {
-                            ViewModels.Helpers.DisplayDialog("Cannot play items", "An error occured, could not play items. Please give it another shot and make sure your internet connection is working");
-                            return false;
+                            if (r != null && r.Items != null)
+                                tracks.AddRange(r.Items);
                         }
                     }
-                    else
+
+                    if (tracks.Count > 0)
                     {
-                        ViewModels.Helpers.DisplayDialog("Cannot play items", "An error occured, could not play items. Please give it another shot and make sure your internet connection is working");
-                        return false;
+                        foreach (var item in tracks)
+                        {
+                            if (item.Track is FullTrack track)
+                                uris.Add(track.Uri);
+                            if (item.Track is FullEpisode episode)
+                                uris.Add(episode.Uri);
+                        }
                     }
+
+                    ///var error = spotify.Player.ResumePlayback(uris: new List<string> { "spotify:track:4iV5W9uYEdYUVa79Axb7Rh" });
+
+                    return await PlaySpotifyMedia(uris, 0, shuffle);
                 }
-                return false;
+                else
+                {
+                    ViewModels.Helpers.DisplayDialog("Cannot play items", "An error occured, could not play items. Please give it another shot and make sure your internet connection is working");
+                    return false;
+                }
             }
             catch (Exception e)
             {
@@ -271,8 +234,156 @@ namespace Spotify_search_helper.Data
                 return false;
             }
         }
-    }
 
+        private async Task<bool> PlaySpotifyMedia(List<string> uris, int index = 0, bool shuffle = false)
+        {
+            try
+            {
+                var spotify = await Authentication.GetClient();
+                bool result;
+                if (spotify == null) return false;
+                if (uris.Count > 0)
+                {
+                    PlayerResumePlaybackRequest request = new PlayerResumePlaybackRequest
+                    {
+                        Uris = uris,
+                        OffsetParam = new PlayerResumePlaybackRequest.Offset { Position = index },
+                    };
+                    result = await spotify.Player.ResumePlayback(request);
+
+                    if (shuffle) await spotify.Player.SetShuffle(new PlayerShuffleRequest(true));
+                }
+                else
+                {
+                    ViewModels.Helpers.DisplayDialog("Cannot play items", "An error occured, could not play items. Please give it another shot and make sure your internet connection is working");
+                    return false;
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                ViewModels.Helpers.DisplayDialog("Cannot play items", e.Message);
+                return false;
+            }
+        }
+
+        public async Task<List<Track>> GetSpotifyTracks(string id)
+        {
+            try
+            {
+                List<Track> results = new List<Track>();
+                var spotify = await Authentication.GetClient();
+
+                if (spotify != null)
+                {
+
+                    //get playlists tracks
+                    FullPlaylist fpl = null;
+                    List<PlaylistTrack<IPlayableItem>> tracks = new List<PlaylistTrack<IPlayableItem>>();
+
+                    fpl = await spotify.Playlists.Get(id);
+                    if (fpl != null && fpl.Tracks != null && fpl.Tracks.Items != null && fpl.Tracks.Items.Count > 0)
+                    {
+                        tracks.AddRange(fpl.Tracks.Items);
+                    }
+                    else if (fpl != null)
+                    {
+                        var r = await spotify.Playlists.GetItems(id);
+
+                        if (r != null && r.Items != null)
+                            tracks.AddRange(r.Items);
+                    }
+
+                    if (tracks.Count > 0)
+                    {
+                        Track item;
+                        BitmapImage image = null;
+                        foreach (var playlistTrack in tracks)
+                        {
+                            if (playlistTrack.Track is FullTrack track)
+                            {
+                                item = new Track
+                                {
+                                    Id = track.Id,
+                                    Title = track.Name,
+                                    Uri = track.Uri,
+                                    TrackNumber = track.TrackNumber,
+                                    DurationMs = track.DurationMs,
+                                    ArtistsStr = ""
+                                };
+
+                                if (track.Album != null)
+                                {
+                                    item.Album = track.Album.Name;
+                                    //load track image after
+                                    if (track.Album.Images != null && track.Album.Images.Count > 0)
+                                    {
+                                        image = new BitmapImage(new Uri(track.Album.Images.FirstOrDefault().Url));
+                                        item.Image = image;
+                                    }
+                                }
+                                if (track.Artists != null && track.Artists.Count > 0)
+                                {
+                                    if (track.Artists.Count == 1)
+                                        item.ArtistsStr = track.Artists.FirstOrDefault().Name;
+                                    else
+                                    {
+                                        for (int i = 0; i < track.Artists.Count; i++)
+                                        {
+                                            if (i != (track.Artists.Count - 1))
+                                                item.ArtistsStr += track.Artists[i].Name + ", ";
+                                            else
+                                                item.ArtistsStr += track.Artists[i].Name;
+                                        }
+                                    }
+                                }
+                                else
+                                    item.ArtistsStr = "Unknown";
+
+                                //artist
+                                //album
+                                results.Add(item);
+                            }
+                            //if (item.Track is FullEpisode episode)
+                            //    uris.Add(episode.Uri);
+                            image = null;
+                        }
+                    }
+                }
+                else
+                {
+                    ViewModels.Helpers.DisplayDialog("Error", "An error occured, please give it another shot and make sure your internet connection is working");
+                }
+                return results;
+            }
+            catch (Exception e)
+            {
+                ViewModels.Helpers.DisplayDialog("Cannot play items", e.Message);
+                return null;
+            }
+        }
+
+        public async Task<bool> RemoveItemFromPlaylist(string playlistId, List<string> uris)
+        {
+            if (uris == null || uris.Count <= 0)
+                return false;
+
+            var spotify = await Authentication.GetClient();
+            if (spotify == null)
+                return false;
+
+            List<PlaylistRemoveItemsRequest.Item> trackUris = new List<PlaylistRemoveItemsRequest.Item>();
+
+            foreach (var uri in uris)
+            {
+                trackUris.Add(new PlaylistRemoveItemsRequest.Item { Uri = uri });
+            }
+
+            //Remove multiple tracks
+            await spotify.Playlists.RemoveItems(playlistId, new PlaylistRemoveItemsRequest(trackUris));
+            return true;
+        }
+    }
 
     /// <summary>
     /// A sample implementation of the <see cref="Collections.IIncrementalSource{TSource}"/> interface.

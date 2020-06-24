@@ -49,7 +49,8 @@ namespace Spotify_search_helper.ViewModels
             AdvancedCollectionView = new AdvancedCollectionView(sourceItems, true);
 
             // And sort ascending by the property "Title"
-            AdvancedCollectionView.SortDescriptions.Add(new SortDescription("Title", SortDirection.Ascending));
+            //AdvancedCollectionView.SortDescriptions.Add(new SortDescription("Title", SortDirection.Ascending));
+            CurrentSorting = PlaylistSortList.FirstOrDefault();
 
             // IncrementalLoadingCollection can be bound to a GridView or a ListView. In this case it is a ListView called PeopleListView.
             //MyPlaylistSource = new IncrementalLoadingCollection<PlaylistSource, Playlist>();
@@ -63,7 +64,122 @@ namespace Spotify_search_helper.ViewModels
 
         }
 
-        #region AdvancedCollectionView
+        #region PlaylistView
+
+        public ObservableCollection<Sorting> PlaylistSortList { get; } = new ObservableCollection<Sorting>(Sorting._playlistSortList);
+        readonly List<Playlist> _playlistCollectionCopy = new List<Playlist>();
+
+        ObservableCollection<PlaylistCategory> _playlistCategoryList = new ObservableCollection<PlaylistCategory>();
+        public ObservableCollection<PlaylistCategory> PlaylistCategoryList
+        {
+            get => _playlistCategoryList;
+            set { _playlistCategoryList = value; RaisePropertyChanged("PlaylistCategoryList"); }
+        }
+
+        ObservableCollection<Playlist> _searchSuggestionCollection = new ObservableCollection<Playlist>();
+        public ObservableCollection<Playlist> SearchSuggestionCollection
+        {
+            get => _searchSuggestionCollection;
+            set
+            {
+                _searchSuggestionCollection = value;
+                RaisePropertyChanged("SearchSuggestionCollection");
+            }
+        }
+
+        ObservableCollection<Playlist> _selectedPlaylistCollection = new ObservableCollection<Playlist>();
+        public ObservableCollection<Playlist> SelectedPlaylistCollection
+        {
+            get => _selectedPlaylistCollection;
+            set
+            {
+                _selectedPlaylistCollection = value;
+                RaisePropertyChanged("SelectedPlaylistCollection");
+            }
+        }
+
+        private void SelectedPlaylistCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (SelectedPlaylistCollection.Count > 0)
+                HasSelectedItems = true;
+            else
+            {
+                HasSelectedItems = false;
+                IsSelectAllChecked = false;
+
+                if (IsSelectedPlaylistExpanded)
+                {
+                    IsSelectedPlaylistExpanded = false;
+                    IsPopupActive = false;
+                }
+
+            }
+
+            //update selected state
+            int totalTracks = 0;
+
+            if (e.NewItems != null)
+            {
+                foreach (var item in e.NewItems)
+                {
+                    if (item is Playlist playlist)
+                    {
+                        playlist.IsSelected = true;
+
+                    }
+                }
+            }
+
+            if (e.OldItems != null)
+            {
+                foreach (var item in e.OldItems)
+                {
+                    if (item is Playlist playlist)
+                        playlist.IsSelected = false;
+                }
+            }
+
+            foreach (var item in SelectedPlaylistCollection)
+            {
+                totalTracks += item.ItemsCount;
+            }
+
+            SelectedPlaylistsTracksCount = totalTracks;
+        }
+
+        private ObservableCollection<string> _alphabet = new ObservableCollection<string>();
+        public ObservableCollection<string> Alphabet
+        {
+            get => _alphabet;
+            set
+            {
+                _alphabet = value;
+                RaisePropertyChanged("Alphabet");
+            }
+        }
+
+        private void SortPlaylistCollection(Sorting sorting)
+        {
+            using (AdvancedCollectionView.DeferRefresh())
+            {
+                AdvancedCollectionView.SortDescriptions.Clear();
+                switch (sorting.Type)
+                {
+                    case Sorting.SortType.Name:
+                    case Sorting.SortType.Size:
+                        AdvancedCollectionView.SortDescriptions.Add(new SortDescription(sorting.Property, sorting.SortDirection));
+                        break;
+                    case Sorting.SortType.Default:
+                        break;
+                    default:
+                        AdvancedCollectionView.SortDescriptions.Add(new SortDescription("Title", SortDirection.Ascending));
+                        break;
+                }
+
+                //scroll to top
+                Views.MainPage.Current.ScrollPlaylistViewToTop();
+            }
+        }
 
         private AdvancedCollectionView _advancedCollectionView;
         public AdvancedCollectionView AdvancedCollectionView
@@ -74,9 +190,7 @@ namespace Spotify_search_helper.ViewModels
                 _advancedCollectionView = value;
                 RaisePropertyChanged("AdvancedCollectionView");
             }
-        }
-
-        readonly List<Playlist> _playlistCollectionCopy = new List<Playlist>();
+        }    
 
         public void AddToCollection(IEnumerable<Playlist> items)
         {
@@ -215,6 +329,204 @@ namespace Spotify_search_helper.ViewModels
 
         #endregion
 
+        #region TracksView
+
+        public void TrackSuggestionChosen(Track item)
+        {
+            if (item != null)
+            {
+                TrackSearchText = item.Title;
+            }
+        }
+
+        private async void RemoveTracksFromCurrentPlaylist(IEnumerable<Track> items)
+        {
+            IsLoading = true;
+
+            if (CurrentPlaylist != null)
+            {
+                try
+                {
+                    if (await DataSource.Current.RemoveItemFromPlaylist(CurrentPlaylist.Id, new List<string>(items.Select(c => c.Uri))))
+                    {
+                        using (TracksCollectionView.DeferRefresh())
+                        {
+                            foreach (var item in items)
+                            {
+                                TracksCollectionView.Remove(item);
+                                _tracksCollectionCopy.Remove(item);
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+
+            IsLoading = false;
+        }
+
+        private async void PlayCurrentPlaylistTracks(Track item)
+        {
+            IsLoading = true;
+            if (CurrentPlaylist != null)
+            {
+                int index;
+                if (CurrentTrackSorting != null || !string.IsNullOrEmpty(TrackSearchText))
+                {
+                    if (item != null)
+                        index = _filteredTracksCollection.IndexOf(item);
+                    else
+                        index = -1;
+
+                    if (index < 0) index = 0;
+                    await DataSource.Current.PlaySpotifyTracks(_filteredTracksCollection, index);
+                }
+                else
+                {
+                    index = _tracksCollectionCopy.IndexOf(item);
+                    if (index < 0) index = 0;
+                    await DataSource.Current.PlaySpotifyTracks(_tracksCollectionCopy, index);
+                }
+
+                
+                 
+            }
+            IsLoading = false;
+        }
+
+        private async void PlayTracks(IEnumerable<Track> items, int index = 0)
+        {
+            IsLoading = true;
+
+            await DataSource.Current.PlaySpotifyTracks(items.ToList(), index);
+
+            IsLoading = false;
+        }
+
+        private void ResetTracksView()
+        {
+            TracksCollectionView.Clear();
+            TrackSearchText = "";
+            CurrentTrackSorting = TracksSortList.FirstOrDefault();
+            _tracksCollectionCopy.Clear();
+        }
+
+        private void SortTrackCollection(Sorting sorting)
+        {
+            if (TracksCollectionView == null)
+                return;
+
+            try
+            {
+                using (TracksCollectionView.DeferRefresh())
+                {
+                    TracksCollectionView.SortDescriptions.Clear();
+
+                    switch (sorting.Type)
+                    {
+                        case Sorting.SortType.Name:
+                        case Sorting.SortType.Artist:
+                        case Sorting.SortType.Album:
+                            TracksCollectionView.SortDescriptions.Add(new SortDescription(sorting.Property, sorting.SortDirection));
+                            break;
+                        case Sorting.SortType.Default:
+                            break;
+                        default:
+                            TracksCollectionView.SortDescriptions.Add(new SortDescription("Title", SortDirection.Ascending));
+                            break;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //
+            }
+
+            //scroll to top
+            Views.MainPage.Current.ScrollTracksViewToTop();
+        }
+
+        public void FilterTracksCollectionView(string searchStr)
+        {
+            //make sure the filtered items are clear
+            _filteredTracksCollection.Clear();
+            using (TracksCollectionView.DeferRefresh())
+            {
+                if (!string.IsNullOrEmpty(searchStr))
+                {
+                    TracksCollectionView.Filter = c => (((Track)c).Title).Contains(searchStr, StringComparison.CurrentCultureIgnoreCase) ||
+                        (((Track)c).Album).Contains(searchStr, StringComparison.CurrentCultureIgnoreCase) ||
+                        (((Track)c).ArtistsStr).Contains(searchStr, StringComparison.CurrentCultureIgnoreCase); //add artist search
+                    _filteredTracksCollection.AddRange(_tracksCollectionCopy.Where(c => c.Title.Contains(searchStr, StringComparison.CurrentCultureIgnoreCase) ||
+                    c.Album.Contains(searchStr, StringComparison.CurrentCultureIgnoreCase) ||
+                    c.ArtistsStr.Contains(searchStr, StringComparison.CurrentCultureIgnoreCase)));
+                }
+                else
+                {
+                    TracksCollectionView.Filter = c => c != null; //bit of a hack to clear filters
+                    _filteredTracksCollection.AddRange(_tracksCollectionCopy);
+                }
+            }
+        }
+
+        private Sorting _currentTrackSorting;
+        public Sorting CurrentTrackSorting
+        {
+            get => _currentTrackSorting;
+            set
+            {
+                _currentTrackSorting = value;
+                RaisePropertyChanged("CurrentTrackSorting");
+                if (value != null) SortTrackCollection(value);
+            }
+        }
+
+        private string _trackSearchText;
+        public string TrackSearchText
+        {
+            get { return _trackSearchText; }
+            set
+            {
+                _trackSearchText = value;
+                RaisePropertyChanged("TrackSearchText");
+                FilterTracksCollectionView(value);
+
+                //if searchtext is cleared, show all items
+            }
+        }
+
+        public ObservableCollection<Sorting> TracksSortList { get; } = new ObservableCollection<Sorting>(Sorting._tracksSortList);
+        readonly List<Track> _tracksCollectionCopy = new List<Track>();
+        readonly List<Track> _filteredTracksCollection = new List<Track>();
+
+        ObservableCollection<Playlist> _tracksViewSearchSuggestions = new ObservableCollection<Playlist>();
+        public ObservableCollection<Playlist> TracksViewSearchSuggestions
+        {
+            get => _tracksViewSearchSuggestions;
+            set
+            {
+                _tracksViewSearchSuggestions = value;
+                RaisePropertyChanged("TracksViewSearchSuggestions");
+            }
+        }
+
+        private AdvancedCollectionView _tracksCollectionView;
+        public AdvancedCollectionView TracksCollectionView
+        {
+            get => _tracksCollectionView;
+            set
+            {
+                _tracksCollectionView = value;
+                RaisePropertyChanged("TracksCollectionView");
+            }
+        }
+
+        #endregion
+
         #region Incremental loading
 
         //ObservableCollection<Playlist> PlaylistsFiltered;
@@ -255,11 +567,39 @@ namespace Spotify_search_helper.ViewModels
 
         #region External Calls
 
+        public void SelectedSearchItem(Playlist item)
+        {
+            SearchText = item.Title;
+            LoadPlaylistTracks(item);
+        }
+
         private void ScrollToPlaylistAlphabet(string alphabet)
         {
             if (AdvancedCollectionView != null && AdvancedCollectionView.Source != null)
             {
-                var item = AdvancedCollectionView.Where(c => ((Playlist)c).Title.ToLower().StartsWith(alphabet.ToLower())).FirstOrDefault();
+                object item = null;
+                if (alphabet == "#") {
+                    item = _playlistCollectionCopy.Where(c => c.Title.StartsWith("0") ||
+                    c.Title.StartsWith("1") ||
+                    c.Title.StartsWith("2") ||
+                    c.Title.StartsWith("3") ||
+                    c.Title.StartsWith("4") ||
+                    c.Title.StartsWith("5") ||
+                    c.Title.StartsWith("6") ||
+                    c.Title.StartsWith("7") ||
+                    c.Title.StartsWith("8") ||
+                    c.Title.StartsWith("9") ||
+                    c.Title.StartsWith("_") ||
+                    c.Title.StartsWith(".") ||
+                    c.Title.StartsWith("&") ||
+                    c.Title.StartsWith("$") ||
+                    c.Title.StartsWith("#") ||
+                    c.Title.StartsWith("@")).FirstOrDefault();
+                }
+                else 
+                {
+                    item = AdvancedCollectionView.Where(c => ((Playlist)c).Title.ToLower().StartsWith(alphabet.ToLower())).FirstOrDefault();
+                }
                 if (item != null) Views.MainPage.Current.ScrollToPlaylistAlphabet(item);
             }
         }
@@ -307,6 +647,29 @@ namespace Spotify_search_helper.ViewModels
 
         #region Properties
         private const int _searchSuggestionsLimit = 5;
+
+        private Playlist _currentPlaylist;
+        public Playlist CurrentPlaylist
+        {
+            get => _currentPlaylist;
+            set
+            {
+                _currentPlaylist = value;
+                RaisePropertyChanged("CurrentPlaylist");
+            }
+        }
+
+        private Sorting _currentSorting;
+        public Sorting CurrentSorting
+        {
+            get => _currentSorting;
+            set
+            {
+                _currentSorting = value;
+                RaisePropertyChanged("CurrentSorting");
+                if (value != null) SortPlaylistCollection(value);
+            }
+        }
 
         private int _selectedPlaylistsTracksCount;
         public int SelectedPlaylistsTracksCount
@@ -361,8 +724,43 @@ namespace Spotify_search_helper.ViewModels
             set
             {
                 if (!value && IsSelectedPlaylistExpanded) IsSelectedPlaylistExpanded = false;
+                if (!value && IsTracksView) IsTracksView = false;
                 _isPopupActive = value;
                 RaisePropertyChanged("IsPopupActive");
+            }
+        }
+
+        private bool _isTracksView;
+        public bool IsTracksView
+        {
+            get => _isTracksView;
+            set
+            {
+                if (IsSelectedPlaylistExpanded) IsSelectedPlaylistExpanded = false;
+                _isTracksView = value;
+                RaisePropertyChanged("IsTracksView");
+                if (!value) ResetTracksView();
+            }
+        }
+
+        private bool _isSelectAllTracksChecked;
+        public bool IsSelectAllTracksChecked
+        {
+            get => _isSelectAllTracksChecked;
+            set
+            {
+                _isSelectAllTracksChecked = value;
+                RaisePropertyChanged("IsSelectAllTracksChecked");
+                if (value)
+                {
+                    foreach (var item in TracksCollectionView)
+                        ((Track)item).IsSelected = true;
+                }
+                else
+                {
+                    foreach (var item in TracksCollectionView)
+                        ((Track)item).IsSelected = false;
+                }
             }
         }
 
@@ -499,6 +897,40 @@ namespace Spotify_search_helper.ViewModels
 
         #region Methods
 
+        private async void LoadPlaylistTracks(Playlist item)
+        {
+            IsLoading = true;
+
+            if (item != null)
+            {
+                if (TracksCollectionView == null)
+                    TracksCollectionView = new AdvancedCollectionView();
+                else
+                    TracksCollectionView.Clear();
+
+                if (CurrentTrackSorting == null) CurrentSorting = TracksSortList.FirstOrDefault();
+                using (TracksCollectionView.DeferRefresh())
+                {
+                    CurrentPlaylist = item;
+                    IsPopupActive = true;
+                    IsTracksView = true;
+                    var items = await DataSource.Current.GetSpotifyTracks(item.Id);
+                    if (items != null)
+                    {
+                        _tracksCollectionCopy.Clear();
+                        _tracksCollectionCopy.AddRange(items);
+
+                        foreach (var track in items)
+                        {
+                            TracksCollectionView.Add(track);
+                        }
+                    }
+                }
+            }
+
+            IsLoading = false;
+        }
+
         private void UpdateSearchSuggestions()
         {
             //clear current list
@@ -543,7 +975,7 @@ namespace Spotify_search_helper.ViewModels
         private async void PlayItem(Playlist item)
         {
             IsLoading = true;
-            await DataSource.Current.PlaySpotifyItem(item.Uri);
+            await DataSource.Current.PlaySpotifyItems(new List<Playlist> { item });
             IsLoading = false;
         }
 
@@ -628,77 +1060,6 @@ namespace Spotify_search_helper.ViewModels
 
         #region collections
 
-        ObservableCollection<Playlist> _searchSuggestionCollection = new ObservableCollection<Playlist>();
-        public ObservableCollection<Playlist> SearchSuggestionCollection
-        {
-            get => _searchSuggestionCollection;
-            set
-            {
-                _searchSuggestionCollection = value;
-                RaisePropertyChanged("SearchSuggestionCollection");
-            }
-        }
-
-        private ObservableCollection<string> _alphabet = new ObservableCollection<string>();
-        public ObservableCollection<string> Alphabet
-        {
-            get => _alphabet;
-            set
-            {
-                _alphabet = value;
-                RaisePropertyChanged("Alphabet");
-            }
-        }
-
-        private void SelectedPlaylistCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (SelectedPlaylistCollection.Count > 0)
-                HasSelectedItems = true;
-            else
-            {
-                HasSelectedItems = false;
-                IsSelectAllChecked = false;
-
-                if (IsSelectedPlaylistExpanded)
-                {
-                    IsSelectedPlaylistExpanded = false;
-                    IsPopupActive = false;
-                }
-
-            }
-
-            //update selected state
-            int totalTracks = 0;
-
-            if (e.NewItems != null)
-            {
-                foreach (var item in e.NewItems)
-                {
-                    if (item is Playlist playlist)
-                    {
-                        playlist.IsSelected = true;
-
-                    }
-                }
-            }
-
-            if (e.OldItems != null)
-            {
-                foreach (var item in e.OldItems)
-                {
-                    if (item is Playlist playlist)
-                        playlist.IsSelected = false;
-                }
-            }
-
-            foreach (var item in SelectedPlaylistCollection)
-            {
-                totalTracks += item.ItemsCount;
-            }
-
-            SelectedPlaylistsTracksCount = totalTracks;
-        }
-
         public IncrementalLoadingCollection<PlaylistSource, Playlist> _myPlaylistSource;
         public IncrementalLoadingCollection<PlaylistSource, Playlist> MyPlaylistSource
         {
@@ -707,17 +1068,6 @@ namespace Spotify_search_helper.ViewModels
             {
                 _myPlaylistSource = value;
                 RaisePropertyChanged("MyPlaylistSource");
-            }
-        }
-
-        ObservableCollection<Playlist> _selectedPlaylistCollection = new ObservableCollection<Playlist>();
-        public ObservableCollection<Playlist> SelectedPlaylistCollection
-        {
-            get => _selectedPlaylistCollection;
-            set
-            {
-                _selectedPlaylistCollection = value;
-                RaisePropertyChanged("SelectedPlaylistCollection");
             }
         }
 
@@ -735,16 +1085,95 @@ namespace Spotify_search_helper.ViewModels
             set { _categoryList = value; RaisePropertyChanged("CategoryList"); }
         }
 
-        ObservableCollection<PlaylistCategory> _playlistCategoryList = new ObservableCollection<PlaylistCategory>();
-        public ObservableCollection<PlaylistCategory> PlaylistCategoryList
-        {
-            get => _playlistCategoryList;
-            set { _playlistCategoryList = value; RaisePropertyChanged("PlaylistCategoryList"); }
-        }
-
         #endregion
 
         #region Commands
+
+        private RelayCommand<Track> _tracksViewItemClickCommand;
+        public RelayCommand<Track> TracksViewItemClickCommand
+        {
+            get
+            {
+                if (_tracksViewItemClickCommand == null)
+                {
+                    _tracksViewItemClickCommand = new RelayCommand<Track>((item) =>
+                    {
+                        if (item != null) item.IsSelected = !item.IsSelected;
+                    });
+                }
+                return _tracksViewItemClickCommand;
+            }
+        }
+
+        private RelayCommand _playSelectedTracksCommand;
+        public RelayCommand PlaySelectedTracksCommand
+        {
+            get
+            {
+                if (_playSelectedTracksCommand == null)
+                {
+                    _playSelectedTracksCommand = new RelayCommand(() =>
+                    {
+                        if (_tracksCollectionCopy.Where(c => c.IsSelected).Count() > 0)
+                            PlayTracks(_tracksCollectionCopy.Where(c => c.IsSelected));
+                        else
+                            Helpers.DisplayDialog("No items selected", "Please select some items first.");
+                    });
+                }
+                return _playSelectedTracksCommand;
+            }
+        }
+
+        private RelayCommand<Track> _removeTrackFromCurrentPlaylistCommand;
+        public RelayCommand<Track> RemoveTrackFromCurrentPlaylistCommand
+        {
+            get
+            {
+                if (_removeTrackFromCurrentPlaylistCommand == null)
+                {
+                    _removeTrackFromCurrentPlaylistCommand = new RelayCommand<Track>((item) =>
+                    {
+                        RemoveTracksFromCurrentPlaylist(new List<Track> { item });
+                    });
+                }
+                return _removeTrackFromCurrentPlaylistCommand;
+            }
+        }
+
+        private RelayCommand<Track> _removeSelectedFromCurrentPlaylistCommand;
+        public RelayCommand<Track> RemoveSelectedFromCurrentPlaylistCommand
+        {
+            get
+            {
+                if (_removeSelectedFromCurrentPlaylistCommand == null)
+                {
+                    _removeSelectedFromCurrentPlaylistCommand = new RelayCommand<Track>((item) =>
+                    {
+                        if (_tracksCollectionCopy.Where(c => c.IsSelected).Count() > 0)
+                            RemoveTracksFromCurrentPlaylist(_tracksCollectionCopy.Where(c => c.IsSelected));
+                        else
+                            Helpers.DisplayDialog("No items selected", "Please select some items first.");
+                    });
+                }
+                return _removeSelectedFromCurrentPlaylistCommand;
+            }
+        }
+
+        private RelayCommand<Playlist> _playlistItemClickCommand;
+        public RelayCommand<Playlist> PlaylistItemClickCommand
+        {
+            get
+            {
+                if (_playlistItemClickCommand == null)
+                {
+                    _playlistItemClickCommand = new RelayCommand<Playlist>((item) =>
+                    {
+                        LoadPlaylistTracks(item);
+                    });
+                }
+                return _playlistItemClickCommand;
+            }
+        }
 
         private RelayCommand _loginCommand;
         public RelayCommand LoginCommand
@@ -759,6 +1188,25 @@ namespace Spotify_search_helper.ViewModels
                     });
                 }
                 return _loginCommand;
+            }
+        }
+
+        private RelayCommand<Track> _playTrackCommand;
+        public RelayCommand<Track> PlayTrackCommand
+        {
+            get
+            {
+                if (_playTrackCommand == null)
+                {
+                    _playTrackCommand = new RelayCommand<Track>((item) =>
+                    {
+                        if (item != null)
+                        {
+                            PlayCurrentPlaylistTracks(item);
+                        }
+                    });
+                }
+                return _playTrackCommand;
             }
         }
 
@@ -903,6 +1351,25 @@ namespace Spotify_search_helper.ViewModels
                     });
                 }
                 return _closeButtonCommand;
+            }
+        }
+
+        private RelayCommand _closeTracksButtonCommand;
+        public RelayCommand CloseTracksButtonCommand
+        {
+            get
+            {
+                if (_closeTracksButtonCommand == null)
+                {
+                    _closeTracksButtonCommand = new RelayCommand(() =>
+                    {
+                        IsPopupActive = false;
+                        IsTracksView = false;
+                        _tracksCollectionCopy.Clear();
+                        TracksCollectionView.Clear();
+                    });
+                }
+                return _closeTracksButtonCommand;
             }
         }
 
