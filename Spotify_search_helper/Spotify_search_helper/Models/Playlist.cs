@@ -37,7 +37,5 @@ namespace Spotify_search_helper.Models
             get { return _isSelected; }
             set { SetProperty(this._isSelected, value, () => this._isSelected = value); }
         }
-
-        
     }
 }

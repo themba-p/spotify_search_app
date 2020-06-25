@@ -8,6 +8,7 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml.Input;
 using System.Numerics;
+using Windows.ApplicationModel.Core;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -71,6 +72,13 @@ namespace Spotify_search_helper.Views
             
         }
 
+        public void ScrollPlaylistViewToTop()
+        {
+            if (PlaylistContentView.Items != null && PlaylistContentView.Items.FirstOrDefault() != null)
+                PlaylistContentView.ScrollIntoView(PlaylistContentView.Items.FirstOrDefault());
+
+        }
+
         public void ToggleDarkTheme(bool isEnabled)
         {
             if (isEnabled)
@@ -91,6 +99,27 @@ namespace Spotify_search_helper.Views
         private void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
             //Display details of playlist, Tracks, playlist info etc.
+            if (args.SelectedItem != null && args.SelectedItem is Models.Playlist item)
+            {
+                ViewModels.MainPageViewModel.Current.SelectedSearchItem(item);
+            }
+        }
+
+        private void TrackSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            ViewModels.MainPageViewModel.Current.FilterTracksCollectionView(args.QueryText);
+        }
+
+        private void TrackSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            ViewModels.MainPageViewModel.Current.TrackSuggestionChosen(args.SelectedItem as Models.Track);
+        }
+
+        public void ScrollTracksViewToTop()
+        {
+            if(TracksListView.Items != null && TracksListView.Items.FirstOrDefault() != null)
+            TracksListView.ScrollIntoView(TracksListView.Items.FirstOrDefault(), ScrollIntoViewAlignment.Leading);
+
         }
     }
 

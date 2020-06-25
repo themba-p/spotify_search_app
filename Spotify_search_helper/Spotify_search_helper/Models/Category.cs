@@ -49,7 +49,7 @@ namespace Spotify_search_helper.Models
                 new Category(CategoryType.MadeForYou,
                 "Video playlist",
                 "Videos from Spotify playlists.",
-                "/Assets/made_for_you.png"),
+                "/Assets/video.png"),
                 new Category(CategoryType.Convert,
                 "Convert files",
                 "Find your local files on Spotify.",
