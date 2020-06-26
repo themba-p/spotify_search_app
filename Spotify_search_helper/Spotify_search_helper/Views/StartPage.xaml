@@ -1,0 +1,58 @@
+﻿<Page
+    x:Class="Spotify_search_helper.Views.StartPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Spotify_search_helper.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
+    xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
+    mc:Ignorable="d"
+    DataContext="{Binding StartPageInstance, Source={StaticResource Locator}}"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:BoolToObjectConverter x:Key="BoolToVisibilityInverseConverter" TrueValue="Collapsed" FalseValue="Visible"/>
+    </Page.Resources>
+    
+    <Grid>
+        <Grid.Background>
+            <media:AcrylicBrush
+                      BackgroundSource="Backdrop"
+                      TintColor="{ThemeResource TintColor}"
+                      TintOpacity="0.95"
+                      BlurAmount="12"/>
+        </Grid.Background>
+        <Grid x:Name="NotLoggedInView"
+              Grid.ColumnSpan="100"
+              Grid.RowSpan="100"
+              Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityInverseConverter}, FallbackValue=collapsed}">
+
+
+            <StackPanel MaxWidth="400" VerticalAlignment="Center">
+                <TextBlock Text="The app requires a Spotify premium account to function, please login with the button below to continue." FontSize="24" TextWrapping="WrapWholeWords"/>
+                <Button RequestedTheme="Dark" 
+                        Background="{ThemeResource BrandColorThemeBrush}"
+                        Margin="0 12" 
+                        Command="{Binding LoginCommand}"
+                        Padding="24 16" 
+                        CornerRadius="12" 
+                        Width="200"
+                        IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
+                    Login with Spotify
+                </Button>
+            </StackPanel>
+        </Grid>
+
+
+        <ProgressBar Grid.ColumnSpan="100"
+                     IsIndeterminate="{Binding IsLoading}"
+                     Foreground="{ThemeResource ItemPrimaryForeground}"
+                     Margin="0 0 0 0" 
+                     VerticalAlignment="Top"
+            Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+    </Grid>
+</Page>

@@ -13,102 +13,74 @@ namespace Spotify_search_helper.Data
 {
     class Authentication
     {
-        private static SpotifyClient _spotifyClient;
-        public static SpotifyClient SpotifyClient
-        {
-            get => _spotifyClient;
-            set => _spotifyClient = value;
-        }
+        public static SpotifyClient SpotifyClient { get; set; }
 
         private static readonly string CredentialsPath = ApplicationData.Current.LocalFolder.Path + "\\credentials.json";
         private static string clientId = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_ID");
         private static string clientSecret = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_SECRET");
         private static readonly EmbedIOAuthServer _server = new EmbedIOAuthServer(new Uri("http://localhost:5000/callback"), 5000);
 
-        public static async Task<SpotifyClient> GetClient()
+        /// <summary>
+        /// Checks if user is authenticated
+        /// </summary>
+        /// <returns>
+        /// Null if failed, Profile if successful
+        /// </returns>
+        public static async Task<PrivateUser> IsAuthenticated()
+        {
+            //check if file with token exists, if it does not exist, login will be shown
+            if (!File.Exists(CredentialsPath))
+                return null;
+
+            var json = await File.ReadAllTextAsync(CredentialsPath);
+            var token = JsonConvert.DeserializeObject<AuthorizationCodeTokenResponse>(json);
+
+            CheckCliendSecretId();
+
+            if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
+                return null;
+
+            var authenticator = new AuthorizationCodeAuthenticator(clientId, clientSecret, token);
+            authenticator.TokenRefreshed += (sender, tokenx) => File.WriteAllText(CredentialsPath, JsonConvert.SerializeObject(tokenx));
+
+            //might throw an error if user revoked access to their spotify account
+            var config = SpotifyClientConfig.CreateDefault()
+              .WithAuthenticator(authenticator);
+
+            SpotifyClient = new SpotifyClient(config);
+            //try and get user profile
+            return await SpotifyClient.UserProfile.Current();
+        }
+
+        public static async Task<SpotifyClient> GetSpotifyClientAsync()
         {
             if (SpotifyClient == null)
-                await Auth();
+                await Authenticate();
 
-            //check if spotify client is still valid or has access been revoked
+            //check if client is valid
             try
             {
                 await SpotifyClient.UserProfile.Current();
                 return SpotifyClient;
-                //success, return client
             }
             catch (Exception)
             {
                 //error, try to re-authenticate
-                await Auth(true);
-                return SpotifyClient;
+                return await Authenticate();
             }
-
         }
 
-
-        //private static async void ReAuthenticate()
-        //{
-        //    //delete existing file
-        //    await StartAuthentication();
-        //}
-
-        private static async Task Auth(bool reauthenticate = false)
+        public static async Task<SpotifyClient> Authenticate()
         {
+            CheckCliendSecretId();
+
             if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
-            {
-                if(string.IsNullOrEmpty(clientId))
-                {
-                    Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_ID", "de354ca4295141c6ad3a7a07086fbd32");
-                    clientId = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_ID");
-                }
+                return null;
 
-                if (string.IsNullOrEmpty(clientSecret))
-                {
-                    Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_SECRET", "474efaae7656470b81a4266bebbfc4ad");
-                    clientSecret = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_SECRET");
-                }
-
-                if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
-                    throw new NullReferenceException();
-            }
-
-            await Start(reauthenticate);
-        }
-
-        private static async Task Start(bool reauthenticate = false)
-        {
-            try
-            {
-                if (!reauthenticate && File.Exists(CredentialsPath))
-                {
-                    var json = await File.ReadAllTextAsync(CredentialsPath);
-                    var token = JsonConvert.DeserializeObject<AuthorizationCodeTokenResponse>(json);
-
-                    var authenticator = new AuthorizationCodeAuthenticator(clientId, clientSecret, token);
-                    authenticator.TokenRefreshed += (sender, tokenx) => File.WriteAllText(CredentialsPath, JsonConvert.SerializeObject(tokenx));
-
-                    //might throw an error if user revoked access to their spotify account
-                    var config = SpotifyClientConfig.CreateDefault()
-                      .WithAuthenticator(authenticator);
-
-                    SpotifyClient = new SpotifyClient(config);
-                }
-                else
-                    await StartAuthentication();
-            }
-            catch (Exception e)
-            {
-                ViewModels.Helpers.DisplayDialog("Authentication error", e.Message);
-            }
-        }
-
-        private static async Task StartAuthentication()
-        {
             var request = new LoginRequest(_server.BaseUri, clientId, LoginRequest.ResponseType.Code)
             {
                 Scope = new List<string> { UserReadPrivate, PlaylistReadPrivate, UserModifyPlaybackState,
-                    UserLibraryModify, UserLibraryRead, PlaylistModifyPrivate, 
+                    UserLibraryModify, UserLibraryRead, PlaylistModifyPrivate,
                     PlaylistModifyPublic }
             };
 
@@ -145,24 +117,155 @@ namespace Spotify_search_helper.Data
                 {
                     //
                 }
-            }
-            else if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
-            {
-                ViewModels.Helpers.DisplayDialog("Authentication error!", "Error code: " + WebAuthenticationResult.ResponseErrorDetail + ", please try again.");
-            }
-            else if(WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.UserCancel)
-            {
-                SpotifyClient = null;
-                DataSource.AuthFailed();
-
-                //show that user can't use app if they are not logged in
+                return SpotifyClient;
             }
             else
-            {
-                ViewModels.Helpers.DisplayDialog("Authentication error!", "Error code: " + WebAuthenticationResult.ResponseErrorDetail + ", please try again.");
-            }
-            DataSource.AuthComplete();
+                return null;
+            //else if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
+            //{
+            //    ViewModels.Helpers.DisplayDialog("Authentication error!", "Error code: " + WebAuthenticationResult.ResponseErrorDetail + ", please try again.");
+            //}
+            //else if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.UserCancel)
+            //{
+            //    SpotifyClient = null;
+            //    DataSource.AuthFailed();
+
+            //    //show that user can't use app if they are not logged in
+            //}
+            //else
+            //{
+            //    ViewModels.Helpers.DisplayDialog("Authentication error!", "Error code: " + WebAuthenticationResult.ResponseErrorDetail + ", please try again.");
+            //}
         }
+
+        private static void CheckCliendSecretId()
+        {
+            if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
+            {
+                if (string.IsNullOrEmpty(clientId))
+                {
+                    Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_ID", "de354ca4295141c6ad3a7a07086fbd32");
+                    clientId = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_ID");
+                }
+
+                if (string.IsNullOrEmpty(clientSecret))
+                {
+                    Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_SECRET", "474efaae7656470b81a4266bebbfc4ad");
+                    clientSecret = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_SECRET");
+                }
+            }
+        }
+
+        //private static async Task Auth(bool reauthenticate = false)
+        //{
+        //    if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
+        //    {
+        //        if(string.IsNullOrEmpty(clientId))
+        //        {
+        //            Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_ID", "de354ca4295141c6ad3a7a07086fbd32");
+        //            clientId = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_ID");
+        //        }
+
+        //        if (string.IsNullOrEmpty(clientSecret))
+        //        {
+        //            Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_SECRET", "474efaae7656470b81a4266bebbfc4ad");
+        //            clientSecret = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_SECRET");
+        //        }
+
+        //        if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
+        //            throw new NullReferenceException();
+        //    }
+
+        //    await Start(reauthenticate);
+        //}
+
+        //private static async Task Start(bool reauthenticate = false)
+        //{
+        //    try
+        //    {
+        //        if (!reauthenticate && File.Exists(CredentialsPath))
+        //        {
+        //            var json = await File.ReadAllTextAsync(CredentialsPath);
+        //            var token = JsonConvert.DeserializeObject<AuthorizationCodeTokenResponse>(json);
+
+        //            var authenticator = new AuthorizationCodeAuthenticator(clientId, clientSecret, token);
+        //            authenticator.TokenRefreshed += (sender, tokenx) => File.WriteAllText(CredentialsPath, JsonConvert.SerializeObject(tokenx));
+
+        //            //might throw an error if user revoked access to their spotify account
+        //            var config = SpotifyClientConfig.CreateDefault()
+        //              .WithAuthenticator(authenticator);
+
+        //            SpotifyClient = new SpotifyClient(config);
+        //        }
+        //        else
+        //            await StartAuthentication();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        ViewModels.Helpers.DisplayDialog("Authentication error", e.Message);
+        //    }
+        //}
+
+        //private static async Task StartAuthentication()
+        //{
+        //    var request = new LoginRequest(_server.BaseUri, clientId, LoginRequest.ResponseType.Code)
+        //    {
+        //        Scope = new List<string> { UserReadPrivate, PlaylistReadPrivate, UserModifyPlaybackState,
+        //            UserLibraryModify, UserLibraryRead, PlaylistModifyPrivate, 
+        //            PlaylistModifyPublic }
+        //    };
+
+        //    Uri uri = request.ToUri();
+
+        //    System.Uri StartUri = uri;
+        //    System.Uri EndUri = new Uri("http://localhost:5000/callback");
+
+        //    WebAuthenticationResult WebAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(
+        //                                            WebAuthenticationOptions.None,
+        //                                            StartUri,
+        //                                            EndUri);
+        //    if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
+        //    {
+        //        var index = WebAuthenticationResult.ResponseData.IndexOf("code=");
+        //        string code = WebAuthenticationResult.ResponseData.Substring(index + 5);
+
+        //        var config = SpotifyClientConfig.CreateDefault();
+        //        var tokenResponse = await new OAuthClient(config).RequestToken(
+        //      new AuthorizationCodeTokenRequest(
+        //        clientId, clientSecret, code, EndUri));
+
+        //        SpotifyClient = new SpotifyClient(tokenResponse.AccessToken);
+
+        //        try
+        //        {
+        //            if (!File.Exists(CredentialsPath))
+        //            {
+        //                await ApplicationData.Current.LocalFolder.CreateFileAsync("credentials.json");
+        //            }
+        //            await File.WriteAllTextAsync(CredentialsPath, JsonConvert.SerializeObject(tokenResponse));
+        //        }
+        //        catch (Exception)
+        //        {
+        //            //
+        //        }
+        //    }
+        //    else if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
+        //    {
+        //        ViewModels.Helpers.DisplayDialog("Authentication error!", "Error code: " + WebAuthenticationResult.ResponseErrorDetail + ", please try again.");
+        //    }
+        //    else if(WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.UserCancel)
+        //    {
+        //        SpotifyClient = null;
+        //        //DataSource.AuthFailed();
+
+        //        //show that user can't use app if they are not logged in
+        //    }
+        //    else
+        //    {
+        //        ViewModels.Helpers.DisplayDialog("Authentication error!", "Error code: " + WebAuthenticationResult.ResponseErrorDetail + ", please try again.");
+        //    }
+        //    //DataSource.AuthComplete();
+        //}
     }
 
 }

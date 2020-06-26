@@ -25,21 +25,25 @@ namespace Spotify_search_helper.Data
             Current = this;
         }
 
-        public async Task Initialize()
+        public async Task Authenticate()
         {
-            if (await Authentication.GetClient() != null)
-                ViewModels.MainPageViewModel.Current.IsLoading = false;
+            await Authentication.Authenticate();
         }
 
-        public static async void AuthComplete()
+        public async Task<bool> IsAuthenticated()
         {
-            await DataSource.Current.GetProfile();
-            ViewModels.MainPageViewModel.Current.IsLoading = false;
-        }
-
-        public static void AuthFailed()
-        {
-            throw new NotImplementedException();
+            try
+            {
+                var currentUser = await Authentication.IsAuthenticated();
+                Windows.UI.Xaml.Media.ImageSource image = null;
+                if (currentUser.Images != null) image = new Windows.UI.Xaml.Media.Imaging.BitmapImage(new Uri(currentUser.Images.FirstOrDefault().Url));
+                Profile = new ProfileUser(currentUser.Id, currentUser.DisplayName, image);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<ProfileUser> GetProfile()
@@ -50,7 +54,7 @@ namespace Spotify_search_helper.Data
                     return Profile;
                 else
                 {
-                    var spotify = await Authentication.GetClient();
+                    var spotify = await Authentication.GetSpotifyClientAsync();
                     if (spotify != null)
                     {
                         var user = await spotify.UserProfile.Current();
@@ -100,7 +104,7 @@ namespace Spotify_search_helper.Data
                 Limit = limit,
                 Offset = startIndex
             };
-            var spotify = await Authentication.GetClient();
+            var spotify = await Authentication.GetSpotifyClientAsync();
 
             if (spotify != null)
             {
@@ -176,7 +180,7 @@ namespace Spotify_search_helper.Data
         {
             try
             {
-                var spotify = await Authentication.GetClient();
+                var spotify = await Authentication.Authenticate();
 
                 if (spotify != null)
                 {
@@ -239,7 +243,7 @@ namespace Spotify_search_helper.Data
         {
             try
             {
-                var spotify = await Authentication.GetClient();
+                var spotify = await Authentication.GetSpotifyClientAsync();
                 bool result;
                 if (spotify == null) return false;
                 if (uris.Count > 0)
@@ -272,7 +276,7 @@ namespace Spotify_search_helper.Data
             try
             {
                 List<Track> results = new List<Track>();
-                var spotify = await Authentication.GetClient();
+                var spotify = await Authentication.GetSpotifyClientAsync();
 
                 if (spotify != null)
                 {
@@ -368,7 +372,7 @@ namespace Spotify_search_helper.Data
             if (uris == null || uris.Count <= 0)
                 return false;
 
-            var spotify = await Authentication.GetClient();
+            var spotify = await Authentication.GetSpotifyClientAsync();
             if (spotify == null)
                 return false;
 
@@ -409,7 +413,7 @@ namespace Spotify_search_helper.Data
         private async void Load()
         {
             // we need the first page
-            var spotify = await Authentication.GetClient();
+            var spotify = await Authentication.Authenticate();
             PlaylistCurrentUsersRequest request = new PlaylistCurrentUsersRequest
             {
                 Limit = limit,
@@ -469,7 +473,7 @@ namespace Spotify_search_helper.Data
                         startIndex += _playlist.Count - startIndex;
 
                         //get the rest of the items from spotify
-                        var spotify = await Authentication.GetClient();
+                        var spotify = await Authentication.Authenticate();
                         var result = await spotify.Playlists.CurrentUsers(request);
                         if (result != null && result.Items != null)
                         {
@@ -481,7 +485,7 @@ namespace Spotify_search_helper.Data
             }
             else
             {
-                var spotify = await Authentication.GetClient();
+                var spotify = await Authentication.Authenticate();
                 var result = await spotify.Playlists.CurrentUsers(request);
                 if (result != null && result.Items != null)
                 {

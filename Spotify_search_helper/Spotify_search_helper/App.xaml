@@ -16,8 +16,14 @@
                     <Color x:Key="Status-bar-color">#f1f1f1</Color>
                     <Color x:Key="Status-bar-foreground">#000</Color>
                     <SolidColorBrush x:Key="BorderThemeBrush" Color="#DCDCDC"/>
-                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#e9e9e9"/>
+                    <SolidColorBrush x:Key="PrimaryThemeBrush" Color="#1DB954"/>
+                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush2" Color="#e9e9e9"/>
                     <Color x:Key="ApplicationPageBackgroundColor">#e9e9e9</Color>
+                    <AcrylicBrush x:Key="ApplicationPageBackgroundThemeBrush"
+                                        BackgroundSource="HostBackdrop"
+                                        TintColor="#FFEAEAEA"
+                                        TintOpacity="0.90" 
+                                        FallbackColor="#e9e9e9"/>
                     <SolidColorBrush x:Key="PlaceHolderTextThemeBrush" Color="#FFC7C7C7"/>
                     <Color x:Key="TintColor">#FFEAEAEA</Color>
                     <SolidColorBrush x:Key="ItemBackgroundThemeBrush" Color="#FFFFFF"/>
@@ -34,21 +40,19 @@
                 <ResourceDictionary x:Key="Dark">
                     <Color x:Key="Status-bar-color">#000</Color>
                     <Color x:Key="Status-bar-foreground">#FFDDDDDD</Color>
-                    <SolidColorBrush x:Key="BorderThemeBrush" Color="#1A1A1A"/>
+                    <SolidColorBrush x:Key="BorderThemeBrush" Color="Transparent"/>
                     <SolidColorBrush x:Key="PrimaryThemeBrush" Color="#1DB954"/>
                     <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush2" Color="#000000"/>
                     <Color x:Key="ApplicationPageBackgroundColor">#000000</Color>
                     <AcrylicBrush x:Key="ApplicationPageBackgroundThemeBrush"
                                         BackgroundSource="HostBackdrop"
-                                        TintColor="{ThemeResource TintColor}"
+                                        TintColor="#000000"
                                         TintOpacity="0.90" 
-                                        FallbackColor="{ThemeResource ApplicationPageBackgroundColor}"/>
+                                        FallbackColor="#000000"/>
                     <SolidColorBrush x:Key="PlaceHolderTextThemeBrush" Color="#FF444444"/>
                     <Color x:Key="TintColor">#000000</Color>
-                    <!--<SolidColorBrush x:Key="ItemBackgroundThemeBrush" Color="#090909"/>-->
                     <SolidColorBrush x:Key="ItemBackgroundThemeBrush" Color="#161618"/>
                     <SolidColorBrush x:Key="SecondaryItemBackgroundThemeBrush" Color="#1D1D20"/>
-                    <!--<SolidColorBrush x:Key="SecondaryItemBackgroundThemeBrush" Color="#141414"/>-->
                     <SolidColorBrush x:Key="SecondaryItemBackgroundAltThemeBrush" Color="#000000"/>
                     <SolidColorBrush x:Key="ItemPrimaryForeground" Color="#fff"/>
                     <SolidColorBrush x:Key="ItemSecondaryForeground" Color="#C6C6C6"/>

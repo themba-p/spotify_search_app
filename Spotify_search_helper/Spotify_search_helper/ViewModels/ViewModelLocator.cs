@@ -17,6 +17,9 @@ namespace Spotify_search_helper.ViewModels
     /// </summary>
     public class ViewModelLocator
     {
+        public const string StartPageKey = "StartPage";
+        public const string MainPageKey = "MainPage";
+
         ///<summary>
         ///Initialize a new instance of the ViewModelLocator class.
         ///</summary>
@@ -24,6 +27,9 @@ namespace Spotify_search_helper.ViewModels
         public ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
+            var nav = new NavigationService();
+            nav.Configure(StartPageKey, typeof(Views.StartPage));
+            nav.Configure(MainPageKey, typeof(Views.MainPage));
             if (ViewModelBase.IsInDesignModeStatic)
             {
                 // Create design time view services and models
@@ -33,8 +39,17 @@ namespace Spotify_search_helper.ViewModels
                 //create run time view services and models
             }
 
-            SimpleIoc.Default.Register<INavigationService, NavigationService>();
+            SimpleIoc.Default.Register<INavigationService>(() => nav);
             SimpleIoc.Default.Register<MainPageViewModel>();
+            SimpleIoc.Default.Register<StartPageViewModel>();
+        }
+
+        public StartPageViewModel StartPageInstance
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<StartPageViewModel>();
+            }
         }
 
         ///<summary>
@@ -43,7 +58,7 @@ namespace Spotify_search_helper.ViewModels
         /// <value>
         /// The MainPageViewModel
         /// </value>
-        public MainPageViewModel StartPageInstance
+        public MainPageViewModel MainPageInstance
         {
             get
             {
