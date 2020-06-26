@@ -9,6 +9,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml.Input;
 using System.Numerics;
 using Windows.ApplicationModel.Core;
+using Windows.UI.Xaml.Media.Animation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -25,6 +26,7 @@ namespace Spotify_search_helper.Views
         {
             this.InitializeComponent();
             Current = this;
+            Window.Current.SetTitleBar(DragGrid);
             Initialize();
 
             this.Loaded += MainPage_Loaded;
@@ -38,14 +40,49 @@ namespace Spotify_search_helper.Views
             ApplicationViewExtensions.SetTitle(this, string.Empty);
 
             var lightGreyBrush = (Color)Application.Current.Resources["Status-bar-foreground"];
-            var brandColor = (Color)Application.Current.Resources["Status-bar-color"];
+            var statusBarColor = (Color)Application.Current.Resources["Status-bar-color"];
+            var brandColor = (Color)Application.Current.Resources["BrandColorThemeColor"];
 
             ApplicationViewExtensions.SetTitle(this, "Spotify Companion");
             StatusBarExtensions.SetBackgroundOpacity(this, 0.8);
-            TitleBarExtensions.SetButtonBackgroundColor(this, brandColor);
+            TitleBarExtensions.SetButtonBackgroundColor(this, statusBarColor);
             TitleBarExtensions.SetButtonForegroundColor(this, lightGreyBrush);
-            TitleBarExtensions.SetBackgroundColor(this, brandColor);
+            TitleBarExtensions.SetBackgroundColor(this, statusBarColor);
             TitleBarExtensions.SetForegroundColor(this, lightGreyBrush);
+            TitleBarExtensions.SetButtonBackgroundColor(this, Colors.Transparent);
+            TitleBarExtensions.SetButtonHoverBackgroundColor(this, brandColor);
+            TitleBarExtensions.SetButtonHoverForegroundColor(this, Colors.White);
+        }
+
+        public void DoIt(object item)
+        {
+            try
+            {
+                ConnectedAnimation ConnectedAnimation = PlaylistContentView.PrepareConnectedAnimation("forwardAnimation", item, "connectedElement");
+                ConnectedAnimation.Configuration = new BasicConnectedAnimationConfiguration();
+                ConnectedAnimation.TryStart(destinationElement);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        public async void UndoIt(object item)
+        {
+            PlaylistContentView.ScrollIntoView(item, ScrollIntoViewAlignment.Default);
+            PlaylistContentView.UpdateLayout();
+
+            ConnectedAnimation ConnectedAnimation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("backwardsAnimation", destinationElement);
+            ConnectedAnimation.Completed += ConnectedAnimation_Completed;
+            ConnectedAnimation.Configuration = new BasicConnectedAnimationConfiguration();
+            await PlaylistContentView.TryStartConnectedAnimationAsync(ConnectedAnimation, item, "connectedElement");
+        }
+
+        private void ConnectedAnimation_Completed(ConnectedAnimation sender, object args)
+        {
+            ViewModels.MainPageViewModel.Current.IsPopupActive = false;
+            //OverlayPopup.Visibility = Visibility.Collapsed;
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
