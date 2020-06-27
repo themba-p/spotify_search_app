@@ -244,7 +244,6 @@ namespace Spotify_search_helper.Data
             try
             {
                 var spotify = await Authentication.GetSpotifyClientAsync();
-                bool result;
                 if (spotify == null) return false;
                 if (uris.Count > 0)
                 {
@@ -253,21 +252,32 @@ namespace Spotify_search_helper.Data
                         Uris = uris,
                         OffsetParam = new PlayerResumePlaybackRequest.Offset { Position = index },
                     };
-                    result = await spotify.Player.ResumePlayback(request);
 
-                    if (shuffle) await spotify.Player.SetShuffle(new PlayerShuffleRequest(true));
+                    if(await spotify.Player.ResumePlayback(request))
+                    {
+                        if (shuffle) await spotify.Player.SetShuffle(new PlayerShuffleRequest(true));
+                        return true;
+                    }
+                    else
+                    {
+                        return await ViewModels.Helpers.LaunchUri(uris[index]);
+                    }
+                    
                 }
                 else
                 {
                     ViewModels.Helpers.DisplayDialog("Cannot play items", "An error occured, could not play items. Please give it another shot and make sure your internet connection is working");
                     return false;
                 }
-                return result;
             }
             catch (Exception e)
             {
-                ViewModels.Helpers.DisplayDialog("Cannot play items", e.Message);
-                return false;
+                if (!await ViewModels.Helpers.LaunchUri(uris[index]))
+                {
+                    ViewModels.Helpers.DisplayDialog("Cannot play items", e.Message);
+                    return false;
+                }
+                return true;
             }
         }
 
