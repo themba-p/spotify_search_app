@@ -372,7 +372,7 @@ namespace Spotify_search_helper.ViewModels
             if (CurrentPlaylist != null)
             {
                 int index;
-                if (CurrentTrackSorting != null || !string.IsNullOrEmpty(TrackSearchText))
+                if (CurrentTrackSorting != null && _filteredTracksCollection.Count != 0 || !string.IsNullOrEmpty(TrackSearchText))
                 {
                     if (item != null)
                         index = _filteredTracksCollection.IndexOf(item);

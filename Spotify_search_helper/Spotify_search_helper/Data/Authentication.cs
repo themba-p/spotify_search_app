@@ -144,128 +144,17 @@ namespace Spotify_search_helper.Data
             {
                 if (string.IsNullOrEmpty(clientId))
                 {
-                    Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_ID", "de354ca4295141c6ad3a7a07086fbd32");
+                    Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_ID", "");
                     clientId = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_ID");
                 }
 
                 if (string.IsNullOrEmpty(clientSecret))
                 {
-                    Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_SECRET", "474efaae7656470b81a4266bebbfc4ad");
+                    Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_SECRET", "");
                     clientSecret = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_SECRET");
                 }
             }
         }
-
-        //private static async Task Auth(bool reauthenticate = false)
-        //{
-        //    if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
-        //    {
-        //        if(string.IsNullOrEmpty(clientId))
-        //        {
-        //            Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_ID", "de354ca4295141c6ad3a7a07086fbd32");
-        //            clientId = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_ID");
-        //        }
-
-        //        if (string.IsNullOrEmpty(clientSecret))
-        //        {
-        //            Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_SECRET", "474efaae7656470b81a4266bebbfc4ad");
-        //            clientSecret = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_SECRET");
-        //        }
-
-        //        if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
-        //            throw new NullReferenceException();
-        //    }
-
-        //    await Start(reauthenticate);
-        //}
-
-        //private static async Task Start(bool reauthenticate = false)
-        //{
-        //    try
-        //    {
-        //        if (!reauthenticate && File.Exists(CredentialsPath))
-        //        {
-        //            var json = await File.ReadAllTextAsync(CredentialsPath);
-        //            var token = JsonConvert.DeserializeObject<AuthorizationCodeTokenResponse>(json);
-
-        //            var authenticator = new AuthorizationCodeAuthenticator(clientId, clientSecret, token);
-        //            authenticator.TokenRefreshed += (sender, tokenx) => File.WriteAllText(CredentialsPath, JsonConvert.SerializeObject(tokenx));
-
-        //            //might throw an error if user revoked access to their spotify account
-        //            var config = SpotifyClientConfig.CreateDefault()
-        //              .WithAuthenticator(authenticator);
-
-        //            SpotifyClient = new SpotifyClient(config);
-        //        }
-        //        else
-        //            await StartAuthentication();
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        ViewModels.Helpers.DisplayDialog("Authentication error", e.Message);
-        //    }
-        //}
-
-        //private static async Task StartAuthentication()
-        //{
-        //    var request = new LoginRequest(_server.BaseUri, clientId, LoginRequest.ResponseType.Code)
-        //    {
-        //        Scope = new List<string> { UserReadPrivate, PlaylistReadPrivate, UserModifyPlaybackState,
-        //            UserLibraryModify, UserLibraryRead, PlaylistModifyPrivate, 
-        //            PlaylistModifyPublic }
-        //    };
-
-        //    Uri uri = request.ToUri();
-
-        //    System.Uri StartUri = uri;
-        //    System.Uri EndUri = new Uri("http://localhost:5000/callback");
-
-        //    WebAuthenticationResult WebAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(
-        //                                            WebAuthenticationOptions.None,
-        //                                            StartUri,
-        //                                            EndUri);
-        //    if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
-        //    {
-        //        var index = WebAuthenticationResult.ResponseData.IndexOf("code=");
-        //        string code = WebAuthenticationResult.ResponseData.Substring(index + 5);
-
-        //        var config = SpotifyClientConfig.CreateDefault();
-        //        var tokenResponse = await new OAuthClient(config).RequestToken(
-        //      new AuthorizationCodeTokenRequest(
-        //        clientId, clientSecret, code, EndUri));
-
-        //        SpotifyClient = new SpotifyClient(tokenResponse.AccessToken);
-
-        //        try
-        //        {
-        //            if (!File.Exists(CredentialsPath))
-        //            {
-        //                await ApplicationData.Current.LocalFolder.CreateFileAsync("credentials.json");
-        //            }
-        //            await File.WriteAllTextAsync(CredentialsPath, JsonConvert.SerializeObject(tokenResponse));
-        //        }
-        //        catch (Exception)
-        //        {
-        //            //
-        //        }
-        //    }
-        //    else if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
-        //    {
-        //        ViewModels.Helpers.DisplayDialog("Authentication error!", "Error code: " + WebAuthenticationResult.ResponseErrorDetail + ", please try again.");
-        //    }
-        //    else if(WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.UserCancel)
-        //    {
-        //        SpotifyClient = null;
-        //        //DataSource.AuthFailed();
-
-        //        //show that user can't use app if they are not logged in
-        //    }
-        //    else
-        //    {
-        //        ViewModels.Helpers.DisplayDialog("Authentication error!", "Error code: " + WebAuthenticationResult.ResponseErrorDetail + ", please try again.");
-        //    }
-        //    //DataSource.AuthComplete();
-        //}
     }
 
 }
