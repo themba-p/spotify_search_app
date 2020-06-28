@@ -2,13 +2,8 @@
 using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-
 using Microsoft.Toolkit.Uwp.UI.Extensions;
 using Windows.UI;
-using Windows.UI.Composition;
-using Windows.UI.Xaml.Input;
-using System.Numerics;
-using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml.Media.Animation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -54,6 +49,52 @@ namespace Spotify_search_helper.Views
             TitleBarExtensions.SetButtonHoverForegroundColor(this, Colors.White);
         }
 
+        public async void ShowCreatePlaylistDialogAsync()
+        {
+            MergePlaylistDialog dialog = new MergePlaylistDialog();
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                //how to get text
+            }
+            else
+            {
+                dialog.Hide();
+            }
+        }
+
+        public void HideCreatePlaylistDialog()
+        {
+            if (MergePlaylistDialog.Current != null)
+                MergePlaylistDialog.Current.Hide();
+        }
+
+        public async void ShowDeleteConfirmDialog()
+        {
+            ContentDialog dialog = new ContentDialog
+            {
+                Title = "Unfollow playlists?",
+                Content = "Are you sure you want to unfollow the selected playlists?",
+                CloseButtonText = "Cancel",
+                PrimaryButtonText = "Unfollow",
+                DefaultButton = ContentDialogButton.Primary,
+                
+            };
+
+            var result = await dialog.ShowAsync();
+            switch (result)
+            {
+                case ContentDialogResult.None:
+                    break;
+                case ContentDialogResult.Primary:
+                    ViewModels.MainPageViewModel.Current.UnfollowSelectedPlaylists();
+                    break;
+                case ContentDialogResult.Secondary:
+                    break;
+            }
+        }
+
         public void DoIt(object item)
         {
             try
@@ -79,15 +120,11 @@ namespace Spotify_search_helper.Views
             await PlaylistContentView.TryStartConnectedAnimationAsync(ConnectedAnimation, item, "connectedElement");
         }
 
-        private void ConnectedAnimation_Completed(ConnectedAnimation sender, object args)
+        public void ScrollTracksViewToTop()
         {
-            ViewModels.MainPageViewModel.Current.IsPopupActive = false;
-            //OverlayPopup.Visibility = Visibility.Collapsed;
-        }
+            if (TracksListView.Items != null && TracksListView.Items.FirstOrDefault() != null)
+                TracksListView.ScrollIntoView(TracksListView.Items.FirstOrDefault(), ScrollIntoViewAlignment.Leading);
 
-        private void MainPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            ViewModels.MainPageViewModel.Current.LoadTheme();
         }
 
         public void ScrollSelectedPlaylistViewToTop()
@@ -106,14 +143,12 @@ namespace Spotify_search_helper.Views
         public void ScrollToPlaylistAlphabet(object item)
         {
             PlaylistContentView.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
-            
         }
 
         public void ScrollPlaylistViewToTop()
         {
             if (PlaylistContentView.Items != null && PlaylistContentView.Items.FirstOrDefault() != null)
                 PlaylistContentView.ScrollIntoView(PlaylistContentView.Items.FirstOrDefault());
-
         }
 
         public void ToggleDarkTheme(bool isEnabled)
@@ -152,11 +187,14 @@ namespace Spotify_search_helper.Views
             ViewModels.MainPageViewModel.Current.TrackSuggestionChosen(args.SelectedItem as Models.Track);
         }
 
-        public void ScrollTracksViewToTop()
+        private void ConnectedAnimation_Completed(ConnectedAnimation sender, object args)
         {
-            if(TracksListView.Items != null && TracksListView.Items.FirstOrDefault() != null)
-            TracksListView.ScrollIntoView(TracksListView.Items.FirstOrDefault(), ScrollIntoViewAlignment.Leading);
+            ViewModels.MainPageViewModel.Current.IsPopupActive = false;
+        }
 
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            ViewModels.MainPageViewModel.Current.LoadTheme();
         }
     }
 

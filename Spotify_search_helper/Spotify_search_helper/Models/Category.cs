@@ -57,7 +57,7 @@ namespace Spotify_search_helper.Models
             };
         }
     }
-    
+
     public enum CategoryType
     {
         Playlist,

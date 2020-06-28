@@ -2,11 +2,6 @@
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using Spotify_search_helper.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Spotify_search_helper.ViewModels
 {
@@ -43,13 +38,24 @@ namespace Spotify_search_helper.ViewModels
             }
         }
 
-        private async void Login()
+        private RelayCommand _loginCommand;
+        public RelayCommand LoginCommand
         {
-            IsLoading = true;
+            get
+            {
+                if (_loginCommand == null)
+                {
+                    _loginCommand = new RelayCommand(async() =>
+                    {
+                        IsLoading = true;
 
-            await DataSource.Current.Authenticate();
+                        await DataSource.Current.Authenticate();
 
-            IsLoading = false;
+                        IsLoading = false;
+                    });
+                }
+                return _loginCommand;
+            }
         }
 
         private bool _isLoading = false;
@@ -71,22 +77,6 @@ namespace Spotify_search_helper.ViewModels
             {
                 _isAuthenticated = value;
                 RaisePropertyChanged("IsAuthenticated");
-            }
-        }
-
-        private RelayCommand _loginCommand;
-        public RelayCommand LoginCommand
-        {
-            get
-            {
-                if (_loginCommand == null)
-                {
-                    _loginCommand = new RelayCommand(() =>
-                    {
-                        Login();
-                    });
-                }
-                return _loginCommand;
             }
         }
     }

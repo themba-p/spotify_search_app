@@ -7,7 +7,7 @@ namespace Spotify_search_helper.Models
     {
         public Playlist() { }
 
-        public Playlist(string id, string title, string description, string owner,string ownerId, 
+        public Playlist(string id, string title, string description, string owner, string ownerId,
             ImageSource image, PlaylistCategoryType categoryType, string uri, int itemsCount)
         {
             this.Id = id;

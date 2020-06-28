@@ -24,7 +24,7 @@ namespace Spotify_search_helper.Models
         private string _displayName;
         public string DisplayName
         {
-            get => _displayName; 
+            get => _displayName;
             set => _ = SetProperty(_displayName, value, () => _displayName = value);
         }
 
