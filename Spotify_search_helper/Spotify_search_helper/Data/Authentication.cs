@@ -81,7 +81,7 @@ namespace Spotify_search_helper.Data
             {
                 Scope = new List<string> { UserReadPrivate, PlaylistReadPrivate, UserModifyPlaybackState,
                     UserLibraryModify, UserLibraryRead, PlaylistModifyPrivate,
-                    PlaylistModifyPublic }
+                    PlaylistModifyPublic, UgcImageUpload }
             };
 
             Uri uri = request.ToUri();
@@ -115,27 +115,12 @@ namespace Spotify_search_helper.Data
                 }
                 catch (Exception)
                 {
-                    //
+                    
                 }
                 return SpotifyClient;
             }
             else
                 return null;
-            //else if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
-            //{
-            //    ViewModels.Helpers.DisplayDialog("Authentication error!", "Error code: " + WebAuthenticationResult.ResponseErrorDetail + ", please try again.");
-            //}
-            //else if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.UserCancel)
-            //{
-            //    SpotifyClient = null;
-            //    DataSource.AuthFailed();
-
-            //    //show that user can't use app if they are not logged in
-            //}
-            //else
-            //{
-            //    ViewModels.Helpers.DisplayDialog("Authentication error!", "Error code: " + WebAuthenticationResult.ResponseErrorDetail + ", please try again.");
-            //}
         }
 
         private static void CheckCliendSecretId()

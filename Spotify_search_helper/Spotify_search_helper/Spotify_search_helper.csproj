@@ -123,7 +123,6 @@
     <Compile Include="Data\DataSource.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\ItemClickCommand.cs" />
-    <Compile Include="Models\MediaItem.cs" />
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\PlaylistCategory.cs" />
     <Compile Include="Models\ProfileUser.cs" />
@@ -137,6 +136,9 @@
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MergePlaylistDialog.xaml.cs">
+      <DependentUpon>MergePlaylistDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\StartPage.xaml.cs">
       <DependentUpon>StartPage.xaml</DependentUpon>
@@ -208,6 +210,10 @@
   <ItemGroup />
   <ItemGroup>
     <Page Include="Views\MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MergePlaylistDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
