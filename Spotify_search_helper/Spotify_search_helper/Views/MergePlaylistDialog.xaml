@@ -406,7 +406,7 @@
         <Grid Grid.RowSpan="10" 
               Background="{ThemeResource LoadingBackgroundThemeBrush}"
               Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=collapsed}">
-            <ProgressRing IsActive="{Binding IsLoading}" 
+            <muxc:ProgressRing IsActive="{Binding IsLoading}" 
                           Height="48" Width="48"
                           Foreground="{ThemeResource BrandColorThemeBrush}"/>
         </Grid>

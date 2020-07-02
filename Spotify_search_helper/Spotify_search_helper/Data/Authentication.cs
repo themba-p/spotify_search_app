@@ -129,7 +129,7 @@ namespace Spotify_search_helper.Data
             {
                 if (string.IsNullOrEmpty(clientId))
                 {
-                    Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_ID", "");
+                    Environment.SetEnvironmentVariable("SPOTIFY_CLIENT_ID", "de354ca4295141c6ad3a7a07086fbd32");
                     clientId = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_ID");
                 }
 

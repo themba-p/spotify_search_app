@@ -3,39 +3,21 @@ using Windows.UI.Xaml.Media;
 
 namespace Spotify_search_helper.Models
 {
-    public class Playlist : NotificationBase
+    public class Playlist : ItemMediaBase
     {
         public Playlist() { }
 
-        public Playlist(string id, string title, string description, string owner, string ownerId,
-            ImageSource image, PlaylistCategoryType categoryType, string uri, int itemsCount)
+        public Playlist(string id, string title, ImageSource image, string uri, User owner, string mediaPreviewUrl, string description, PlaylistCategoryType categoryType, int itemsCount)
+            :base(id, title, image, uri, owner, mediaPreviewUrl)
         {
-            this.Id = id;
-            this.Title = title;
-            this.Description = description;
-            this.Owner = owner;
-            this.OwnerId = ownerId;
-            this.Image = image;
-            this.CategoryType = categoryType;
-            this.Uri = uri;
-            this.ItemsCount = itemsCount;
+            Description = Helpers.CleanString(description);
+            CategoryType = categoryType;
+            ItemsCount = itemsCount;
+            MediaBaseType = ItemMediaBaseType.Playlist;
         }
 
-        public string Id { get; set; }
-        public string Title { get; set; }
         public string Description { get; set; }
-        public string Owner { get; set; }
-        public ImageSource Image { get; set; }
-        public string OwnerId { get; set; }
-        public string Uri { get; set; }
         public int ItemsCount { get; set; }
         public PlaylistCategoryType CategoryType { get; set; }
-
-        private bool _isSelected;
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set { SetProperty(this._isSelected, value, () => this._isSelected = value); }
-        }
     }
 }
