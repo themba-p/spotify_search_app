@@ -74,7 +74,8 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
             <vm:ViewModelLocator xmlns:vm="using:Spotify_search_helper.ViewModels" x:Key="Locator" />
-            <SolidColorBrush x:Key="BrandColorThemeBrush" Color="#1131fd"/>
+            <SolidColorBrush x:Key="BrandColorThemeBrush" Color="#1f299c"/>
+            <SolidColorBrush x:Key="SpotifyBrandThemeBrush" Color="#1ED761"/>
             <Color x:Key="BrandColorThemeColor">#1131fd</Color>
             <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{ThemeResource BrandColorThemeColor}"/>
             <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="{ThemeResource BrandColorThemeColor}" Opacity="0.8"/>
@@ -83,7 +84,10 @@
             <SolidColorBrush x:Key="ComboBoxItemBackgroundSelected" Color="{ThemeResource BrandColorThemeColor}"/>
             <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPointerOver" Color="{ThemeResource BrandColorThemeColor}" Opacity="0.8"/>
             <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPressed" Color="{ThemeResource BrandColorThemeColor}"/>
-            
+
+            <SolidColorBrush x:Key="ToggleButtonBackgroundPointerOver" Color="{ThemeResource BrandColorThemeColor}" Opacity="0.6"/>
+            <SolidColorBrush x:Key="ToggleButtonBackgroundChecked" Color="{ThemeResource BrandColorThemeColor}" Opacity="1"/>
+            <SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPointerOver" Color="{ThemeResource BrandColorThemeColor}" Opacity="0.8"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

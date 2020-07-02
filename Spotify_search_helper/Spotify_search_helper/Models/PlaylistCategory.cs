@@ -36,6 +36,20 @@ namespace Spotify_search_helper.Models
             set { SetProperty(this._tracksCount, value, () => this._tracksCount = value); }
         }
 
+        private bool _hasResults;
+        public bool HasResults
+        {
+            get { return _hasResults; }
+            set { SetProperty(this._hasResults, value, () => this._hasResults = value); }
+        }
+
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set { SetProperty(this._isSelected, value, () => this._isSelected = value); }
+        }
+
         public static List<PlaylistCategory> GetCategoryItems()
         {
             return new List<PlaylistCategory>

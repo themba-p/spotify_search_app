@@ -5,6 +5,10 @@ using Windows.UI.Xaml.Controls;
 using Microsoft.Toolkit.Uwp.UI.Extensions;
 using Windows.UI;
 using Windows.UI.Xaml.Media.Animation;
+using Spotify_search_helper.Models;
+using Spotify_search_helper.Data;
+using GalaSoft.MvvmLight.Messaging;
+using Spotify_search_helper.ViewModels;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -16,6 +20,9 @@ namespace Spotify_search_helper.Views
     public sealed partial class MainPage : Page
     {
         public static MainPage Current;
+        private readonly MergePlaylistDialog _createPlaylistDialog = null;
+        private readonly AddToPlaylistDialog _addToPlaylistDialog = null;
+        private ContentDialog _dialog = null;
 
         public MainPage()
         {
@@ -23,6 +30,10 @@ namespace Spotify_search_helper.Views
             Current = this;
             Window.Current.SetTitleBar(DragGrid);
             Initialize();
+            _createPlaylistDialog = new MergePlaylistDialog();
+            _addToPlaylistDialog = new AddToPlaylistDialog();
+            RegisterMessenger();
+
 
             this.Loaded += MainPage_Loaded;
         }
@@ -49,50 +60,98 @@ namespace Spotify_search_helper.Views
             TitleBarExtensions.SetButtonHoverForegroundColor(this, Colors.White);
         }
 
-        public async void ShowCreatePlaylistDialogAsync()
+        private void RegisterMessenger()
         {
-            MergePlaylistDialog dialog = new MergePlaylistDialog();
-            var result = await dialog.ShowAsync();
+            Messenger.Default.Register<ElementTheme>(this, ToggleTheme);
+            Messenger.Default.Register<MediaControlType>(this, MediaControl);
+            Messenger.Default.Register<DialogManager>(this, DialogManage);
+            Messenger.Default.Register<MessengerHelper>(this, HandleMessengerHelper);
+        }
 
-            if (result == ContentDialogResult.Primary)
+        private void HandleMessengerHelper(MessengerHelper messenger)
+        {
+            try
             {
-                //how to get text
+                switch (messenger.Action)
+                {
+                    case MessengerAction.ScrollToItem:
+                        switch (messenger.Target)
+                        {
+                            case TargetView.Playlist:
+                                if (messenger.Item == null && PlaylistContentView.Items != null) messenger.Item = PlaylistContentView.Items.FirstOrDefault();
+                                PlaylistContentView.ScrollIntoView(messenger.Item, ScrollIntoViewAlignment.Leading);
+                                break;
+                            case TargetView.Tracks:
+                                if (messenger.Item == null && TracksListView.Items != null) messenger.Item = TracksListView.Items.FirstOrDefault();
+                                TracksListView.ScrollIntoView(messenger.Item, ScrollIntoViewAlignment.Leading);
+                                break;
+                            case TargetView.SelectedPlaylist:
+                                if (messenger.Item == null && SelectedPlaylistViewExpanded.Items != null) messenger.Item = SelectedPlaylistViewExpanded.Items.FirstOrDefault();
+                                SelectedPlaylistViewExpanded.ScrollIntoView(messenger.Item, ScrollIntoViewAlignment.Leading);
+                                break;
+                            case TargetView.Alphabet:
+                                PlaylistContentView.ScrollIntoView(messenger.Item, ScrollIntoViewAlignment.Leading);
+                                break;
+                        }
+                        break;
+                }
             }
-            else
+            catch (Exception)
             {
-                dialog.Hide();
+
             }
         }
 
-        public void HideCreatePlaylistDialog()
+        private async void DialogManage(DialogManager manager)
         {
-            if (MergePlaylistDialog.Current != null)
-                MergePlaylistDialog.Current.Hide();
-        }
-
-        public async void ShowDeleteConfirmDialog()
-        {
-            ContentDialog dialog = new ContentDialog
+            switch (manager.Type)
             {
-                Title = "Unfollow playlists?",
-                Content = "Are you sure you want to unfollow the selected playlists?",
-                CloseButtonText = "Cancel",
-                PrimaryButtonText = "Unfollow",
-                DefaultButton = ContentDialogButton.Primary,
-                
-            };
-
-            var result = await dialog.ShowAsync();
-            switch (result)
-            {
-                case ContentDialogResult.None:
+                case DialogType.AddToPlaylist:
+                    if (manager.Action == DialogAction.Show)
+                        await _addToPlaylistDialog.ShowAsync();
+                    else
+                        _addToPlaylistDialog.Hide();
                     break;
-                case ContentDialogResult.Primary:
-                    ViewModels.MainPageViewModel.Current.UnfollowSelectedPlaylists();
+                case DialogType.Merge:
+                case DialogType.CreatePlaylist:
+                    if (manager.Action == DialogAction.Show)
+                        await _createPlaylistDialog.ShowAsync();
+                    else
+                        _createPlaylistDialog.Hide();
                     break;
-                case ContentDialogResult.Secondary:
+                case DialogType.Default:
+                case DialogType.Unfollow:
+                    _dialog = new ContentDialog
+                    {
+                        Title = manager.Title,
+                        Content = manager.Message,
+                        PrimaryButtonText = manager.PrimaryButtonText,
+                        SecondaryButtonText = manager.SecondaryButtonText,
+                    };
+                    Messenger.Default.Send(new DialogResult(DialogType.Unfollow, await _dialog.ShowAsync()));
                     break;
             }
+        }
+
+        public void MediaControl(MediaControlType controlType)
+        {
+            switch (controlType)
+            {
+                case MediaControlType.Play:
+                    mediaElement.Play();
+                    break;
+                case MediaControlType.Pause:
+                    mediaElement.Pause();
+                    break;
+                case MediaControlType.Stop:
+                    mediaElement.Stop();
+                    break;
+            }
+        }
+
+        public void ToggleTheme(ElementTheme theme)
+        {
+            this.Frame.RequestedTheme = theme;
         }
 
         public void DoIt(object item)
@@ -120,73 +179,6 @@ namespace Spotify_search_helper.Views
             await PlaylistContentView.TryStartConnectedAnimationAsync(ConnectedAnimation, item, "connectedElement");
         }
 
-        public void ScrollTracksViewToTop()
-        {
-            if (TracksListView.Items != null && TracksListView.Items.FirstOrDefault() != null)
-                TracksListView.ScrollIntoView(TracksListView.Items.FirstOrDefault(), ScrollIntoViewAlignment.Leading);
-
-        }
-
-        public void ScrollSelectedPlaylistViewToTop()
-        {
-            try
-            {
-                if (SelectedPlaylistViewExpanded.Items != null)
-                    SelectedPlaylistViewExpanded.ScrollIntoView(SelectedPlaylistViewExpanded.Items.FirstOrDefault());
-            }
-            catch (Exception)
-            {
-                //
-            }
-        }
-
-        public void ScrollToPlaylistAlphabet(object item)
-        {
-            PlaylistContentView.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
-        }
-
-        public void ScrollPlaylistViewToTop()
-        {
-            if (PlaylistContentView.Items != null && PlaylistContentView.Items.FirstOrDefault() != null)
-                PlaylistContentView.ScrollIntoView(PlaylistContentView.Items.FirstOrDefault());
-        }
-
-        public void ToggleDarkTheme(bool isEnabled)
-        {
-            if (isEnabled)
-            {
-                this.Frame.RequestedTheme = ElementTheme.Dark;
-            }
-            else
-            {
-                this.Frame.RequestedTheme = ElementTheme.Light;
-            }
-        }
-
-        private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-        {
-            ViewModels.MainPageViewModel.Current.FilterAdvancedCollectionView();
-        }
-
-        private void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
-        {
-            //Display details of playlist, Tracks, playlist info etc.
-            if (args.SelectedItem != null && args.SelectedItem is Models.Playlist item)
-            {
-                ViewModels.MainPageViewModel.Current.SelectedSearchItem(item);
-            }
-        }
-
-        private void TrackSearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-        {
-            ViewModels.MainPageViewModel.Current.FilterTracksCollectionView(args.QueryText);
-        }
-
-        private void TrackSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
-        {
-            ViewModels.MainPageViewModel.Current.TrackSuggestionChosen(args.SelectedItem as Models.Track);
-        }
-
         private void ConnectedAnimation_Completed(ConnectedAnimation sender, object args)
         {
             ViewModels.MainPageViewModel.Current.IsPopupActive = false;
@@ -194,7 +186,7 @@ namespace Spotify_search_helper.Views
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            ViewModels.MainPageViewModel.Current.LoadTheme();
+            //ViewModels.MainPageViewModel.Current.LoadTheme();
         }
     }
 

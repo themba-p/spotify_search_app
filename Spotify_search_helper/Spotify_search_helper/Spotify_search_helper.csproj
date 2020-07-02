@@ -122,18 +122,26 @@
     <Compile Include="Data\Authentication.cs" />
     <Compile Include="Data\DataSource.cs" />
     <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\DialogManager.cs" />
     <Compile Include="Models\ItemClickCommand.cs" />
+    <Compile Include="Models\ItemBase.cs" />
+    <Compile Include="Models\ItemMediaBase.cs" />
+    <Compile Include="Models\MessengerHelper.cs" />
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\PlaylistCategory.cs" />
     <Compile Include="Models\ProfileUser.cs" />
     <Compile Include="Models\Sorting.cs" />
     <Compile Include="Models\Track.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\Helpers.cs" />
     <Compile Include="ViewModels\MainPageViewModel.cs" />
     <Compile Include="ViewModels\StartPageViewModel.cs" />
     <Compile Include="ViewModels\ViewModelHelpers.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
+    <Compile Include="Views\AddToPlaylistDialog.xaml.cs">
+      <DependentUpon>AddToPlaylistDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -150,18 +158,12 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\chevron-up.png" />
-    <Content Include="Assets\chevron.png" />
-    <Content Include="Assets\close_icon.png" />
     <Content Include="Assets\convert.png" />
-    <Content Include="Assets\edit.png" />
     <Content Include="Assets\liked.png" />
     <Content Include="Assets\logo.png" />
     <Content Include="Assets\logo_icon%403x.png" />
     <Content Include="Assets\playlist.png" />
-    <Content Include="Assets\plus.png" />
-    <Content Include="Assets\popup_bg.png" />
-    <Content Include="Assets\Search_Glyph.png" />
+    <Content Include="Assets\Spotify_Icon_RGB_White.png" />
     <Content Include="Assets\video.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -209,6 +211,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Page Include="Views\AddToPlaylistDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

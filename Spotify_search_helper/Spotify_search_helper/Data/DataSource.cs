@@ -12,10 +12,9 @@ namespace Spotify_search_helper.Data
     public class DataSource
     {
         public static DataSource Current = null;
-        private readonly List<SimplePlaylist> _playlist = new List<SimplePlaylist>();
 
         private int startIndex = 0;
-        private readonly int limit = 12;
+        private readonly int limit = 20;
         private Paging<SimplePlaylist> page;
         private Paging<PlaylistTrack<IPlayableItem>> _currentPlaylistPage;
         public ProfileUser Profile { get; set; }
@@ -89,6 +88,22 @@ namespace Spotify_search_helper.Data
             }
         }
 
+        public async Task<Track> GetSigleTrackFromPlaylist(string id)
+        {
+            try
+            {
+                var spotify = await Authentication.GetSpotifyClientAsync();
+                var fpl = await spotify.Playlists.Get(id);
+                _currentPlaylistPage = fpl.Tracks;
+                return ConvertTracks(new List<PlaylistTrack<IPlayableItem>> { fpl.Tracks.Items.FirstOrDefault() }).FirstOrDefault();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async void GetOther()
         {
             ViewModels.MainPageViewModel.Current.IsLoading = true;
@@ -104,6 +119,7 @@ namespace Spotify_search_helper.Data
                     //await Task.Delay(3000);
                 }
 
+                startIndex = 0;
                 //update counts 
                 ViewModels.MainPageViewModel.Current.UpdatePlaylistCategoryCount();
             }
@@ -139,12 +155,13 @@ namespace Spotify_search_helper.Data
                 if (result != null && result.Items != null)
                 {
                     BitmapImage image = null;
+                    User owner = null;
                     int itemsCount = 0;
                     PlaylistCategoryType categoryType = PlaylistCategoryType.All;
                     foreach (var item in result.Items)
                     {
-                        if (_playlist.Find(c => c.Id == item.Id) == null)
-                            _playlist.Add(item);
+                        //if (_playlist.Find(c => c.Id == item.Id) == null)
+                        //    _playlist.Add(item);
 
                         if (Profile != null && item.Owner != null)
                         {
@@ -158,17 +175,34 @@ namespace Spotify_search_helper.Data
                                     categoryType = PlaylistCategoryType.Following;
                             }
                         }
-
+                        
                         if (item.Images != null && item.Images.Count > 0)
                             image = new BitmapImage(new Uri(item.Images.FirstOrDefault().Url));
 
                         if (item.Tracks != null) itemsCount = item.Tracks.Total;
 
-                        results.Add(new Playlist(item.Id, item.Name, ViewModels.Helpers.CleanString(item.Description),
-                            item.Owner.DisplayName, item.Owner.Id, image, categoryType, item.Uri, itemsCount));
+                        if (item.Owner != null)
+                        {
+                            BitmapImage ownerImg = null;
+                            if (item.Owner.Images != null && item.Owner.Images.Count > 0)
+                                ownerImg = new BitmapImage(new Uri(item.Owner.Images.FirstOrDefault().Url));
+                            owner = new User(item.Owner.Id, item.Owner.DisplayName, ownerImg, item.Owner.Uri);
+                        }
 
+                        results.Add(new Playlist(item.Id,
+                            item.Name,
+                            image,
+                            item.Uri,
+                            owner,
+                            null,
+                            item.Description,
+                            categoryType,
+                            itemsCount));
+
+                        //reset
                         image = null;
                         itemsCount = 0;
+                        owner = null;
                         categoryType = PlaylistCategoryType.All;
                     }
                 }
@@ -269,7 +303,7 @@ namespace Spotify_search_helper.Data
                     }
                     else
                     {
-                        return await ViewModels.Helpers.LaunchUri(uris[index]);
+                        return await ViewModels.Helpers.OpenSpotifyAppAsync(uris[index]);
                     }
 
                 }
@@ -279,14 +313,9 @@ namespace Spotify_search_helper.Data
                     return false;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                if (!await ViewModels.Helpers.LaunchUri(uris[index]))
-                {
-                    ViewModels.Helpers.DisplayDialog("Cannot play items", e.Message);
-                    return false;
-                }
-                return true;
+                return await ViewModels.Helpers.OpenSpotifyAppAsync(uris[index]);
             }
         }
 
@@ -296,27 +325,35 @@ namespace Spotify_search_helper.Data
             {
                 List<Playlist> results = new List<Playlist>();
                 BitmapImage image = null;
+                User owner = null;
                 int itemsCount = 0;
 
                 foreach (var item in playlists)
                 {
+                    if (item.Owner != null)
+                    {
+                        BitmapImage ownerImg = null;
+                        if (item.Owner.Images != null && item.Owner.Images.Count > 0)
+                            ownerImg = new BitmapImage(new Uri(item.Owner.Images.FirstOrDefault().Url));
+                        owner = new User(item.Owner.Id, item.Owner.DisplayName, ownerImg, item.Owner.Uri);
+                    }
+
                     if (item.Images != null && item.Images.Count > 0)
                         image = new BitmapImage(new Uri(item.Images.FirstOrDefault().Url));
 
                     if (item.Tracks != null) itemsCount = item.Tracks.Total;
 
-                    results.Add(new Playlist
-                    {
-                        Id = item.Id,
-                        Title = item.Name,
-                        Owner = item.Owner.DisplayName,
-                        OwnerId = item.Owner.Id,
-                        Image = image,
-                        CategoryType = PlaylistCategoryType.MyPlaylist,
-                        Uri = item.Uri,
-                        ItemsCount = itemsCount
-                    });
+                    results.Add(new Playlist(item.Id,
+                            item.Name,
+                            image,
+                            item.Uri,
+                            owner,
+                            "",
+                            "",
+                            PlaylistCategoryType.MyPlaylist,
+                            itemsCount));
 
+                    owner = null;
                     image = null;
                     itemsCount = 0;
                 }
@@ -342,53 +379,54 @@ namespace Spotify_search_helper.Data
             try
             {
                 List<Track> results = new List<Track>();
-                Track item;
+                string artist = "";
+                string album = "";
                 BitmapImage image = null;
                 foreach (var playlistTrack in tracks)
                 {
                     if (playlistTrack.Track is FullTrack track)
                     {
-                        item = new Track
-                        {
-                            Id = track.Id,
-                            Title = track.Name,
-                            Uri = track.Uri,
-                            TrackNumber = track.TrackNumber,
-                            DurationMs = track.DurationMs,
-                            ArtistsStr = ""
-                        };
-
                         if (track.Album != null)
                         {
-                            item.Album = track.Album.Name;
+                            album = track.Album.Name;
+
                             //load track image after
                             if (track.Album.Images != null && track.Album.Images.Count > 0)
-                            {
                                 image = new BitmapImage(new Uri(track.Album.Images.FirstOrDefault().Url));
-                                item.Image = image;
-                            }
                         }
+                        
                         if (track.Artists != null && track.Artists.Count > 0)
                         {
                             if (track.Artists.Count == 1)
-                                item.ArtistsStr = track.Artists.FirstOrDefault().Name;
+                                artist = track.Artists.FirstOrDefault().Name;
                             else
                             {
                                 for (int i = 0; i < track.Artists.Count; i++)
                                 {
                                     if (i != (track.Artists.Count - 1))
-                                        item.ArtistsStr += track.Artists[i].Name + ", ";
+                                        artist += track.Artists[i].Name + ", ";
                                     else
-                                        item.ArtistsStr += track.Artists[i].Name;
+                                        artist += track.Artists[i].Name;
                                 }
                             }
                         }
                         else
-                            item.ArtistsStr = "Unknown";
+                            artist = "Unknown";
 
-                        results.Add(item);
+                        results.Add(new Track(track.Id,
+                            track.Name,
+                            image,
+                            track.Uri,
+                            null,
+                            track.PreviewUrl,
+                            artist,
+                            album,
+                            track.TrackNumber,
+                            track.DurationMs));
                     }
 
+                    artist = "";
+                    album = "";
                     image = null;
                 }
 
@@ -450,32 +488,25 @@ namespace Spotify_search_helper.Data
             }
         }
 
-        public async Task<bool> RemoveItemFromPlaylist(string playlistId, List<string> uris)
+        public async Task<bool> RemoveItemsFromPlaylist(string playlistId, List<string> uris)
         {
             try
             {
-                if (uris == null || uris.Count <= 0)
-                    return false;
-
                 var spotify = await Authentication.GetSpotifyClientAsync();
-                if (spotify == null)
-                    return false;
-
-                List<PlaylistRemoveItemsRequest.Item> trackUris = new List<PlaylistRemoveItemsRequest.Item>();
-
+                List<PlaylistRemoveItemsRequest.Item> items = new List<PlaylistRemoveItemsRequest.Item>();
                 foreach (var uri in uris)
                 {
-                    trackUris.Add(new PlaylistRemoveItemsRequest.Item { Uri = uri });
+                    items.Add(new PlaylistRemoveItemsRequest.Item { Uri = uri });
                 }
+                PlaylistRemoveItemsRequest request = new PlaylistRemoveItemsRequest(items);
 
-                //Remove multiple tracks
-                await spotify.Playlists.RemoveItems(playlistId, new PlaylistRemoveItemsRequest(trackUris));
+                await spotify.Playlists.RemoveItems(playlistId, request);
                 return true;
             }
             catch (Exception)
             {
-
-                throw;
+                ViewModels.Helpers.DisplayDialog("Error", "An error occured, please try again");
+                return false;
             }
         }
 
@@ -518,6 +549,22 @@ namespace Spotify_search_helper.Data
             {
                 ViewModels.Helpers.DisplayDialog("Error", "An error occured while creating your playlist");
                 return null;
+            }
+        }
+
+        public async Task<bool> AddToSpotifyPlaylist(string playlistId, IEnumerable<string> uris)
+        {
+            try
+            {
+                var spotify = await Authentication.GetSpotifyClientAsync();
+                PlaylistAddItemsRequest request = new PlaylistAddItemsRequest(uris.ToList());
+                await spotify.Playlists.AddItems(playlistId, request);
+                return true;
+            }
+            catch (Exception)
+            {
+                ViewModels.Helpers.DisplayDialog("Error", "An error occured, please try again");
+                return false;
             }
         }
 
@@ -587,8 +634,7 @@ namespace Spotify_search_helper.Data
 
                     if (item.Tracks != null) itemsCount = item.Tracks.Total;
 
-                    return new Playlist(item.Id, item.Name, "",
-                        item.Owner.DisplayName, item.Owner.Id, image, PlaylistCategoryType.MyPlaylist, item.Uri, itemsCount);
+                    return (ConvertPlaylists(new List<FullPlaylist> { item })).FirstOrDefault();
                 }
                 return null;
             }
