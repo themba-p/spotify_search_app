@@ -1,5 +1,5 @@
-﻿<ContentDialog x:Name="MergeDialog"
-               x:Class="Spotify_search_helper.Views.MergePlaylistDialog"
+﻿<ContentDialog x:Name="dialog"
+               x:Class="Spotify_search_helper.Views.PlaylistDialog"
                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                xmlns:local="using:Spotify_search_helper.Views" 
@@ -15,7 +15,7 @@
         <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <Thickness x:Key="ContentDialogPadding">0,0,0,0</Thickness>
-        <Style x:Key="MergeDialogTextBoxStyle" TargetType="TextBox">
+        <Style x:Key="PlaylistDialogTextBoxStyle" TargetType="TextBox">
             <Setter Property="Foreground" Value="{ThemeResource TextControlForeground}"/>
             <Setter Property="Background" Value="{ThemeResource InputBoxThemeBrush}"/>
             <Setter Property="BorderBrush" Value="{ThemeResource TextControlBorderBrush}"/>
@@ -331,7 +331,7 @@
                            Margin="0 0 0 24"
                            FontWeight="Medium"
                            Style="{StaticResource TitleTextBlockStyle}"/>
-                <TextBox Style="{StaticResource MergeDialogTextBoxStyle}" x:Name="PlaylistNameTextBox"
+                <TextBox Style="{StaticResource PlaylistDialogTextBoxStyle}" x:Name="PlaylistNameTextBox"
                      Text="{Binding NewPlaylistName, Mode=TwoWay}"
                      CornerRadius="10"
                      Height="36"  

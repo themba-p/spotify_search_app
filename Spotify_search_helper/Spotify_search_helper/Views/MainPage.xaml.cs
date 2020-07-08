@@ -9,6 +9,7 @@ using Spotify_search_helper.Models;
 using Spotify_search_helper.Data;
 using GalaSoft.MvvmLight.Messaging;
 using Spotify_search_helper.ViewModels;
+using Windows.UI.Popups;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -20,7 +21,7 @@ namespace Spotify_search_helper.Views
     public sealed partial class MainPage : Page
     {
         public static MainPage Current;
-        private readonly MergePlaylistDialog _createPlaylistDialog = null;
+        private readonly PlaylistDialog _createPlaylistDialog = null;
         private readonly AddToPlaylistDialog _addToPlaylistDialog = null;
         private ContentDialog _dialog = null;
 
@@ -30,12 +31,17 @@ namespace Spotify_search_helper.Views
             Current = this;
             Window.Current.SetTitleBar(DragGrid);
             Initialize();
-            _createPlaylistDialog = new MergePlaylistDialog();
+            _createPlaylistDialog = new PlaylistDialog();
             _addToPlaylistDialog = new AddToPlaylistDialog();
             RegisterMessenger();
 
+            this.SizeChanged += MainPage_SizeChanged;
+        }
 
-            this.Loaded += MainPage_Loaded;
+        private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Messenger.Default.Send(e);
+            
         }
 
         private void Initialize()
@@ -128,13 +134,14 @@ namespace Spotify_search_helper.Views
                         PrimaryButtonText = manager.PrimaryButtonText,
                         SecondaryButtonText = manager.SecondaryButtonText,
                     };
+                    
                     Messenger.Default.Send(new DialogResult(DialogType.Unfollow, await _dialog.ShowAsync()));
                     break;
             }
         }
 
         public void MediaControl(MediaControlType controlType)
-        {
+        {   
             switch (controlType)
             {
                 case MediaControlType.Play:
@@ -147,6 +154,7 @@ namespace Spotify_search_helper.Views
                     mediaElement.Stop();
                     break;
             }
+            
         }
 
         public void ToggleTheme(ElementTheme theme)
@@ -159,7 +167,7 @@ namespace Spotify_search_helper.Views
             try
             {
                 ConnectedAnimation ConnectedAnimation = PlaylistContentView.PrepareConnectedAnimation("forwardAnimation", item, "connectedElement");
-                ConnectedAnimation.Configuration = new BasicConnectedAnimationConfiguration();
+                ConnectedAnimation.Configuration = new DirectConnectedAnimationConfiguration();
                 ConnectedAnimation.TryStart(destinationElement);
             }
             catch (Exception)
@@ -170,23 +178,21 @@ namespace Spotify_search_helper.Views
 
         public async void UndoIt(object item)
         {
-            PlaylistContentView.ScrollIntoView(item, ScrollIntoViewAlignment.Default);
-            PlaylistContentView.UpdateLayout();
+            try
+            {
+                PlaylistContentView.ScrollIntoView(item, ScrollIntoViewAlignment.Default);
+                PlaylistContentView.UpdateLayout();
+                MainPageViewModel.Current.IsPopupActive = false;
 
-            ConnectedAnimation ConnectedAnimation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("backwardsAnimation", destinationElement);
-            ConnectedAnimation.Completed += ConnectedAnimation_Completed;
-            ConnectedAnimation.Configuration = new BasicConnectedAnimationConfiguration();
-            await PlaylistContentView.TryStartConnectedAnimationAsync(ConnectedAnimation, item, "connectedElement");
-        }
+                ConnectedAnimation ConnectedAnimation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("backwardsAnimation", destinationElement);
+                //ConnectedAnimation.Completed += ConnectedAnimation_Completed;
+                ConnectedAnimation.Configuration = new DirectConnectedAnimationConfiguration();
+                await PlaylistContentView.TryStartConnectedAnimationAsync(ConnectedAnimation, item, "connectedElement");
+            }
+            catch (Exception)
+            {
 
-        private void ConnectedAnimation_Completed(ConnectedAnimation sender, object args)
-        {
-            ViewModels.MainPageViewModel.Current.IsPopupActive = false;
-        }
-
-        private void MainPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            //ViewModels.MainPageViewModel.Current.LoadTheme();
+            }
         }
     }
 

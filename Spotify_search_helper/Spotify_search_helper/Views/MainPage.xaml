@@ -245,7 +245,7 @@
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
             <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
             <Setter Property="BorderBrush" Value="{ThemeResource BorderThemeBrush}"/>
-            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="CornerRadius" Value="0"/>
             <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
@@ -256,7 +256,7 @@
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="VerticalContentAlignment" Value="Stretch"/>
             <Setter Property="MinHeight" Value="0"/>
-            <Setter Property="Height" Value="42"/>
+            <Setter Property="Height" Value="48"/>
             <Setter Property="AllowDrop" Value="False"/>
             <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}"/>
             <Setter Property="FocusVisualMargin" Value="0"/>
@@ -308,7 +308,7 @@
                                             </ObjectAnimationUsingKeyFrames>-->
                                             <DoubleAnimation Duration="0" Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Opacity" To="1"/>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#ffffff"/>
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ItemPrimaryForeground}"/>
                                             </ObjectAnimationUsingKeyFrames>
 
                                             <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter"/>
@@ -352,7 +352,7 @@
                                 </VisualStateGroup>
 
                             </VisualStateManager.VisualStateGroups>
-                            <Rectangle x:Name="BorderBackground" Fill="{ThemeResource BrandColorThemeBrush}" Height="2" IsHitTestVisible="False" Control.IsTemplateFocusTarget="True" Opacity="0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5 0.5">
+                            <Rectangle x:Name="BorderBackground" Margin="16 0" Fill="{ThemeResource BrandColorThemeBrush}" Height="2" IsHitTestVisible="False" Control.IsTemplateFocusTarget="True" Opacity="0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5 0.5">
                                 <Rectangle.RenderTransform>
                                     <ScaleTransform/>
                                 </Rectangle.RenderTransform>
@@ -613,7 +613,7 @@
                                     </VisualState>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <Rectangle x:Name="BorderBackground" RadiusX="40" RadiusY="40" Height="250" Fill="Transparent" IsHitTestVisible="False" Control.IsTemplateFocusTarget="True" Opacity="0" VerticalAlignment="Top"/>
+                            <Rectangle x:Name="BorderBackground" RadiusX="40" RadiusY="40" Height="230" Fill="Transparent" IsHitTestVisible="False" Control.IsTemplateFocusTarget="True" Opacity="0" VerticalAlignment="Top"/>
                             <Grid x:Name="ContentPresenterGrid" Background="Transparent" Margin="0,0,0,0">
                                 <Grid.RenderTransform>
                                     <TranslateTransform x:Name="ContentPresenterTranslateTransform"/>
@@ -643,6 +643,266 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="QuickAccessViewItemContainerStyle" TargetType="ListViewItem">
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="BorderBrush" Value="{x:Null}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            <Setter Property="TabNavigation" Value="Local"/>
+            <Setter Property="IsHoldingEnabled" Value="True"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="24,0,0,24"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
+            <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}"/>
+            <Setter Property="AllowDrop" Value="False"/>
+            <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}"/>
+            <Setter Property="FocusVisualMargin" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <Grid x:Name="ContentBorder" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="{TemplateBinding CornerRadius}" FocusVisualMargin="{TemplateBinding FocusVisualMargin}" Control.IsTemplateFocusTarget="True" RenderTransformOrigin="0.5,0.5">
+                            <Grid.RenderTransform>
+                                <ScaleTransform x:Name="ContentBorderScale"/>
+                            </Grid.RenderTransform>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerDownThemeAnimation TargetName="ContentPresenter"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Selected">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOverSelected">
+                                        <Storyboard>
+
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PressedSelected">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerDownThemeAnimation TargetName="ContentPresenter"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="DisabledStates">
+                                    <VisualState x:Name="Enabled"/>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="Opacity" To="{ThemeResource ListViewItemDisabledThemeOpacity}"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="MultiSelectStates">
+                                    <VisualState x:Name="MultiSelectDisabled">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectCheckBoxTransform" Storyboard.TargetProperty="X">
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                                                <SplineDoubleKeyFrame KeySpline="0.1,0.9,0.2,1" KeyTime="0:0:0.333" Value="-32"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectClipTransform" Storyboard.TargetProperty="X">
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                                                <SplineDoubleKeyFrame KeySpline="0.1,0.9,0.2,1" KeyTime="0:0:0.333" Value="32"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenterTranslateTransform" Storyboard.TargetProperty="X">
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="32"/>
+                                                <SplineDoubleKeyFrame KeySpline="0.1,0.9,0.2,1" KeyTime="0:0:0.333" Value="0"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectSquare" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.333" Value="Collapsed"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MultiSelectEnabled">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectCheckBoxTransform" Storyboard.TargetProperty="X">
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="-32"/>
+                                                <SplineDoubleKeyFrame KeySpline="0.1,0.9,0.2,1" KeyTime="0:0:0.333" Value="0"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectClipTransform" Storyboard.TargetProperty="X">
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="32"/>
+                                                <SplineDoubleKeyFrame KeySpline="0.1,0.9,0.2,1" KeyTime="0:0:0.333" Value="0"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenterTranslateTransform" Storyboard.TargetProperty="X">
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="-32"/>
+                                                <SplineDoubleKeyFrame KeySpline="0.1,0.9,0.2,1" KeyTime="0:0:0.333" Value="0"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectSquare" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectCheck" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenterGrid" Storyboard.TargetProperty="Margin">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="32,0,0,0"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="DataVirtualizationStates">
+                                    <VisualState x:Name="DataAvailable"/>
+                                    <VisualState x:Name="DataPlaceholder">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextBlock" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderRect" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="ReorderHintStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition GeneratedDuration="0:0:0.2" To="NoReorderHint"/>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="NoReorderHint"/>
+                                    <VisualState x:Name="BottomReorderHint">
+                                        <Storyboard>
+                                            <DragOverThemeAnimation Direction="Bottom" TargetName="ContentBorder" ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="TopReorderHint">
+                                        <Storyboard>
+                                            <DragOverThemeAnimation Direction="Top" TargetName="ContentBorder" ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="RightReorderHint">
+                                        <Storyboard>
+                                            <DragOverThemeAnimation Direction="Right" TargetName="ContentBorder" ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="LeftReorderHint">
+                                        <Storyboard>
+                                            <DragOverThemeAnimation Direction="Left" TargetName="ContentBorder" ToOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="DragStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition GeneratedDuration="0:0:0.2" To="NotDragging"/>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="NotDragging"/>
+                                    <VisualState x:Name="Dragging">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="Opacity" To="{ThemeResource ListViewItemDragThemeOpacity}"/>
+                                            <DragItemThemeAnimation TargetName="ContentBorder"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="DraggingTarget"/>
+                                    <VisualState x:Name="MultipleDraggingPrimary">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="MultiArrangeOverlayText" Storyboard.TargetProperty="Opacity" To="1"/>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="MultiArrangeOverlayTextBorder" Storyboard.TargetProperty="Opacity" To="1"/>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="MultiSelectSquare" Storyboard.TargetProperty="Opacity" To="0"/>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="MultiSelectCheck" Storyboard.TargetProperty="Opacity" To="0"/>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="Opacity" To="{ThemeResource ListViewItemDragThemeOpacity}"/>
+                                            <FadeInThemeAnimation TargetName="MultiArrangeOverlayText"/>
+                                            <FadeInThemeAnimation TargetName="MultiArrangeOverlayTextBorder"/>
+                                            <DragItemThemeAnimation TargetName="ContentBorder"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MultipleDraggingSecondary"/>
+                                    <VisualState x:Name="DraggedPlaceholder"/>
+                                    <VisualState x:Name="Reordering">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0:0:0.240" Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="Opacity" To="{ThemeResource ListViewItemReorderThemeOpacity}"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="ReorderingTarget">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0:0:0.240" Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="Opacity" To="{ThemeResource ListViewItemReorderTargetThemeOpacity}"/>
+                                            <DoubleAnimation Duration="0:0:0.240" Storyboard.TargetName="ContentBorderScale" Storyboard.TargetProperty="ScaleX" To="{ThemeResource ListViewItemReorderTargetThemeScale}"/>
+                                            <DoubleAnimation Duration="0:0:0.240" Storyboard.TargetName="ContentBorderScale" Storyboard.TargetProperty="ScaleY" To="{ThemeResource ListViewItemReorderTargetThemeScale}"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MultipleReorderingPrimary">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="MultiArrangeOverlayText" Storyboard.TargetProperty="Opacity" To="1"/>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="MultiArrangeOverlayTextBorder" Storyboard.TargetProperty="Opacity" To="1"/>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="MultiSelectSquare" Storyboard.TargetProperty="Opacity" To="0"/>
+                                            <DoubleAnimation Duration="0" Storyboard.TargetName="MultiSelectCheck" Storyboard.TargetProperty="Opacity" To="0"/>
+                                            <DoubleAnimation Duration="0:0:0.240" Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="Opacity" To="{ThemeResource ListViewItemDragThemeOpacity}"/>
+                                            <FadeInThemeAnimation TargetName="MultiArrangeOverlayText"/>
+                                            <FadeInThemeAnimation TargetName="MultiArrangeOverlayTextBorder"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="ReorderedPlaceholder">
+                                        <Storyboard>
+                                            <FadeOutThemeAnimation TargetName="ContentBorder"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="DragOver">
+                                        <Storyboard>
+                                            <DropTargetItemThemeAnimation TargetName="ContentBorder"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Rectangle x:Name="BorderBackground" RadiusX="24" RadiusY="24" Height="128" Fill="Transparent" IsHitTestVisible="False" Control.IsTemplateFocusTarget="True" Opacity="0" VerticalAlignment="Top"/>
+                            <Grid x:Name="ContentPresenterGrid" Background="Transparent" Margin="0,0,0,0">
+                                <Grid.RenderTransform>
+                                    <TranslateTransform x:Name="ContentPresenterTranslateTransform"/>
+                                </Grid.RenderTransform>
+                                <ContentPresenter x:Name="ContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentTransitions="{TemplateBinding ContentTransitions}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Grid>
+                            <TextBlock x:Name="PlaceholderTextBlock" AutomationProperties.AccessibilityView="Raw" Foreground="{x:Null}" IsHitTestVisible="False" Margin="{TemplateBinding Padding}" Opacity="0" Text="Xg"/>
+                            <Rectangle x:Name="PlaceholderRect" Fill="{ThemeResource ListViewItemPlaceholderBackground}" Visibility="Collapsed"/>
+                            <Border x:Name="MultiSelectSquare" BorderThickness="2" BorderBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" HorizontalAlignment="Left" Height="20" Margin="12,0,0,0" VerticalAlignment="Center" Visibility="Collapsed" Width="20">
+                                <Border.Clip>
+                                    <RectangleGeometry Rect="0,0,20,20">
+                                        <RectangleGeometry.Transform>
+                                            <TranslateTransform x:Name="MultiSelectClipTransform"/>
+                                        </RectangleGeometry.Transform>
+                                    </RectangleGeometry>
+                                </Border.Clip>
+                                <Border.RenderTransform>
+                                    <TranslateTransform x:Name="MultiSelectCheckBoxTransform"/>
+                                </Border.RenderTransform>
+                                <FontIcon x:Name="MultiSelectCheck" FontFamily="{ThemeResource SymbolThemeFontFamily}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" FontSize="16" Glyph="&#xE73E;" Opacity="0" Visibility="Collapsed"/>
+                            </Border>
+                            <Border x:Name="MultiArrangeOverlayTextBorder" Background="{ThemeResource SystemControlBackgroundAccentBrush}" BorderThickness="2" BorderBrush="{ThemeResource SystemControlBackgroundChromeWhiteBrush}" HorizontalAlignment="Left" Height="20" IsHitTestVisible="False" MinWidth="20" Margin="12,0,0,0" Opacity="0" VerticalAlignment="Center">
+                                <TextBlock x:Name="MultiArrangeOverlayText" AutomationProperties.AccessibilityView="Raw" HorizontalAlignment="Center" IsHitTestVisible="False" Opacity="0" Style="{ThemeResource CaptionTextBlockStyle1}" Text="{Binding TemplateSettings.DragItemsCount, RelativeSource={RelativeSource Mode=TemplatedParent}}" VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="TextBoxStyle1" TargetType="TextBox">
             <Setter Property="Foreground" Value="{ThemeResource TextControlForeground}"/>
             <Setter Property="Background" Value="{ThemeResource TextControlBackground}"/>
@@ -1457,6 +1717,7 @@
             <Setter Property="Margin" Value="24,0,24,12"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <!--<Setter Property="Width" Value="{Binding ElementName=page, Path=DataContext.TracksViewWidth}"/>-->
             <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
             <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}"/>
             <Setter Property="AllowDrop" Value="False"/>
@@ -1466,10 +1727,10 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ListViewItem">
                         <Grid x:Name="ContentBorder" Background="{x:Null}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="{TemplateBinding CornerRadius}" FocusVisualMargin="{TemplateBinding FocusVisualMargin}" Control.IsTemplateFocusTarget="True" RenderTransformOrigin="0.5,0.5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition MaxWidth="612" Width="*"/>
+                            <!--<Grid.ColumnDefinitions>
+                                <ColumnDefinition MaxWidth="{Binding ElementName=page, Path=DataContext.TracksMaxWidth}" Width="*"/>
                                 <ColumnDefinition Width="auto"/>
-                            </Grid.ColumnDefinitions>
+                            </Grid.ColumnDefinitions>-->
                             <Grid.RenderTransform>
                                 <ScaleTransform x:Name="ContentBorderScale"/>
                             </Grid.RenderTransform>
@@ -2662,17 +2923,19 @@
                 FallbackColor="{ThemeResource ApplicationPageBackgroundColor}"/>
         </Grid.Background>
         <MediaElement x:Name="mediaElement" 
-                      Source="{Binding MediaElementSource}"
+                      Volume="0.15"
+                      Source="{Binding MediaElementSource, Mode=TwoWay}"
                       Visibility="Collapsed"/>
         <Grid x:Name="Profileview" 
-              Visibility="{Binding IsCompactCategory, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=collapsed}"
+              Visibility="{Binding IsCompactCategory, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=collapsedzz}"
               extensions:Mouse.Cursor="Hand"
+              CornerRadius="24"
               Grid.Column="2"
               Grid.Row="1"
-              Height="64"
+              Padding="8 8 16 8"
               HorizontalAlignment="Right"
               Margin="0 0 32 0"
-              Width="164" 
+               
               RenderTransformOrigin="0.5,0.5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
@@ -2694,21 +2957,21 @@
                     <Core:CallMethodAction TargetObject="{Binding ElementName=signInFadeIn}" MethodName="StartAnimation"/>
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
-            <Controls:DropShadowPanel BlurRadius="12.0" Grid.RowSpan="10" HorizontalAlignment="Stretch" 
-                    VerticalAlignment="Stretch"
+            <!--<Controls:DropShadowPanel BlurRadius="12.0" Grid.RowSpan="10" HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Stretch" Width="164" Height="64"
                     Grid.ColumnSpan="10" ShadowOpacity="0.06" OffsetX="6.0" OffsetY="6.0" Color="Black">
                 <Interactivity:Interaction.Behaviors>
                     <ToolkitBehaviors:Scale x:Name="profileBgScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.1" ScaleY="1.1" CenterX="82" CenterY="32" EasingMode="EaseOut" EasingType="Cubic" />
                     <ToolkitBehaviors:Scale x:Name="profileBgScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="82" CenterY="32" EasingMode="EaseOut" EasingType="Cubic"/>
                 </Interactivity:Interaction.Behaviors>
                 <Rectangle Fill="{ThemeResource ItemBackgroundThemeBrush}" Width="164" Height="64" RadiusX="24" RadiusY="24"/>
-            </Controls:DropShadowPanel>
+            </Controls:DropShadowPanel>-->
 
             <Grid Background="{ThemeResource SecondaryItemBackgroundThemeBrush}"
                   CornerRadius="24"
-                  Height="40px"
-                  Margin="12, 0, 0, 0"
-                  Width="40px">
+                  Height="32px"
+                  Margin="0, 0, 0, 0"
+                  Width="32px">
                 <Interactivity:Interaction.Behaviors>
                     <ToolkitBehaviors:Scale x:Name="profilePhotoScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.2" ScaleY="1.2" CenterX="20" CenterY="20" EasingMode="EaseOut"  EasingType="Cubic" />
                     <ToolkitBehaviors:Scale x:Name="profilePhotoScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="20" CenterY="20" EasingMode="EaseOut"   EasingType="Cubic"/>
@@ -2716,8 +2979,8 @@
 
                 <Image Source="{Binding Profile.Image}" Stretch="UniformToFill"/>
             </Grid>
-            <StackPanel Grid.Column="1"
-                        Margin="12 0 16 0"
+            <!--<StackPanel Grid.Column="1"
+                        Margin="12 0 0 0"
                         VerticalAlignment="Center"
                         MaxWidth="140">
                 <TextBlock Text="Sign in as"
@@ -2733,7 +2996,7 @@
                 </TextBlock>
                 <TextBlock Text="{Binding Profile.DisplayName, FallbackValue=Unknown}"
                                TextTrimming="CharacterEllipsis"
-                               FontSize="17"
+                               FontSize="15"
                                FontWeight="Medium"
                                Foreground="{ThemeResource ItemPrimaryForeground}"
                                Margin="0 2 0 0">
@@ -2743,97 +3006,106 @@
                         <ToolkitBehaviors:Offset x:Name="profileNameOffsetLeft"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0"  EasingMode="EaseOut"   EasingType="Cubic"/>
                     </Interactivity:Interaction.Behaviors>
                 </TextBlock>
-            </StackPanel>
+            </StackPanel>-->
         </Grid>
-        <ListView x:Name="CategoryView" 
-                  IsItemClickEnabled="True"
-                  model:ItemClickCommand.Command="{Binding CategoryItemClickedCommand}"
-                  ItemsSource="{Binding CategoryList}" 
-                  ItemContainerStyle="{StaticResource LargeCategoryContainerStyle}"
-                  MaxHeight="600"
-                  Grid.RowSpan="100"
-                  Grid.ColumnSpan="10"
-                  HorizontalAlignment="Center"
-                  VerticalAlignment="Center"
-                  ScrollViewer.VerticalScrollMode="Enabled"
-                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                  Visibility="{Binding IsCompactCategory, Converter={StaticResource BoolToVisibilityInverseConverter}, FallbackValue=collapsed}">
-            <Interactivity:Interaction.Behaviors>
-                <ToolkitBehaviors:Scale x:Name="CategoryViewScaleUp" Duration="400" Delay="0" AutomaticallyStart="False" ScaleX="1.5" ScaleY="1.5" CenterX="125" CenterY="100" EasingMode="EaseOut"  EasingType="Cubic" />
-                <ToolkitBehaviors:Scale x:Name="CategoryViewScaleDown"  Duration="400" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="125" CenterY="100" EasingMode="EaseOut"   EasingType="Cubic"/>
+        <Grid x:Name="Start"
+              Grid.RowSpan="100"
+              Grid.ColumnSpan="10"
+              Visibility="{Binding IsCompactCategory, Converter={StaticResource BoolToVisibilityInverseConverter}, FallbackValue=collapsedz}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <ListView x:Name="CategoryView" 
+                      IsItemClickEnabled="True"
+                      model:ItemClickCommand.Command="{Binding CategoryItemClickedCommand}"
+                      ItemsSource="{Binding CategoryList}" 
+                      ItemContainerStyle="{StaticResource LargeCategoryContainerStyle}"
+                      MaxHeight="600"
+                      Grid.RowSpan="100"
+                      Grid.ColumnSpan="10"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      ScrollViewer.VerticalScrollMode="Enabled"
+                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                      Visibility="{Binding ShowQuickAccessView, Converter={StaticResource BoolToVisibilityInverseConverter}, FallbackValue=collapsed}">
+                <Interactivity:Interaction.Behaviors>
+                    <ToolkitBehaviors:Scale x:Name="CategoryViewScaleUp" Duration="400" Delay="0" AutomaticallyStart="False" ScaleX="1.5" ScaleY="1.5" CenterX="125" CenterY="100" EasingMode="EaseOut"  EasingType="Cubic" />
+                    <ToolkitBehaviors:Scale x:Name="CategoryViewScaleDown"  Duration="400" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="125" CenterY="100" EasingMode="EaseOut"   EasingType="Cubic"/>
 
-                <ToolkitBehaviors:Fade x:Name="CategoryViewFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
-                <ToolkitBehaviors:Fade x:Name="CategoryViewFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
-            </Interactivity:Interaction.Behaviors>
+                    <ToolkitBehaviors:Fade x:Name="CategoryViewFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                    <ToolkitBehaviors:Fade x:Name="CategoryViewFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                </Interactivity:Interaction.Behaviors>
 
-            <Grid/>
-            <Grid/>
-            <Grid/>
-            <Grid/>
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="model:Category">
-                    <Grid CornerRadius="24"
+                <Grid/>
+                <Grid/>
+                <Grid/>
+                <Grid/>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="model:Category">
+                        <Grid CornerRadius="24"
                           Background="{ThemeResource ItemBackgroundThemeBrush}"
                           Height="200px"
                           VerticalAlignment="Stretch" 
                           HorizontalAlignment="Stretch"
                           Width="250px">
-                        <Interactivity:Interaction.Behaviors>
-                            <Core:EventTriggerBehavior EventName="PointerEntered">
-                                <Core:CallMethodAction TargetObject="{Binding ElementName=GridScaleUp}" MethodName="StartAnimation"/>
-                                <Core:CallMethodAction TargetObject="{Binding ElementName=categoryTitleOffsetRight}" MethodName="StartAnimation"/>
-                                <Core:CallMethodAction TargetObject="{Binding ElementName=categoryDescriptionOffsetRight}" MethodName="StartAnimation"/>
-                                <Core:CallMethodAction TargetObject="{Binding ElementName=categoryDescriptionFadeOut}" MethodName="StartAnimation"/>
-                                <Core:CallMethodAction TargetObject="{Binding ElementName=categoryIconScaleUp}" MethodName="StartAnimation"/>
-                                <Core:CallMethodAction TargetObject="{Binding ElementName=chevOffsetRight}" MethodName="StartAnimation"/>
-                                <Core:CallMethodAction TargetObject="{Binding ElementName=chevFadeIn}" MethodName="StartAnimation"/>
-                            </Core:EventTriggerBehavior>
-                            <Core:EventTriggerBehavior EventName="PointerExited">
-                                <Core:CallMethodAction TargetObject="{Binding ElementName=GridScaleDown}" MethodName="StartAnimation"/>
-                                <Core:CallMethodAction TargetObject="{Binding ElementName=categoryTitleOffsetLeft}" MethodName="StartAnimation"/>
-                                <Core:CallMethodAction TargetObject="{Binding ElementName=categoryDescriptionOffsetLeft}" MethodName="StartAnimation"/>
-                                <Core:CallMethodAction TargetObject="{Binding ElementName=categoryDescriptionFadeIn}" MethodName="StartAnimation"/>
-                                <Core:CallMethodAction TargetObject="{Binding ElementName=categoryIconScaleDown}" MethodName="StartAnimation"/>
-                                <Core:CallMethodAction TargetObject="{Binding ElementName=chevOffsetLeft}" MethodName="StartAnimation"/>
-                                <Core:CallMethodAction TargetObject="{Binding ElementName=chevFadeOut}" MethodName="StartAnimation"/>
-                            </Core:EventTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:EventTriggerBehavior EventName="PointerEntered">
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=GridScaleUp}" MethodName="StartAnimation"/>
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=categoryTitleOffsetRight}" MethodName="StartAnimation"/>
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=categoryDescriptionOffsetRight}" MethodName="StartAnimation"/>
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=categoryDescriptionFadeOut}" MethodName="StartAnimation"/>
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=categoryIconScaleUp}" MethodName="StartAnimation"/>
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=chevOffsetRight}" MethodName="StartAnimation"/>
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=chevFadeIn}" MethodName="StartAnimation"/>
+                                </Core:EventTriggerBehavior>
+                                <Core:EventTriggerBehavior EventName="PointerExited">
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=GridScaleDown}" MethodName="StartAnimation"/>
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=categoryTitleOffsetLeft}" MethodName="StartAnimation"/>
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=categoryDescriptionOffsetLeft}" MethodName="StartAnimation"/>
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=categoryDescriptionFadeIn}" MethodName="StartAnimation"/>
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=categoryIconScaleDown}" MethodName="StartAnimation"/>
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=chevOffsetLeft}" MethodName="StartAnimation"/>
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=chevFadeOut}" MethodName="StartAnimation"/>
+                                </Core:EventTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
 
-                        <!--<Grid Background="{ThemeResource ItemBackgroundThemeBrush}" 
+                            <!--<Grid Background="{ThemeResource ItemBackgroundThemeBrush}" 
                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <Interactivity:Interaction.Behaviors>
                                 <ToolkitBehaviors:Scale x:Name="GridScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.1" ScaleY="1.1" CenterX="125" CenterY="50" EasingMode="EaseOut" EasingType="Cubic" />
                                 <ToolkitBehaviors:Scale x:Name="GridScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="125" CenterY="50" EasingMode="EaseOut" EasingType="Cubic"/>
                             </Interactivity:Interaction.Behaviors>
                         </Grid>-->
-                        <StackPanel Margin="16 32 16 24"
+                            <StackPanel Margin="16 32 16 24"
                                     VerticalAlignment="Bottom">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Interactivity:Interaction.Behaviors>
-                                    <ToolkitBehaviors:Offset x:Name="categoryTitleOffsetRight" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="24" EasingMode="EaseOut"  EasingType="Cubic" />
-                                    <ToolkitBehaviors:Offset x:Name="categoryTitleOffsetLeft"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0"  EasingMode="EaseOut"   EasingType="Cubic"/>
-                                </Interactivity:Interaction.Behaviors>
-                                <TextBlock Text="{Binding Title}"
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Interactivity:Interaction.Behaviors>
+                                        <ToolkitBehaviors:Offset x:Name="categoryTitleOffsetRight" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="24" EasingMode="EaseOut"  EasingType="Cubic" />
+                                        <ToolkitBehaviors:Offset x:Name="categoryTitleOffsetLeft"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0"  EasingMode="EaseOut"   EasingType="Cubic"/>
+                                    </Interactivity:Interaction.Behaviors>
+                                    <TextBlock Text="{Binding Title}"
                                            VerticalAlignment="Center"
                                        FontSize="24px"
                                        Foreground="{ThemeResource ItemPrimaryForeground}"
                                        FontWeight="Bold">
 
-                                </TextBlock>
-                                <Image Grid.Column="1" Height="12px" Margin="16 8 0 0" Source="/Assets/chevron.png" VerticalAlignment="Center" Opacity="0">
-                                    <Interactivity:Interaction.Behaviors>
-                                        <ToolkitBehaviors:Offset x:Name="chevOffsetRight" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="-10" OffsetY="0" EasingMode="EaseOut"  EasingType="Cubic" />
-                                        <ToolkitBehaviors:Offset x:Name="chevOffsetLeft"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="-10" OffsetY="0"  EasingMode="EaseOut"   EasingType="Cubic"/>
-                                        <ToolkitBehaviors:Fade x:Name="chevFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
-                                        <ToolkitBehaviors:Fade x:Name="chevFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
-                                    </Interactivity:Interaction.Behaviors>
-                                </Image>
-                            </Grid>
-                            <TextBlock Text="{Binding Description}"
+                                    </TextBlock>
+                                    <Image Grid.Column="1" Height="12px" Margin="16 8 0 0" Source="/Assets/chevron.png" VerticalAlignment="Center" Opacity="0">
+                                        <Interactivity:Interaction.Behaviors>
+                                            <ToolkitBehaviors:Offset x:Name="chevOffsetRight" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="-10" OffsetY="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                            <ToolkitBehaviors:Offset x:Name="chevOffsetLeft"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="-10" OffsetY="0"  EasingMode="EaseOut"   EasingType="Cubic"/>
+                                            <ToolkitBehaviors:Fade x:Name="chevFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                            <ToolkitBehaviors:Fade x:Name="chevFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                        </Interactivity:Interaction.Behaviors>
+                                    </Image>
+                                </Grid>
+                                <TextBlock Text="{Binding Description}"
                                        FontSize="14px"
                                        Foreground="{ThemeResource ItemSecondaryForeground}"
                                        FontWeight="Normal"
@@ -2844,31 +3116,253 @@
                               <ToolkitBehaviors:Fade x:Name="categoryDescriptionFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
                                 <ToolkitBehaviors:Fade x:Name="categoryDescriptionFadeOut"  Duration="300" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
                             </Interactivity:Interaction.Behaviors>
-                            </TextBlock>
-                        </StackPanel>
-                        <Grid Background="{ThemeResource SecondaryItemBackgroundThemeBrush}"
+                                </TextBlock>
+                            </StackPanel>
+                            <Grid Background="{ThemeResource SecondaryItemBackgroundThemeBrush}"
                               CornerRadius="10"
                               Height="48px"
                               HorizontalAlignment="Left"
                               Margin="16"
                               VerticalAlignment="Top"
                               Width="48px">
-                            <Interactivity:Interaction.Behaviors>
-                                <ToolkitBehaviors:Scale x:Name="categoryIconScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.2" ScaleY="1.2" CenterX="24" CenterY="24" EasingMode="EaseOut"  EasingType="Cubic" />
-                                <ToolkitBehaviors:Scale x:Name="categoryIconScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="24" CenterY="24" EasingMode="EaseOut"   EasingType="Cubic"/>
-                            </Interactivity:Interaction.Behaviors>
-                            <Image Width="32px" VerticalAlignment="Center" HorizontalAlignment="Center" Source="{Binding IconPath}" Stretch="Uniform"/>
+                                <Interactivity:Interaction.Behaviors>
+                                    <ToolkitBehaviors:Scale x:Name="categoryIconScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.2" ScaleY="1.2" CenterX="24" CenterY="24" EasingMode="EaseOut"  EasingType="Cubic" />
+                                    <ToolkitBehaviors:Scale x:Name="categoryIconScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="24" CenterY="24" EasingMode="EaseOut"   EasingType="Cubic"/>
+                                </Interactivity:Interaction.Behaviors>
+                                <Image Width="32px" VerticalAlignment="Center" HorizontalAlignment="Center" Source="{Binding IconPath}" Stretch="Uniform"/>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsWrapGrid/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-        </ListView>
-        <StackPanel Margin="32 0 0 32" Orientation="Horizontal"
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+            </ListView>
+            <!--<ListView x:Name="QuickAccessView"
+                      Grid.Row="1"
+                      HorizontalContentAlignment="Center"
+                      IsItemClickEnabled="True"
+                      model:ItemClickCommand.Command="{Binding PlaylistItemClickCommand}"
+                      ItemsSource="{Binding QuickAccessCollectionView}"
+                      Margin="0" Padding="16 12" SelectionMode="None"
+                      extensions:ScrollViewerExtensions.VerticalScrollBarMargin="2, 2, 2, 2"
+                      ItemContainerStyle="{StaticResource PlaylistViewItemContainerStyle}"
+                      Visibility="{Binding ShowQuickAccessView, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=collapsedc}">
+                <Grid/>
+                <Grid/>
+                <Grid/>
+                <Grid/>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="model:Playlist">
+                        <Grid extensions:Mouse.Cursor="Hand" 
+                              Width="230" 
+                              Background="Transparent">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="230"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:EventTriggerBehavior EventName="PointerEntered">
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessShadowScaleDown}" MethodName="StartAnimation"/>
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessTitleOffsetUp}" MethodName="StartAnimation"/>
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessThumbScaleUp}" MethodName="StartAnimation"/>
+                                </Core:EventTriggerBehavior>
+                                <Core:EventTriggerBehavior EventName="PointerExited">
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessShadowScaleUp}" MethodName="StartAnimation"/>
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessTitleOffsetX}" MethodName="StartAnimation"/>
+                                    <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessThumbScaleDown}" MethodName="StartAnimation"/>
+                                </Core:EventTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
+                            <Grid Height="230" Width="230" VerticalAlignment="Top">
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="PointerEntered">
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessPlayBtnFadeIn}" MethodName="StartAnimation"/>
+                                    </Core:EventTriggerBehavior>
+                                    <Core:EventTriggerBehavior EventName="PointerExited">
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessPlayBtnFadeOut}" MethodName="StartAnimation"/>
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                                <Controls:DropShadowPanel BlurRadius="12.0" ShadowOpacity="0.08" OffsetX="6.0" OffsetY="12.0" Color="Black"
+                                                                  Visibility="{Binding ElementName=page, Path=DataContext.IsDarkThemeEnabled, Converter={StaticResource BoolToVisibilityInverseConverter}}">
+                                    <Interactivity:Interaction.Behaviors>
+                                        <ToolkitBehaviors:Scale x:Name="quickAccessShadowScaleDown" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="0.95" ScaleY="0.95" CenterX="125" CenterY="125" EasingMode="EaseOut"  EasingType="Cubic" />
+                                        <ToolkitBehaviors:Scale x:Name="quickAccessShadowScaleUp"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="125" CenterY="125" EasingMode="EaseOut"   EasingType="Cubic"/>
+                                    </Interactivity:Interaction.Behaviors>
+
+                                    <Rectangle Fill="{ThemeResource ItemBackgroundThemeBrush}"  
+                                                       Width="230"
+                                                       Height="230"
+                                                       RadiusX="24"
+                                                       RadiusY="24"/>
+                                </Controls:DropShadowPanel>
+                                <Grid CornerRadius="24" Background="Transparent">
+                                    <Interactivity:Interaction.Behaviors>
+                                        <ToolkitBehaviors:Scale x:Name="quickAccessThumbScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="0.95" ScaleY="0.95" CenterX="125" CenterY="125" EasingMode="EaseOut"  EasingType="Cubic" />
+                                        <ToolkitBehaviors:Scale x:Name="quickAccessThumbScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="125" CenterY="125" EasingMode="EaseOut"   EasingType="Cubic"/>
+                                    </Interactivity:Interaction.Behaviors>
+                                    <Image Source="{Binding Image}" Stretch="UniformToFill"/>
+                                    <StackPanel Margin="16"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Top">
+                                        <Grid>
+                                            <Button Background="{ThemeResource SelectBackgroundBrush}"
+                                                    CornerRadius="24"
+                                                    BorderThickness="2"
+                                                    BorderBrush="LightGray"
+                                                    Foreground="#ffffff"
+                                                    RequestedTheme="Dark"
+                                                    Command="{Binding ElementName=page, Path=DataContext.AddPlaylistToSelectedCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Height="28"
+                                                    HorizontalContentAlignment="Center"
+                                                    VerticalContentAlignment="Center"
+                                                    Width="28"
+                                                    Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}">
+                                                --><!--<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE710;" FontSize="12"/>--><!--
+                                            </Button>
+                                            <Button Background="{ThemeResource SelectBackgroundBrush}"
+                                                    BorderBrush="Transparent"
+                                                    Foreground="#ffffff"
+                                                    BorderThickness="2"
+                                                    CornerRadius="24"
+                                                    RequestedTheme="Dark"
+                                                    Command="{Binding ElementName=page, Path=DataContext.RemovePlaylistToSelectedCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Height="28"
+                                                    Padding="0"
+                                                    HorizontalContentAlignment="Center"
+                                                    VerticalContentAlignment="Center"
+                                                    Width="28"
+                                                    Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}">
+                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE73E;" FontSize="16"/>
+                                            </Button>
+                                        </Grid>
+                                    </StackPanel>
+                                    <Grid Margin="16"
+                                          HorizontalAlignment="Right"
+                                          VerticalAlignment="Bottom">
+                                        <Button Background="{ThemeResource SelectBackgroundBrush}"
+                                                    BorderBrush="Transparent"
+                                                    Foreground="#ffffff"
+                                                    BorderThickness="2"
+                                                    CornerRadius="24"
+                                                    RequestedTheme="Dark"
+                                                    Command="{Binding ElementName=page, Path=DataContext.RemoveQuickAccessItemCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Height="28"
+                                                    Padding="0"
+                                                    HorizontalContentAlignment="Center"
+                                                    VerticalContentAlignment="Center"
+                                                    Width="28">
+                                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8D9;" FontSize="16"/>
+                                        </Button>
+                                    </Grid>
+                                    <Grid Height="40" Width="40"
+                                          Margin="24"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Bottom">
+                                        <muxc:ProgressRing IsActive="{Binding IsLoadingPreview}" 
+                                                Height="40" Width="40"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Foreground="WhiteSmoke"/>
+                                        <Button x:Name="quickAccessPlayBtn" BorderThickness="2" 
+                                                Background="{x:Null}" Opacity="0"
+                                                BorderBrush="WhiteSmoke"
+                                                Foreground="WhiteSmoke"
+                                                RequestedTheme="Dark"
+                                                CornerRadius="48"
+                                                Height="40" Width="40"
+                                                Command="{Binding ElementName=page, Path=DataContext.PlayPlaylistCommand}"
+                                                CommandParameter="{Binding}"
+                                                Padding="0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch">
+                                            <Interactivity:Interaction.Behaviors>
+                                                <ToolkitBehaviors:Scale x:Name="quickAccessPlayBtnScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.2" ScaleY="1.2" CenterX="16" CenterY="16" EasingMode="EaseOut"  EasingType="Cubic" />
+                                                <ToolkitBehaviors:Scale x:Name="quickAccessPlayBtnScaleNormal"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="16" CenterY="16" EasingMode="EaseOut"   EasingType="Cubic"/>
+                                                <ToolkitBehaviors:Fade x:Name="quickAccessPlayBtnFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                                <ToolkitBehaviors:Fade x:Name="quickAccessPlayBtnFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+
+                                                <Core:EventTriggerBehavior EventName="PointerEntered">
+                                                    <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessPlayBtnScaleUp}" MethodName="StartAnimation"/>
+                                                    <Core:InvokeCommandAction Command="{Binding ElementName=page, Path=DataContext.PlayPreviewCommand}" CommandParameter="{Binding}" />
+                                                </Core:EventTriggerBehavior>
+                                                <Core:EventTriggerBehavior EventName="PointerExited">
+                                                    <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessPlayBtnScaleNormal}" MethodName="StartAnimation"/>
+                                                    <Core:InvokeCommandAction Command="{Binding ElementName=page, Path=DataContext.StopPreviewCommand}" CommandParameter="{Binding}" />
+                                                </Core:EventTriggerBehavior>
+                                            </Interactivity:Interaction.Behaviors>
+
+                                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF5B0;" FontSize="14"/>
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <StackPanel Grid.Row="1"
+                                        Margin="8 12 0 0">
+                                <TextBlock Text="{Binding Title, FallbackValue=Unknown}"
+                                           FontSize="24"
+                                           FontWeight="Bold"
+                                           TextWrapping="NoWrap"
+                                           TextTrimming="CharacterEllipsis" 
+                                           ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}">
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid MaximumRowsOrColumns="3" HorizontalAlignment="Center" Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+            </ListView>
+            <StackPanel Orientation="Horizontal" 
+                        Grid.RowSpan="100"
+                        Grid.ColumnSpan="10" Margin="48 48"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top">
+                <Button Background="Transparent"
+                        Command="{Binding ToggleQuickAccessCommand}"
+                        Height="36" 
+                        VerticalAlignment="Top" 
+                        Grid.ColumnSpan="10"
+                        Visibility="{Binding ShowQuickAccessView, Converter={StaticResource BoolToVisibilityInverseConverter}, FallbackValue=collapsedc}">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE728;" FontSize="16" Margin="2,0,2,0" />
+                        <TextBlock Text="Quick access" Margin="8 0"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="CloseQuickAccessButton"
+                        Background="{ThemeResource SelectBackgroundBrush}"
+                        Command="{Binding ToggleQuickAccessCommand}"
+                        CornerRadius="10"
+                        Foreground="#ffffff"
+                        extensions:Mouse.Cursor="Hand"
+                        Grid.Column="0"
+                        Height="36"
+                        Width="36"
+                        Padding="0"
+                        HorizontalContentAlignment="Center"
+                        Margin="12 0 0 0"
+                        VerticalContentAlignment="Center"
+                        VerticalAlignment="Center"
+                        ToolTipService.ToolTip="Close"
+                        Visibility="{Binding ShowQuickAccessView, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=collapsedc}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE711;" FontSize="16"/>
+                </Button>
+            </StackPanel>
+            <StackPanel Height="64"
+                        HorizontalAlignment="Center"
+                        Margin="0 48 0 0"
+                        Visibility="{Binding ShowQuickAccessView, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=collapsedc}">
+                <TextBlock Text="Quick access" FontSize="24" FontWeight="Bold" VerticalAlignment="Center"/>
+            </StackPanel>-->
+        </Grid>
+        <StackPanel x:Name="DarkThemeToggle"  Margin="32 0 0 32" Orientation="Horizontal"
                     VerticalAlignment="Bottom"
                     HorizontalAlignment="Left"
                     Grid.RowSpan="10"
@@ -2922,7 +3416,7 @@
         </CheckBox>
         <Grid x:Name="PageTitle"
               Height="64"
-              Padding="0 0 0 0"
+              Padding="0"
               Grid.ColumnSpan="10" 
               Grid.Row="1"
               Visibility="{Binding IsCompactCategory, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=collapsed}">
@@ -2937,17 +3431,17 @@
                   HorizontalAlignment="Stretch"
                   Visibility="{Binding IsPlaylistSearchActive, Converter={StaticResource BoolToVisibilityConverter}}">
                 <TextBlock Text="{Binding PlaylistViewSubTitle}"
-                                                   FontSize="16"
-                                                   FontWeight="Medium"
-                                                   Foreground="{ThemeResource ItemSecondaryForeground}"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"/>
+                           FontSize="16"
+                           FontWeight="Medium"
+                           Foreground="{ThemeResource ItemSecondaryForeground}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
             </Grid>
             <TextBlock Text="{Binding PageTitle, FallbackValue=Playlists}"
                        FontSize="24"
                        Grid.Column="1"
                        FontWeight="Bold"
-                       Margin="0 0 0 8" HorizontalAlignment="Center"
+                       Margin="0" HorizontalAlignment="Center"
                        TextTrimming="CharacterEllipsis"
                        VerticalAlignment="Center"
                        Visibility="{Binding IsPlaylistSearchActive, Converter={StaticResource BoolToVisibilityInverseConverter}}"/>
@@ -2978,13 +3472,13 @@
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
 
-                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE711;" FontSize="24"/>
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE80F;" FontSize="24"/>
             </Button>
         </Grid>
         <Grid x:Name="PlaylistsContentView" 
               Grid.Row="2"
               Margin="0 12 0 0"
-              Visibility="{Binding IsPlaylistView, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=collapsedzz}"
+              Visibility="{Binding IsPlaylistView, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=collapsed}"
               Grid.Column="1"
               Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
@@ -3007,7 +3501,7 @@
                           IsItemClickEnabled="True"
                           model:ItemClickCommand.Command="{Binding PlaylistItemClickCommand}"
                           ItemsSource="{Binding AdvancedCollectionView}"
-                          Margin="0" Padding="48 0" SelectionMode="None"
+                          Margin="0" Padding="16 0" SelectionMode="None"
                           extensions:ScrollViewerExtensions.VerticalScrollBarMargin="2, 2, 2, 2"
                           ItemContainerStyle="{StaticResource PlaylistViewItemContainerStyle}">
                     <Grid/>
@@ -3016,7 +3510,7 @@
                     <Grid/>
                     <ListView.Header>
                         <Controls:ScrollHeader Mode="QuickReturn">
-                            <Grid Padding="12 0" >
+                            <Grid Padding="12 0 12 0">
                                 <Grid.Background>
                                     <media:AcrylicBrush
                                           BackgroundSource="HostBackdrop"
@@ -3034,7 +3528,6 @@
                                         <BrushTransition />
                                     </Grid.BackgroundTransition>
                                     <Grid x:Name="PageNav"
-                                          
                                           Margin="0 0 0 12">
                                         <ListView x:Name="PlaylistCategoriesView"
                                                   SelectionMode="Single"
@@ -3042,7 +3535,8 @@
                                                   ScrollViewer.VerticalScrollMode="Auto"
                                                   ScrollViewer.VerticalScrollBarVisibility="Hidden"
                                                   ItemsSource="{Binding PlaylistCategoryList}" 
-                                                  ItemContainerStyle="{StaticResource MenuCategoryContainerStyle}">
+                                                  ItemContainerStyle="{StaticResource MenuCategoryContainerStyle}"
+                                                  IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
 
                                             <ListView.ItemsPanel>
                                                 <ItemsPanelTemplate>
@@ -3068,7 +3562,7 @@
                                                                 <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistCategoryItemFadeOutB}" MethodName="StartAnimation"/>
                                                             </Core:EventTriggerBehavior>
                                                         </Interactivity:Interaction.Behaviors>
-                                                        <Grid HorizontalAlignment="Center" Margin="0 -2 0 0"
+                                                        <Grid HorizontalAlignment="Center" Margin="0 0 0 0"
                                                               VerticalAlignment="Top" Opacity="0.8"
                                                               Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibilityInverseConverter}}">
                                                             <Ellipse Height="3" Width="3" 
@@ -3084,11 +3578,11 @@
                                                             </Interactivity:Interaction.Behaviors>
                                                             <StackPanel Orientation="Horizontal" 
                                                                     HorizontalAlignment="Center"
-                                                                    MinWidth="24"
+                                                                    
                                                                     VerticalAlignment="Center">
 
                                                                 <TextBlock Text="{Binding Count, FallbackValue=0}" FontSize="15"/>
-                                                                <TextBlock Text="Playlists" FontSize="15" Margin="2,0,0,0"/>
+                                                                <!--<TextBlock Text="Playlists" FontSize="15" Margin="2,0,0,0"/>-->
                                                             </StackPanel>
                                                         </Grid>
                                                         <Grid Background="Transparent">
@@ -3127,7 +3621,8 @@
                                                             FontSize="17"
                                                             Height="36"
                                                             VerticalAlignment="Center"
-                                                            HorizontalAlignment="Stretch">
+                                                            HorizontalAlignment="Stretch"
+                                                            IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
                                             </AutoSuggestBox>
                                         </Grid>
                                         <StackPanel Orientation="Horizontal" Grid.Column="1">
@@ -3146,7 +3641,8 @@
                                                       VerticalAlignment="Center"
                                                       ItemsSource="{Binding PlaylistSortList}"
                                                       SelectedItem="{Binding CurrentSorting, Mode=TwoWay}"
-                                                      Background="{ThemeResource SecondaryItemBackgroundThemeBrush}">
+                                                      Background="{ThemeResource SecondaryItemBackgroundThemeBrush}"
+                                                      IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
 
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate x:DataType="model:Sorting">
@@ -3161,7 +3657,8 @@
                                                           Margin="0 0 8 0" 
                                                           Width="36" 
                                                           VerticalAlignment="Stretch"
-                                                          ToolTipService.ToolTip="Select All">
+                                                          ToolTipService.ToolTip="Select All"
+                                                          IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
                                                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8B3;" FontSize="16"/>
                                             </ToggleButton>
                                         </StackPanel>
@@ -3172,9 +3669,9 @@
                     </ListView.Header>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="model:Playlist">
-                            <Grid x:Name="connectedElement" 
+                            <Grid x:Name="connectedElementzzzz" 
                                   extensions:Mouse.Cursor="Hand" 
-                                  Width="250" 
+                                  Width="230" 
                                   Background="Transparent">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="250"/>
@@ -3188,6 +3685,7 @@
                                         <Core:CallMethodAction TargetObject="{Binding ElementName=playlistMetaFadeIn}" MethodName="StartAnimation"/>
                                         <Core:CallMethodAction TargetObject="{Binding ElementName=playlistThumbScaleUp}" MethodName="StartAnimation"/>
                                         <Core:CallMethodAction TargetObject="{Binding ElementName=playlistMetaOffsetX}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewSelectBtnFadeIn}" MethodName="StartAnimation"/>
                                     </Core:EventTriggerBehavior>
                                     <Core:EventTriggerBehavior EventName="PointerExited">
                                         <Core:CallMethodAction TargetObject="{Binding ElementName=playlistShadowScaleUp}" MethodName="StartAnimation"/>
@@ -3196,15 +3694,26 @@
                                         <Core:CallMethodAction TargetObject="{Binding ElementName=playlistMetaFadeOut}" MethodName="StartAnimation"/>
                                         <Core:CallMethodAction TargetObject="{Binding ElementName=playlistThumbScaleDown}" MethodName="StartAnimation"/>
                                         <Core:CallMethodAction TargetObject="{Binding ElementName=playlistMetaOffsetY}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewSelectBtnFadeOut}" MethodName="StartAnimation"/>
                                     </Core:EventTriggerBehavior>
                                 </Interactivity:Interaction.Behaviors>
-                                <Grid Height="250" Width="250" VerticalAlignment="Top">
+                                <Grid x:Name="connectedElement" Height="230" Width="230" VerticalAlignment="Top">
                                     <Interactivity:Interaction.Behaviors>
                                         <Core:EventTriggerBehavior EventName="PointerEntered">
                                             <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewPlayBtnFadeIn}" MethodName="StartAnimation"/>
+
+                                            <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistActionsBgFadeIn}" MethodName="StartAnimation"/>
+
+                                            <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistActionsOffsetIn}" MethodName="StartAnimation"/>
+                                            <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistActionsFadeIn}" MethodName="StartAnimation"/>
                                         </Core:EventTriggerBehavior>
                                         <Core:EventTriggerBehavior EventName="PointerExited">
                                             <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewPlayBtnFadeOut}" MethodName="StartAnimation"/>
+
+                                            <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistActionsBgFadeOut}" MethodName="StartAnimation"/>
+
+                                            <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistActionsOffsetOut}" MethodName="StartAnimation"/>
+                                            <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistActionsFadeOut}" MethodName="StartAnimation"/>
                                         </Core:EventTriggerBehavior>
                                     </Interactivity:Interaction.Behaviors>
                                     <Controls:DropShadowPanel BlurRadius="12.0" ShadowOpacity="0.08" OffsetX="6.0" OffsetY="12.0" Color="Black"
@@ -3215,8 +3724,8 @@
                                         </Interactivity:Interaction.Behaviors>
 
                                         <Rectangle Fill="{ThemeResource ItemBackgroundThemeBrush}"  
-                                                       Width="250"
-                                                       Height="250"
+                                                       Width="230"
+                                                       Height="230"
                                                        RadiusX="24"
                                                        RadiusY="24"/>
                                     </Controls:DropShadowPanel>
@@ -3226,83 +3735,205 @@
                                             <ToolkitBehaviors:Scale x:Name="playlistThumbScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="125" CenterY="125" EasingMode="EaseOut"   EasingType="Cubic"/>
                                         </Interactivity:Interaction.Behaviors>
                                         <Image Source="{Binding Image}" Stretch="UniformToFill"/>
+                                        <Rectangle Margin="-1" Opacity="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                            <Rectangle.Fill>
+                                                <media:AcrylicBrush BackgroundSource="Backdrop"
+                                                                    TintColor="#000000"
+                                                                    TintOpacity="0.70"
+                                                                    BlurAmount="5" 
+                                                                    FallbackColor="#000000"/>
+                                            </Rectangle.Fill>
+                                            <Interactivity:Interaction.Behaviors>
+                                                <ToolkitBehaviors:Fade x:Name="PlaylistActionsBgFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                                <ToolkitBehaviors:Fade x:Name="PlaylistActionsBgFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                            </Interactivity:Interaction.Behaviors>
+                                        </Rectangle>
                                     </Grid>
+                                    
                                     <StackPanel Margin="16"
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Top">
-                                        <Grid>
-                                            <Button Background="#000000"
+                                        <Grid Height="28" Width="28">
+                                            <Interactivity:Interaction.Behaviors>
+                                                <ToolkitBehaviors:Scale x:Name="PlaylistSelectedCheckScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.2" ScaleY="1.2" CenterX="14" CenterY="14" EasingMode="EaseOut"  EasingType="Cubic" />
+                                                <ToolkitBehaviors:Scale x:Name="PlaylistSelectedCheckScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="14" CenterY="14" EasingMode="EaseOut"   EasingType="Cubic"/>
+
+                                                <Core:EventTriggerBehavior EventName="PointerEntered">
+                                                    <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistSelectedCheckScaleUp}" MethodName="StartAnimation"/>
+                                                </Core:EventTriggerBehavior>
+                                                <Core:EventTriggerBehavior EventName="PointerExited">
+                                                    <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistSelectedCheckScaleDown}" MethodName="StartAnimation"/>
+                                                </Core:EventTriggerBehavior>
+                                            </Interactivity:Interaction.Behaviors>
+                                            <Button Background="{ThemeResource SelectBackgroundBrush}"
+                                                    Opacity="0"
                                                     CornerRadius="24"
+                                                    BorderThickness="2"
+                                                    BorderBrush="LightGray"
                                                     Foreground="#ffffff"
                                                     RequestedTheme="Dark"
                                                     Command="{Binding ElementName=page, Path=DataContext.AddPlaylistToSelectedCommand}"
                                                     CommandParameter="{Binding}"
-                                                    Height="32"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
                                                     HorizontalContentAlignment="Center"
+                                                    Padding="0"
                                                     VerticalContentAlignment="Center"
-                                                    Width="32"
                                                     Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}">
-                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE710;" FontSize="12"/>
+                                                <Interactivity:Interaction.Behaviors>
+                                                    <ToolkitBehaviors:Fade x:Name="PlaylistViewSelectBtnFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                                    <ToolkitBehaviors:Fade x:Name="PlaylistViewSelectBtnFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                                </Interactivity:Interaction.Behaviors>
+                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE73E;" FontSize="16" Opacity="0.15"/>
                                             </Button>
-                                            <Button Background="{ThemeResource BrandColorThemeBrush}"
-                                                    CornerRadius="24"
+                                            <Button Background="{ThemeResource SelectBackgroundBrush}"
+                                                    BorderBrush="Transparent"
                                                     Foreground="#ffffff"
+                                                    BorderThickness="2"
+                                                    CornerRadius="24"
                                                     RequestedTheme="Dark"
                                                     Command="{Binding ElementName=page, Path=DataContext.RemovePlaylistToSelectedCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Padding="0"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    HorizontalContentAlignment="Center"
+                                                    VerticalContentAlignment="Center"
+                                                    Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}">
+                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE73E;" FontSize="16"/>
+                                            </Button>
+                                        </Grid>
+                                    </StackPanel>
+                                    <Grid x:Name="PlaylistActions" 
+                                          Opacity="0"
+                                          Margin="12 24"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Bottom">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Interactivity:Interaction.Behaviors>
+                                            <ToolkitBehaviors:Offset x:Name="PlaylistActionsOffsetIn" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                            <ToolkitBehaviors:Offset x:Name="PlaylistActionsOffsetOut"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="20" EasingMode="EaseOut"   EasingType="Cubic"/>
+                                            <ToolkitBehaviors:Fade x:Name="PlaylistActionsFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                            <ToolkitBehaviors:Fade x:Name="PlaylistActionsFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                        </Interactivity:Interaction.Behaviors>
+                                        <Button Background="Transparent" 
+                                                Grid.Column="0"
+                                                extensions:Mouse.Cursor="Hand"
+                                                CornerRadius="24"
+                                                Height="32"
+                                                Width="32"
+                                                Padding="0"
+                                                RequestedTheme="Dark">
+                                            <Button.Content>
+                                                <FontIcon Glyph="&#xE712;" FontSize="16" Margin="2,4,2,2" />
+                                            </Button.Content>
+                                            <Button.Flyout>
+                                                <MenuFlyout>
+                                                    <MenuFlyoutItem Text="Add to queue">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xE768;"/>
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+                                                    <MenuFlyoutItem Text="Add to other playlist">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xE710;"/>
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+                                                    <MenuFlyoutSeparator/>
+                                                    <MenuFlyoutItem Text="Unfollow">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xE711;"/>
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+                                                </MenuFlyout>
+                                            </Button.Flyout>
+                                        </Button>
+                                        <Grid Grid.Column="1"
+                                              Height="44"
+                                              Width="44"
+                                              Margin="16 0"
+                                              VerticalAlignment="Center">
+                                            <muxc:ProgressRing IsActive="{Binding IsLoadingPreview}" 
+                                                               Height="44" 
+                                                               Width="44"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"
+                                                               Foreground="WhiteSmoke"/>
+                                            <Button x:Name="PlaylistViewPlayBtn" 
+                                                    extensions:Mouse.Cursor="Hand"
+                                                    BorderThickness="2" 
+                                                    Background="{x:Null}"
+                                                    BorderBrush="WhiteSmoke"
+                                                    Foreground="WhiteSmoke"
+                                                    RequestedTheme="Dark"
+                                                    CornerRadius="48"
+                                                    Height="44" 
+                                                    Width="44"
+                                                    Command="{Binding ElementName=page, Path=DataContext.PlayPlaylistCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Padding="0"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch">
+                                                <Interactivity:Interaction.Behaviors>
+                                                    <ToolkitBehaviors:Fade x:Name="PlaylistViewPlayBtnFadeIn" Duration="400" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                                    <ToolkitBehaviors:Fade x:Name="PlaylistViewPlayBtnFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+
+                                                    <Core:EventTriggerBehavior EventName="PointerEntered">
+                                                        <!--<Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewPlayBtnFadeIn}" MethodName="StartAnimation"/>-->
+                                                        <Core:InvokeCommandAction Command="{Binding ElementName=page, Path=DataContext.PlayPreviewCommand}" CommandParameter="{Binding}" />
+                                                    </Core:EventTriggerBehavior>
+                                                    <Core:EventTriggerBehavior EventName="PointerExited">
+                                                        <!--<Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewPlayBtnFadeOut}" MethodName="StartAnimation"/>-->
+                                                        <Core:InvokeCommandAction Command="{Binding ElementName=page, Path=DataContext.StopPreviewCommand}" CommandParameter="{Binding}" />
+                                                    </Core:EventTriggerBehavior>
+                                                </Interactivity:Interaction.Behaviors>
+                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF5B0;" FontSize="14"/>
+                                            </Button>
+                                        </Grid>
+                                        <Grid Grid.Column="2">
+                                            <Button Background="{ThemeResource SelectBackgroundBrush}"
+                                                    extensions:Mouse.Cursor="Hand"
+                                                    BorderBrush="Transparent"
+                                                    Foreground="#ffffff"
+                                                    BorderThickness="2"
+                                                    CornerRadius="24"
+                                                    RequestedTheme="Dark"
+                                                    Command="{Binding ElementName=page, Path=DataContext.AddQuickAccessItemCommand}"
                                                     CommandParameter="{Binding}"
                                                     Height="32"
                                                     Padding="0"
                                                     HorizontalContentAlignment="Center"
                                                     VerticalContentAlignment="Center"
                                                     Width="32"
-                                                    Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}">
-                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE73E;" FontSize="18"/>
+                                                    Visibility="{Binding IsQuickAccessItem, Converter={StaticResource BoolToVisibilityInverseConverter}}">
+                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE208;" FontSize="16"/>
+                                            </Button>
+                                            <Button Background="{ThemeResource SelectBackgroundBrush}"
+                                                    extensions:Mouse.Cursor="Hand"
+                                                    BorderBrush="Transparent"
+                                                    Foreground="#ffffff"
+                                                    BorderThickness="2"
+                                                    CornerRadius="24"
+                                                    RequestedTheme="Dark"
+                                                    Command="{Binding ElementName=page, Path=DataContext.RemoveQuickAccessItemCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Height="28"
+                                                    Padding="0"
+                                                    HorizontalContentAlignment="Center"
+                                                    VerticalContentAlignment="Center"
+                                                    Width="28"
+                                                    Visibility="{Binding IsQuickAccessItem, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE735;" FontSize="16"/>
                                             </Button>
                                         </Grid>
-                                    </StackPanel>
-                                    <Grid Height="40" Width="40"
-                                          Margin="24"
-                                          HorizontalAlignment="Left"
-                                          VerticalAlignment="Bottom">
-                                        <muxc:ProgressRing IsActive="{Binding IsLoadingPreview}" 
-                                                           Height="40" Width="40"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center"
-                                                           Foreground="WhiteSmoke"/>
-                                        <Button x:Name="PlaylistViewPlayBtn" BorderThickness="2" 
-                                                Background="{x:Null}" Opacity="01"
-                                                BorderBrush="WhiteSmoke"
-                                                Foreground="WhiteSmoke"
-                                                RequestedTheme="Dark"
-                                                CornerRadius="48"
-                                                Height="40" Width="40"
-                                                Command="{Binding ElementName=page, Path=DataContext.PlayPlaylistCommand}"
-                                                CommandParameter="{Binding}"
-                                                Padding="0"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Stretch">
-                                            <Interactivity:Interaction.Behaviors>
-                                                <ToolkitBehaviors:Scale x:Name="PlaylistViewPlayBtnScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.2" ScaleY="1.2" CenterX="16" CenterY="16" EasingMode="EaseOut"  EasingType="Cubic" />
-                                                <ToolkitBehaviors:Scale x:Name="PlaylistViewPlayBtnScaleNormal"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="16" CenterY="16" EasingMode="EaseOut"   EasingType="Cubic"/>
-                                                <ToolkitBehaviors:Fade x:Name="PlaylistViewPlayBtnFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
-                                                <ToolkitBehaviors:Fade x:Name="PlaylistViewPlayBtnFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
-
-                                                <Core:EventTriggerBehavior EventName="PointerEntered">
-                                                    <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewPlayBtnScaleUp}" MethodName="StartAnimation"/>
-                                                    <Core:InvokeCommandAction Command="{Binding ElementName=page, Path=DataContext.PlayPreviewCommand}" CommandParameter="{Binding}" />
-                                                </Core:EventTriggerBehavior>
-                                                <Core:EventTriggerBehavior EventName="PointerExited">
-                                                    <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistViewPlayBtnScaleNormal}" MethodName="StartAnimation"/>
-                                                    <Core:InvokeCommandAction Command="{Binding ElementName=page, Path=DataContext.StopPreviewCommand}" />
-                                                </Core:EventTriggerBehavior>
-                                            </Interactivity:Interaction.Behaviors>
-
-                                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF5B0;" FontSize="14"/>
-                                        </Button>
                                     </Grid>
                                 </Grid>
                                 <StackPanel Grid.Row="1"
-                                            Margin="8 16 0 0">
+                                            Margin="8 0 0 0">
                                     <Grid Opacity="0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="auto"/>
@@ -3315,11 +3946,12 @@
                                             <ToolkitBehaviors:Offset x:Name="playlistMetaOffsetX" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="-8" EasingMode="EaseOut"  EasingType="Cubic" />
                                             <ToolkitBehaviors:Offset x:Name="playlistMetaOffsetY"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0"  EasingMode="EaseOut"   EasingType="Cubic"/>
                                         </Interactivity:Interaction.Behaviors>
-                                        <TextBlock Text="by " FontSize="14" Margin="0 0 2 0"/>
+                                        <TextBlock Text="By " FontSize="14" Margin="0 0 2 0"/>
                                         <TextBlock Text="{Binding Owner.Title, FallbackValue=Unknown}" Grid.Column="1" FontSize="14" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}"/>
                                         <StackPanel Grid.Column="2" Margin="8 0" Orientation="Horizontal">
-                                            <Ellipse Fill="{ThemeResource ItemPrimaryForeground}" Opacity="0.4" Height="4" Width="4" VerticalAlignment="Center" Margin="0 0 8 0"/>
+                                            <Ellipse Fill="{ThemeResource ItemPrimaryForeground}" Opacity="0.4" Height="3" Width="3" VerticalAlignment="Center" Margin="0 0 8 0"/>
                                             <TextBlock Text="{Binding ItemsCount, FallbackValue=0}" FontSize="14" Foreground="{ThemeResource ItemSecondaryForeground}"/>
+                                            <TextBlock Text="Tracks" FontSize="14" Foreground="{ThemeResource ItemSecondaryForeground}" Margin="2 0 0 0"/>
                                         </StackPanel>
                                     </Grid>
                                     <TextBlock Text="{Binding Title, FallbackValue=Unknown}"
@@ -3424,7 +4056,7 @@
                 <media:AcrylicBrush
                       BackgroundSource="Backdrop"
                       TintColor="{ThemeResource TintColor}"
-                      TintOpacity="0.95"
+                      TintOpacity="0.90"
                       BlurAmount="12"/>
 
             </Grid.Background>
@@ -3511,7 +4143,12 @@
                             ToolTipService.ToolTip="Clear selected">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE711;" FontSize="18"/>
                     </Button>
-                    <Button Background="{ThemeResource SecondaryItemBackgroundThemeBrush}" CornerRadius="10" Grid.Column="1" Height="32" Margin="24 0 0 0" Width="32" Style="{StaticResource ButtonRevealStyle}"
+                    <Button Background="{ThemeResource SecondaryItemBackgroundThemeBrush}" 
+                            CornerRadius="10" 
+                            Grid.Column="1" 
+                            Height="32" 
+                            Margin="24 0 0 0" 
+                            Width="32"
                             Command="{Binding ToggleExpandedPlaylistSelectedCommand}"
                             CommandParameter="False"
                             ToolTipService.ToolTip="Collapse"
@@ -3589,7 +4226,7 @@
                         <Grid/>
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="model:Playlist">
-                                <Grid Height="116"
+                                <Grid Height="116" Background="Transparent"
                                       Width="{Binding ElementName=page, Path=DataContext.ExpandedSelectPlaylistWidth, FallbackValue=352}"
                                       Padding="8">
                                     <Grid.ColumnDefinitions>
@@ -3611,10 +4248,14 @@
                                           Width="100">
                                         <Interactivity:Interaction.Behaviors>
                                             <Core:EventTriggerBehavior EventName="PointerEntered">
+                                                <Core:CallMethodAction TargetObject="{Binding ElementName=SelectedPlaylistViewItemThumbBgFadeIn}" MethodName="StartAnimation"/>
+
                                                 <Core:InvokeCommandAction Command="{Binding ElementName=page, Path=DataContext.PlayPreviewCommand}" CommandParameter="{Binding}" />
                                             </Core:EventTriggerBehavior>
                                             <Core:EventTriggerBehavior EventName="PointerExited">
-                                                <Core:InvokeCommandAction Command="{Binding ElementName=page, Path=DataContext.StopPreviewCommand}" />
+                                                <Core:CallMethodAction TargetObject="{Binding ElementName=SelectedPlaylistViewItemThumbBgFadeOut}" MethodName="StartAnimation"/>
+
+                                                <Core:InvokeCommandAction Command="{Binding ElementName=page, Path=DataContext.StopPreviewCommand}" CommandParameter="{Binding}"/>
                                             </Core:EventTriggerBehavior>
                                         </Interactivity:Interaction.Behaviors>
                                         <Image Source="{Binding Image}" Stretch="UniformToFill">
@@ -3623,6 +4264,19 @@
                                                 <ToolkitBehaviors:Scale x:Name="SelectedExpandedThumbScaleNormal"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="50" CenterY="50" EasingMode="EaseOut"   EasingType="Cubic"/>
                                             </Interactivity:Interaction.Behaviors>
                                         </Image>
+                                        <Rectangle Margin="-1" Opacity="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                            <Rectangle.Fill>
+                                                <media:AcrylicBrush BackgroundSource="Backdrop"
+                                                                    TintColor="#000000"
+                                                                    TintOpacity="0.70"
+                                                                    BlurAmount="5" 
+                                                                    FallbackColor="#000000"/>
+                                            </Rectangle.Fill>
+                                            <Interactivity:Interaction.Behaviors>
+                                                <ToolkitBehaviors:Fade x:Name="SelectedPlaylistViewItemThumbBgFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                                <ToolkitBehaviors:Fade x:Name="SelectedPlaylistViewItemThumbBgFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                            </Interactivity:Interaction.Behaviors>
+                                        </Rectangle>
                                         <Grid Height="40" Width="40"
                                               Margin="24"
                                               HorizontalAlignment="Center"
@@ -3736,7 +4390,6 @@
                                 Margin="0 0 4 0"
                                 VerticalAlignment="Stretch"
                                 VerticalContentAlignment="Center"
-                                Style="{StaticResource ButtonRevealStyle}"
                                 IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
                             <TextBlock Text="Merge"/>
                         </Button>
@@ -3752,7 +4405,6 @@
                                 Margin="4 0"
                                 VerticalAlignment="Stretch"
                                 VerticalContentAlignment="Center"
-                                Style="{StaticResource ButtonRevealStyle}"
                                 IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
                             <TextBlock Text="Shuffle play"/>
                         </Button>
@@ -3767,7 +4419,6 @@
                                 Margin="4 0 0 0"
                                 VerticalAlignment="Stretch"
                                 VerticalContentAlignment="Center"
-                                Style="{StaticResource ButtonRevealStyle}"
                                 IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
                             <TextBlock Text="Unfollow"/>
                         </Button>
@@ -3888,52 +4539,63 @@
                 </Button>
             </Grid>
         </Grid>
-        <Grid x:Name="destinationElement"
+        <Grid x:Name="TracksView"
               Grid.RowSpan="10"
-              Padding="0 32 0 0"
-              Grid.ColumnSpan="10" 
-              Visibility="{Binding IsTracksView, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=collapsed}">
+              Padding="0 32 0 0" 
+              Grid.ColumnSpan="10"
+              Visibility="{Binding IsTracksView, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=collapsedzz}">
             <Grid.Background>
                 <media:AcrylicBrush
                         BackgroundSource="Backdrop"
                         TintColor="{ThemeResource TintColor}"
-                        TintOpacity="0.95"
+                        TintOpacity="1"
                         BlurAmount="12"/>
 
             </Grid.Background>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
+            <animations:Implicit.ShowAnimations>
+                <animations:ScalarAnimation Target="Translation.Y" Duration="00:00:00.3000000" To="0"/>
+                <animations:OpacityAnimation Duration="00:00:00.3000000" To="1"/>
+            </animations:Implicit.ShowAnimations>
+            <animations:Implicit.HideAnimations>
+                <animations:ScalarAnimation Target="Translation.Y" Duration="00:00:00.1500000" To="50"/>
+                <animations:OpacityAnimation Duration="00:00:00.1500000" To="0"/>
+            </animations:Implicit.HideAnimations>
             <Grid x:Name="PlaylistInfoTrackView" 
-                  MaxWidth="612" HorizontalAlignment="Left"
+                  HorizontalAlignment="Center" 
+                  MaxWidth="{Binding ElementName=page, Path=DataContext.TracksMaxWidth}"
+                  Width="{Binding ElementName=page, Path=DataContext.TracksViewWidth}"
                   extensions:Mouse.Cursor="Hand" 
                   Background="Transparent" 
-                  Margin="0 0 0 16" 
-                  Padding="24 0">
-                <!--<Grid.ColumnDefinitions>
+                  Margin="0 0 0 16"
+                  Padding="24 0 16 0">
+                <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>-->
-                <!--<Grid Height="200" Width="200" Grid.ColumnSpan="10">
+                </Grid.ColumnDefinitions>
+                <Grid Height="100" Width="100" VerticalAlignment="Top" Margin="0 12 0 0">
                     <Interactivity:Interaction.Behaviors>
                         <Core:EventTriggerBehavior EventName="PointerEntered">
+                            <Core:CallMethodAction TargetObject="{Binding ElementName=TracksViewInfoThumbBgFadeIn}" MethodName="StartAnimation"/>
+
                             <Core:CallMethodAction TargetObject="{Binding ElementName=currentPlaylistPlayBtnFadeIn}" MethodName="StartAnimation"/>
                             <Core:CallMethodAction TargetObject="{Binding ElementName=currentPlaylistThumbScaleDown}" MethodName="StartAnimation"/>
 
                             <Core:CallMethodAction TargetObject="{Binding ElementName=currentPlaylistShadowScaleDown}" MethodName="StartAnimation"/>
                         </Core:EventTriggerBehavior>
                         <Core:EventTriggerBehavior EventName="PointerExited">
+                            <Core:CallMethodAction TargetObject="{Binding ElementName=TracksViewInfoThumbBgFadeOut}" MethodName="StartAnimation"/>
+
                             <Core:CallMethodAction TargetObject="{Binding ElementName=currentPlaylistPlayBtnFadeOut}" MethodName="StartAnimation"/>
                             <Core:CallMethodAction TargetObject="{Binding ElementName=currentPlaylistThumbScaleNormal}" MethodName="StartAnimation"/>
 
                             <Core:CallMethodAction TargetObject="{Binding ElementName=currentPlaylistShadowScaleNormal}" MethodName="StartAnimation"/>
                         </Core:EventTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
-                    <Controls:DropShadowPanel BlurRadius="12.0" ShadowOpacity="0.08" OffsetX="6.0" OffsetY="12.0" Color="Black"
+                    <Controls:DropShadowPanel BlurRadius="12" ShadowOpacity="0.1" OffsetX="2.0" OffsetY="6" Color="Black"
                                               Visibility="{Binding IsDarkThemeEnabled, Converter={StaticResource BoolToVisibilityInverseConverter}}">
                         <Interactivity:Interaction.Behaviors>
                             <ToolkitBehaviors:Scale x:Name="currentPlaylistShadowScaleDown" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="0.95" ScaleY="0.95" CenterX="100" CenterY="100" EasingMode="EaseOut"  EasingType="Cubic" />
@@ -3941,17 +4603,35 @@
                         </Interactivity:Interaction.Behaviors>
 
                         <Rectangle Fill="{ThemeResource ItemBackgroundThemeBrush}"  
-                                   Width="200"
-                                   Height="200"
+                                   Width="100"
+                                   Height="100"
                                    RadiusX="24"
                                    RadiusY="24"/>
                     </Controls:DropShadowPanel>
-                    <Grid CornerRadius="24" Background="Transparent">
+                    <Grid x:Name="destinationElement" CornerRadius="24" Background="Transparent">
                         <Interactivity:Interaction.Behaviors>
-                            <ToolkitBehaviors:Scale x:Name="currentPlaylistThumbScaleDown" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="0.95" ScaleY="0.95" CenterX="100" CenterY="100" EasingMode="EaseOut"  EasingType="Cubic" />
-                            <ToolkitBehaviors:Scale x:Name="currentPlaylistThumbScaleNormal"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="100" CenterY="100" EasingMode="EaseOut"   EasingType="Cubic"/>
+                            <ToolkitBehaviors:Scale x:Name="currentPlaylistThumbScaleDown" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="0.95" ScaleY="0.95" CenterX="50" CenterY="50" EasingMode="EaseOut"  EasingType="Cubic" />
+                            <ToolkitBehaviors:Scale x:Name="currentPlaylistThumbScaleNormal"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="50" CenterY="50" EasingMode="EaseOut"   EasingType="Cubic"/>
                         </Interactivity:Interaction.Behaviors>
-                        <Image Source="{Binding CurrentPlaylist.Image}" Stretch="UniformToFill"/>
+                        <Image Source="{Binding CurrentPlaylist.Image}" Stretch="UniformToFill">
+                            <Interactivity:Interaction.Behaviors>
+                                <ToolkitBehaviors:Scale x:Name="TracksViewImageScaleUp" Duration="400" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="50" CenterY="50" EasingMode="EaseOut"  EasingType="Cubic" />
+                                <ToolkitBehaviors:Scale x:Name="TracksViewImageScaleDown"  Duration="400" Delay="0" AutomaticallyStart="False" ScaleX="0.9" ScaleY="0.9" CenterX="50" CenterY="50" EasingMode="EaseOut"   EasingType="Cubic"/>
+                            </Interactivity:Interaction.Behaviors>
+                        </Image>
+                        <Rectangle Margin="-1" Opacity="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Rectangle.Fill>
+                                <media:AcrylicBrush BackgroundSource="Backdrop"
+                                                    TintColor="#000000"
+                                                    TintOpacity="0.70"
+                                                    BlurAmount="5" 
+                                                    FallbackColor="#000000"/>
+                            </Rectangle.Fill>
+                            <Interactivity:Interaction.Behaviors>
+                                <ToolkitBehaviors:Fade x:Name="TracksViewInfoThumbBgFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                <ToolkitBehaviors:Fade x:Name="TracksViewInfoThumbBgFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                            </Interactivity:Interaction.Behaviors>
+                        </Rectangle>
                     </Grid>
                     <Button BorderThickness="2" 
                             Background="Transparent" 
@@ -3963,11 +4643,10 @@
                             Command="{Binding PlayPlaylistCommand}"
                             CommandParameter="{Binding}"
                             Padding="0"
-                            Margin="24"
-                            Height="32"
-                            Width="32"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Bottom">
+                            Height="40"
+                            Width="40"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
                         <Interactivity:Interaction.Behaviors>
                             <ToolkitBehaviors:Scale x:Name="currentPlaylistPlayBtnScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.2" ScaleY="1.2" CenterX="16" CenterY="16" EasingMode="EaseOut"  EasingType="Cubic" />
                             <ToolkitBehaviors:Scale x:Name="currentPlaylistPlayBtnScaleNormal"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="16" CenterY="16" EasingMode="EaseOut"   EasingType="Cubic"/>
@@ -3983,32 +4662,29 @@
                         </Interactivity:Interaction.Behaviors>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF5B0;" FontSize="14"/>
                     </Button>
-                </Grid>-->
-                <StackPanel  Grid.Row="1"
+                </Grid>
+                <StackPanel Grid.Row="1"
                             HorizontalAlignment="Left"
-                            Margin="12 8 24 0" 
-                            >
+                            Margin="24 12 16 0" 
+                            Grid.Column="1">
+                    <Interactivity:Interaction.Behaviors>
+                        <ToolkitBehaviors:Offset x:Name="PlaylistInfoTrackViewOffsetIn" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                        <ToolkitBehaviors:Offset x:Name="PlaylistInfoTrackViewOffsetOut"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="48" OffsetY="0"  EasingMode="EaseOut"   EasingType="Cubic"/>
+                        <ToolkitBehaviors:Fade x:Name="PlaylistInfoTrackViewFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                        <ToolkitBehaviors:Fade x:Name="PlaylistInfoTrackViewFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                    </Interactivity:Interaction.Behaviors>
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="auto"/>
-                        </Grid.ColumnDefinitions>
-                        <!--<TextBlock Text="by " FontSize="14" Margin="0 0 2 0"/>-->
                         <TextBlock Text="{Binding CurrentPlaylist.Owner.Title, FallbackValue=Unknown}" Grid.Column="1" FontSize="14" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}"/>
-                        <!--<StackPanel Grid.Column="2" Margin="8 0" Orientation="Horizontal">
-                            <Ellipse Fill="{ThemeResource ItemPrimaryForeground}" Opacity="0.4" Height="4" Width="4" VerticalAlignment="Center" Margin="0 0 8 0"/>
-                            <TextBlock Text="{Binding CurrentPlaylist.ItemsCount, FallbackValue=0}" FontSize="14" Foreground="{ThemeResource ItemSecondaryForeground}"/>
-                        </StackPanel>-->
                     </Grid>
                     <TextBlock Text="{Binding CurrentPlaylist.Title, FallbackValue=Unknown}"
                                FontSize="32"
                                FontWeight="Black"
                                MaxHeight="126"
+                               Margin="0 -8 0 0"
                                TextWrapping="WrapWholeWords"
                                TextTrimming="CharacterEllipsis">
                     </TextBlock>
-                    <TextBlock Text="{Binding CurrentPlaylist.Description, FallbackValue=No description}"
+                    <TextBlock Text="{Binding CurrentPlaylist.Description}"
                                FontSize="14"
                                MaxHeight="84"
                                TextWrapping="WrapWholeWords"
@@ -4018,13 +4694,12 @@
             </Grid>
             <ListView x:Name="TracksListView"
                       Grid.Row="1" Grid.Column="1"
-                      Grid.RowSpan="10"
                       Background="Transparent"
                       HorizontalContentAlignment="Stretch"
                       model:ItemClickCommand.Command="{Binding TracksViewItemClickCommand}"
                       ItemsSource="{Binding TracksCollectionView}"
-                      SelectionMode="None" 
-                      Padding="0 0"
+                      SelectionMode="Extended"
+                      Padding="0"
                       IsItemClickEnabled="True"
                       ItemContainerStyle="{StaticResource TracksViewContainerStyle}">
 
@@ -4033,7 +4708,8 @@
                 <Grid/>
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="model:Track">
-                        <Grid x:Name="MediaItem"
+                        <Grid x:Name="MediaItem" 
+                              Background="Transparent" 
                               extensions:Mouse.Cursor="Hand">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
@@ -4049,6 +4725,13 @@
                                 </Core:EventTriggerBehavior>
                             </Interactivity:Interaction.Behaviors>
                             <!--Height="116"-->
+                            <Rectangle Fill="{ThemeResource BrandColorThemeBrush}"
+                                       Grid.ColumnSpan="10"
+                                       RadiusX="24"
+                                       RadiusY="24"
+                                       Opacity="1"
+                                       Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
                             <Grid Background="{ThemeResource SecondaryItemBackgroundThemeBrush}" 
                                   CornerRadius="24"
                                   Height="80" 
@@ -4056,24 +4739,41 @@
                                   Margin="8">
                                 <Interactivity:Interaction.Behaviors>
                                     <Core:EventTriggerBehavior EventName="PointerEntered">
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=TracksViewItemThumbBgFadeIn}" MethodName="StartAnimation"/>
+
                                         <Core:InvokeCommandAction Command="{Binding ElementName=page, Path=DataContext.PlayPreviewCommand}" CommandParameter="{Binding}" />
                                     </Core:EventTriggerBehavior>
                                     <Core:EventTriggerBehavior EventName="PointerExited">
-                                        <Core:InvokeCommandAction Command="{Binding ElementName=page, Path=DataContext.StopPreviewCommand}" />
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=TracksViewItemThumbBgFadeOut}" MethodName="StartAnimation"/>
+
+                                        <Core:InvokeCommandAction Command="{Binding ElementName=page, Path=DataContext.StopPreviewCommand}" CommandParameter="{Binding}" />
                                     </Core:EventTriggerBehavior>
                                 </Interactivity:Interaction.Behaviors>
                                 <Image Source="{Binding Image}" Stretch="UniformToFill">
                                     <Interactivity:Interaction.Behaviors>
-                                        <ToolkitBehaviors:Scale x:Name="TracksListViewThumbScaleDown" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.1" ScaleY="1.1" CenterX="50" CenterY="50" EasingMode="EaseOut"  EasingType="Cubic" />
-                                        <ToolkitBehaviors:Scale x:Name="TracksListViewThumbScaleNormal"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="50" CenterY="50" EasingMode="EaseOut"   EasingType="Cubic"/>
+                                        <ToolkitBehaviors:Scale x:Name="TracksListViewThumbScaleDown" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.1" ScaleY="1.1" CenterX="40" CenterY="40" EasingMode="EaseOut"  EasingType="Cubic" />
+                                        <ToolkitBehaviors:Scale x:Name="TracksListViewThumbScaleNormal"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="40" CenterY="40" EasingMode="EaseOut"   EasingType="Cubic"/>
                                     </Interactivity:Interaction.Behaviors>
                                 </Image>
-                                <Grid Height="44" Width="44"
+                                <Rectangle Margin="-1" Opacity="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Rectangle.Fill>
+                                        <media:AcrylicBrush BackgroundSource="Backdrop"
+                                                    TintColor="#000000"
+                                                    TintOpacity="0.70"
+                                                    BlurAmount="5" 
+                                                    FallbackColor="#000000"/>
+                                    </Rectangle.Fill>
+                                    <Interactivity:Interaction.Behaviors>
+                                        <ToolkitBehaviors:Fade x:Name="TracksViewItemThumbBgFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                        <ToolkitBehaviors:Fade x:Name="TracksViewItemThumbBgFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                    </Interactivity:Interaction.Behaviors>
+                                </Rectangle>
+                                <Grid Height="32" Width="32"
                                       Margin="0"
                                       HorizontalAlignment="Center"
                                       VerticalAlignment="Center">
                                     <muxc:ProgressRing IsActive="{Binding IsLoadingPreview}" 
-                                                      Height="44" Width="44"
+                                                      Height="32" Width="32"
                                                       Foreground="WhiteSmoke"/>
                                     <Button x:Name="TracksListViewPlayBtn" BorderThickness="2" 
                                             Background="{x:Null}"
@@ -4081,7 +4781,7 @@
                                             Foreground="WhiteSmoke"
                                             RequestedTheme="Dark"
                                             CornerRadius="48"
-                                            Height="44" Width="44"
+                                            Height="32" Width="32"
                                             Command="{Binding ElementName=page, Path=DataContext.PlayTrackCommand}"
                                             CommandParameter="{Binding}"
                                             Padding="0"
@@ -4107,16 +4807,16 @@
                                             Margin="24 12 8 12"
                                             VerticalAlignment="Center">
                                 <TextBlock Text="{Binding Title, FallbackValue=Uknown}"
-                                               FontSize="17"
-                                               FontWeight="Medium" 
-                                               TextTrimming="CharacterEllipsis"
-                                               ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}"/>
+                                           FontSize="17"
+                                           FontWeight="Medium" 
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="by " FontSize="14" Foreground="{ThemeResource ItemSecondaryForeground}" Margin="0 0 2 0"/>
+                                    <TextBlock Text="By " FontSize="14" Foreground="{ThemeResource ItemSecondaryForeground}" Margin="0 0 2 0"/>
                                     <TextBlock Text="{Binding Artist, FallbackValue=Unknown}" Foreground="{ThemeResource ItemSecondaryForeground}" Grid.Column="1" FontSize="14" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}"/>
                                 </Grid>
                                 <TextBlock Text="{Binding Album, FallbackValue=Unknown}"
@@ -4124,11 +4824,12 @@
                                                Foreground="{ThemeResource ItemSecondaryForeground}"
                                                MaxHeight="46"
                                                TextTrimming="CharacterEllipsis"
-                                               TextWrapping="WrapWholeWords"
+                                               TextWrapping="NoWrap"
                                                ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}"/>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal" Grid.Column="2" Margin="24 0 24 0">
-                                <Grid Margin="0 0 0 0" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Grid.Column="2" Margin="24 0 24 0"
+                                        Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibilityInverseConverter}}">
+                                <!--<Grid VerticalAlignment="Center">
                                     <Button BorderThickness="2" BorderBrush="{ThemeResource SecondaryItemBackgroundThemeBrush}" 
                                             Background="Transparent"
                                             CornerRadius="24"
@@ -4153,15 +4854,16 @@
 
                                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF78C;" FontSize="14"/>
                                     </Button>
-                                </Grid>
+                                </Grid>-->
                                 <Button Background="{ThemeResource SecondaryItemBackgroundThemeBrush}" 
-                                                CornerRadius="24"
-                                                Command="{Binding ElementName=page, Path=DataContext.RemoveTrackFromCurrentPlaylistCommand}"
-                                                CommandParameter="{Binding}"
-                                                Grid.Column="1" 
-                                                Height="32" 
-                                                Margin="12 12 0 12" 
-                                                Width="32" Padding="0">
+                                        CornerRadius="24"
+                                        Command="{Binding ElementName=page, Path=DataContext.RemoveTrackFromCurrentPlaylistCommand}"
+                                        CommandParameter="{Binding}"
+                                        Grid.Column="1" 
+                                        Height="32" 
+                                        Margin="12 12 0 12" 
+                                        Width="32" Padding="0"
+                                        Visibility="{Binding CanModify, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <Interactivity:Interaction.Behaviors>
                                         <ToolkitBehaviors:Scale x:Name="TracksViewItemBtnScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.1" ScaleY="1.1" CenterX="16" CenterY="16" EasingMode="EaseOut"  EasingType="Cubic" />
                                         <ToolkitBehaviors:Scale x:Name="TracksViewItemBtnScaleNormal"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="16" CenterY="16" EasingMode="EaseOut"   EasingType="Cubic"/>
@@ -4180,45 +4882,89 @@
                 </ListView.ItemTemplate>
                 <ListView.Header>
                     <Controls:ScrollHeader Mode="QuickReturn">
-                        <Grid Padding="24 0">
+                        <Grid Padding="24 0" 
+                              HorizontalAlignment="Center" 
+                              MaxWidth="{Binding ElementName=page, Path=DataContext.TracksMaxWidth}"
+                              Width="{Binding ElementName=page, Path=DataContext.TracksViewWidth}">
                             <Grid.Background>
                                 <media:AcrylicBrush
                                       BackgroundSource="Backdrop"
                                       TintColor="{ThemeResource TintColor}"
                                       TintOpacity="0.95"
                                       BlurAmount="12"/>
-
                             </Grid.Background>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
-                            <Grid Grid.Row="1" 
+                            <Grid x:Name="TrackSubtitle"
+                                  Grid.Row="1" 
                                   Height="36"
                                   Margin="0 0 0 12"
-                                  Padding="8 0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="auto"/>
-                                </Grid.ColumnDefinitions>
+                                  Padding="4 0">
+                                <Interactivity:Interaction.Behaviors>
+                                    <ToolkitBehaviors:Offset x:Name="TrackSubtitleOffsetIn" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                    <ToolkitBehaviors:Offset x:Name="TrackSubtitleOffsetOut"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="-24" OffsetY="0"  EasingMode="EaseOut"   EasingType="Cubic"/>
+                                    <ToolkitBehaviors:Fade x:Name="TrackSubtitleFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                    <ToolkitBehaviors:Fade x:Name="TrackSubtitleFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                </Interactivity:Interaction.Behaviors>
                                 <TextBlock Text="{Binding TracksViewSubTitle, FallbackValue=Tracks (0)}"
                                            FontSize="16"
                                            FontWeight="Medium"
                                            Foreground="{ThemeResource ItemSecondaryForeground}"
-                                           VerticalAlignment="Center"/>
+                                           VerticalAlignment="Center"
+                                           Visibility="{Binding IsTracksViewFilterActive, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Visibility="{Binding IsTracksViewFilterActive, Converter={StaticResource BoolToVisibilityInverseConverter}}">
+                                    <TextBlock Text="Created by"
+                                               FontSize="14"
+                                               Foreground="{ThemeResource ItemTertiaryForeground}"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding CurrentPlaylist.Owner.Title}"
+                                               FontSize="14"
+                                               FontWeight="Medium"
+                                               Foreground="{ThemeResource ItemPrimaryForeground}"
+                                               Margin="4 0 0 0"
+                                               VerticalAlignment="Center"/>
+                                    <Ellipse Height="3"
+                                             Width="3"
+                                             Margin="8 0"
+                                             Fill="{ThemeResource ItemSecondaryForeground}"
+                                             VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding CurrentPlaylist.ItemsCount}"
+                                               FontSize="14"
+                                               Foreground="{ThemeResource ItemSecondaryForeground}"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Text="Tracks"
+                                               FontSize="14"
+                                               Foreground="{ThemeResource ItemSecondaryForeground}"
+                                               Margin="4 0 0 0"
+                                               VerticalAlignment="Center"/>
+                                    <Ellipse Height="3"
+                                             Width="3"
+                                             Margin="8 0"
+                                             Fill="{ThemeResource ItemSecondaryForeground}"
+                                             VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding CurrentPlaylist.DurationStr, FallbackValue=0}"
+                                               FontSize="14"
+                                               Foreground="{ThemeResource ItemSecondaryForeground}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
                             </Grid>
                             <Grid x:Name="TrackSearch" 
                                   Height="36"
                                   Grid.Row="0"
-                                  Margin="0 0 0 12"
+                                  Margin="0 0 0 6"
                                   Padding="0 0">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" MaxWidth="382"/>
+                                    <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="auto"/>
                                 </Grid.ColumnDefinitions>
                                 <Interactivity:Interaction.Behaviors>
-                                    <ToolkitBehaviors:Offset x:Name="TrackSearchOffsetEnter" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0" EasingMode="EaseOut"  EasingType="Cubic" />
-                                    <ToolkitBehaviors:Offset x:Name="TrackSearchOffsetExit"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="24" OffsetY="0"  EasingMode="EaseOut"   EasingType="Cubic"/>
+                                    <ToolkitBehaviors:Offset x:Name="TrackSearchOffsetIn" Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                    <ToolkitBehaviors:Offset x:Name="TrackSearchOffsetOut"  Duration="400" Delay="0" AutomaticallyStart="False" OffsetX="0" OffsetY="32"  EasingMode="EaseOut"   EasingType="Cubic"/>
+                                    <ToolkitBehaviors:Fade x:Name="TrackSearchFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                    <ToolkitBehaviors:Fade x:Name="TrackSearchFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
                                 </Interactivity:Interaction.Behaviors>
                                 <Grid Margin="0 0 8 0">
                                     <AutoSuggestBox Style="{StaticResource AutoSuggestBoxStyle1}" 
@@ -4230,22 +4976,25 @@
                                                     Height="36"
                                                     VerticalAlignment="Center"
                                                     HorizontalAlignment="Stretch"
-                                                    DisplayMemberPath="Title">
+                                                    DisplayMemberPath="Title"
+                                                    IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
                                     </AutoSuggestBox>
                                 </Grid>
-                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Column="1">
+                                <StackPanel Orientation="Horizontal" 
+                                            Grid.Column="1">
                                     <ComboBox Style="{StaticResource ComboBoxStyle1}" 
                                               BorderThickness="0"
                                               extensions:Mouse.Cursor="Hand"
                                               CornerRadius="10"
-                                              Width="186"
+                                              Width="164"
                                               Padding="16 0 0 0"
                                               Margin="0 0 8 0"
                                               VerticalContentAlignment="Stretch"
                                               VerticalAlignment="Stretch"
                                               ItemsSource="{Binding TracksSortList}"
                                               SelectedItem="{Binding CurrentTrackSorting, Mode=TwoWay}"
-                                              Background="{ThemeResource ItemBackgroundThemeBrush}">
+                                              Background="{ThemeResource ItemBackgroundThemeBrush}"
+                                              IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
 
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate x:DataType="model:Sorting">
@@ -4256,10 +5005,10 @@
                                     <ToggleButton Background="{ThemeResource ItemBackgroundThemeBrush}" 
                                                   IsChecked="{Binding IsSelectAllTracksChecked, Mode=TwoWay}" 
                                                   CornerRadius="10" 
-                                                  extensions:Mouse.Cursor="Hand"
-                                                  Margin="0 0 8 0" 
+                                                  extensions:Mouse.Cursor="Hand" 
                                                   Width="36" 
-                                                  VerticalAlignment="Stretch">
+                                                  VerticalAlignment="Stretch"
+                                                  IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
                                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8B3;" FontSize="16"/>
                                     </ToggleButton>
                                     <!--<ToggleSwitch ToolTipService.ToolTip="Select All" Style="{StaticResource ToggleSwitchStyle1}" IsOn="{Binding IsSelectAllTracksChecked, Mode=TwoWay}" OffContent="" OnContent="" Width="44" BackgroundSizing="InnerBorderEdge"/>-->
@@ -4268,9 +5017,16 @@
                         </Grid>
                     </Controls:ScrollHeader>
                 </ListView.Header>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel HorizontalAlignment="Center" 
+                                         MaxWidth="{Binding ElementName=page, Path=DataContext.TracksMaxWidth}"
+                                         Width="{Binding ElementName=page, Path=DataContext.TracksViewWidth}"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
             </ListView>
-            <Grid Height="64" Grid.Row="4" 
-                  Padding="24 0"
+            <Grid Height="64" Grid.Row="1"
+                  Padding="24 0" Grid.RowSpan="10" VerticalAlignment="Bottom"
                   Visibility="{Binding TracksViewHasSelectedItems, Converter={StaticResource BoolToVisibilityConverter}}">
                 <Grid.Background>
                     <media:AcrylicBrush
@@ -4284,6 +5040,14 @@
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
+                <animations:Implicit.ShowAnimations>
+                    <animations:ScalarAnimation Target="Translation.Y" Duration="00:00:00.3000000" From="50" To="0"/>
+                    <animations:OpacityAnimation Duration="00:00:00.3000000" To="1"/>
+                </animations:Implicit.ShowAnimations>
+                <animations:Implicit.HideAnimations>
+                    <animations:ScalarAnimation Target="Translation.Y" Duration="00:00:00.1500000" To="50"/>
+                    <animations:OpacityAnimation Duration="00:00:00.1500000" To="0"/>
+                </animations:Implicit.HideAnimations>
                 <StackPanel Orientation="Horizontal">
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE133;" FontSize="16" VerticalAlignment="Center"/>
                     <TextBlock Text="Selected" 
@@ -4362,7 +5126,7 @@
                                 </MenuFlyoutItem>
                                 <MenuFlyoutItem Text="Add to other playlist" Command="{Binding ShowAddToPlaylistDialogCommand}">
                                     <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE90B;"/>
+                                        <FontIcon Glyph="&#xE8D6;"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
                             </MenuFlyout>
@@ -4373,20 +5137,23 @@
                 </StackPanel>
             </Grid>
             <Button x:Name="CloseTracksButton"
+                    Background="{ThemeResource SelectBackgroundBrush}"
+                    CornerRadius="10"
                     Command="{Binding CloseTracksButtonCommand}"
                     Foreground="{ThemeResource ItemPrimaryForeground}"
                     extensions:Mouse.Cursor="Hand"
                     Grid.ColumnSpan="10"
                     Grid.RowSpan="10"
-                    Height="48px"
-                    Width="48px"
+                    Height="40px"
+                    Width="40px"
+                    Padding="0"
                     HorizontalContentAlignment="Center"
                     HorizontalAlignment="Right"
-                    Margin="16 8"
+                    Margin="24 16"
                     VerticalContentAlignment="Center"
                     VerticalAlignment="Top"
-                    Style="{StaticResource TextBlockButtonStyle}"
-                    ToolTipService.ToolTip="Close">
+                    ToolTipService.ToolTip="Close"
+                    IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
 
                 <Interactivity:Interaction.Behaviors>
                     <ToolkitBehaviors:Scale x:Name="closeTracksButtonScaleUp" Duration="400" Delay="0" AutomaticallyStart="False" ScaleX="1.1" ScaleY="1.1" CenterX="24" CenterY="24" EasingMode="EaseOut"  EasingType="Cubic" />
@@ -4400,8 +5167,265 @@
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
 
-                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE711;"/>
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE711;" FontSize="16"/>
             </Button>
+
+            <CheckBox IsChecked="{Binding IsTracksView}" Visibility="Collapsed">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="Checked">
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=TracksViewImageScaleUp}" MethodName="StartAnimation"/>
+                        
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistInfoTrackViewOffsetIn}" MethodName="StartAnimation"/>
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistInfoTrackViewFadeIn}" MethodName="StartAnimation"/>
+
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=TrackSearchOffsetIn}" MethodName="StartAnimation"/>
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=TrackSearchFadeIn}" MethodName="StartAnimation"/>
+
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=TrackSubtitleOffsetIn}" MethodName="StartAnimation"/>
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=TrackSubtitleFadeIn}" MethodName="StartAnimation"/>
+                    </Core:EventTriggerBehavior>
+                    <Core:EventTriggerBehavior EventName="Unchecked">
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=TracksViewImageScaleDown}" MethodName="StartAnimation"/>
+                        
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistInfoTrackViewOffsetOut}" MethodName="StartAnimation"/>
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=PlaylistInfoTrackViewFadeOut}" MethodName="StartAnimation"/>
+
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=TrackSearchOffsetOut}" MethodName="StartAnimation"/>
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=TrackSearchFadeOut}" MethodName="StartAnimation"/>
+
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=TrackSubtitleOffsetOut}" MethodName="StartAnimation"/>
+                        <Core:CallMethodAction TargetObject="{Binding ElementName=TrackSubtitleFadeOut}" MethodName="StartAnimation"/>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+            </CheckBox>
+        </Grid>
+        <Grid x:Name="QuickAccess" 
+              Background="{ThemeResource PopupBackgroundThemeBrush}" 
+              Grid.RowSpan="10"
+              Grid.ColumnSpan="10"
+              Visibility="{Binding ShowQuickAccessView, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=collapsed}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid MaxHeight="280"
+                  Background="#000000"
+                  Grid.Row="1"
+                  Grid.RowSpan="100"
+                  Grid.ColumnSpan="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <animations:Implicit.ShowAnimations>
+                    <animations:ScalarAnimation Target="Translation.Y" Duration="00:00:00.3000000" From="50" To="0"/>
+                    <animations:OpacityAnimation Duration="00:00:00.3000000" To="1"/>
+                </animations:Implicit.ShowAnimations>
+                <animations:Implicit.HideAnimations>
+                    <animations:ScalarAnimation Target="Translation.Y" Duration="00:00:00.1500000" To="50"/>
+                    <animations:OpacityAnimation Duration="00:00:00.1500000" To="0"/>
+                </animations:Implicit.HideAnimations>
+                <ListView x:Name="QuickAccessView"
+                          Grid.Row="1"
+                          HorizontalContentAlignment="Center"
+                          IsItemClickEnabled="True"
+                          model:ItemClickCommand.Command="{Binding PlaylistItemClickCommand}"
+                          ItemsSource="{Binding QuickAccessCollectionView}"
+                          Margin="0" Padding="12 12" SelectionMode="None"
+                          ScrollViewer.HorizontalScrollMode="Auto"
+                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                          ScrollViewer.VerticalScrollMode="Disabled"
+                          extensions:ScrollViewerExtensions.HorizontalScrollBarMargin="2 2 2 2"
+                          extensions:ScrollViewerExtensions.VerticalScrollBarMargin="2, 2, 2, 2"
+                          ItemContainerStyle="{StaticResource QuickAccessViewItemContainerStyle}">
+                    <Grid/>
+                    <Grid/>
+                    <Grid/>
+                    <Grid/>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="model:Playlist">
+                            <Grid x:Name="connectedElement"  extensions:Mouse.Cursor="Hand" 
+                                  Width="128" 
+                                  Background="Transparent">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="PointerEntered">
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessShadowScaleDown}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessTitleOffsetUp}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessThumbScaleUp}" MethodName="StartAnimation"/>
+                                    </Core:EventTriggerBehavior>
+                                    <Core:EventTriggerBehavior EventName="PointerExited">
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessShadowScaleUp}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessTitleOffsetX}" MethodName="StartAnimation"/>
+                                        <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessThumbScaleDown}" MethodName="StartAnimation"/>
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                                <Grid Height="128" Width="128" VerticalAlignment="Top">
+                                    <Interactivity:Interaction.Behaviors>
+                                        <Core:EventTriggerBehavior EventName="PointerEntered">
+                                            <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessBgFadeIn}" MethodName="StartAnimation"/>
+                                            <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessPlayBtnFadeIn}" MethodName="StartAnimation"/>
+                                        </Core:EventTriggerBehavior>
+                                        <Core:EventTriggerBehavior EventName="PointerExited">
+                                            <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessBgFadeOut}" MethodName="StartAnimation"/>
+                                            <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessPlayBtnFadeOut}" MethodName="StartAnimation"/>
+                                        </Core:EventTriggerBehavior>
+                                    </Interactivity:Interaction.Behaviors>
+                                    <Grid CornerRadius="24" Background="{ThemeResource ItemBackgroundThemeBrush}">
+                                        <Interactivity:Interaction.Behaviors>
+                                            <ToolkitBehaviors:Scale x:Name="quickAccessThumbScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="0.95" ScaleY="0.95" CenterX="125" CenterY="125" EasingMode="EaseOut"  EasingType="Cubic" />
+                                            <ToolkitBehaviors:Scale x:Name="quickAccessThumbScaleDown"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="125" CenterY="125" EasingMode="EaseOut"   EasingType="Cubic"/>
+                                        </Interactivity:Interaction.Behaviors>
+                                        <Image Source="{Binding Image}" Width="128" Stretch="UniformToFill"/>
+                                        <Rectangle Margin="-1" Opacity="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                            <Rectangle.Fill>
+                                                <media:AcrylicBrush BackgroundSource="Backdrop"
+                                                                    TintColor="#000000"
+                                                                    TintOpacity="0.70"
+                                                                    BlurAmount="5" 
+                                                                    FallbackColor="#000000"/>
+                                            </Rectangle.Fill>
+                                            <Interactivity:Interaction.Behaviors>
+                                                <ToolkitBehaviors:Fade x:Name="quickAccessBgFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                                <ToolkitBehaviors:Fade x:Name="quickAccessBgFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+                                            </Interactivity:Interaction.Behaviors>
+                                        </Rectangle>
+                                        <Grid Margin="12"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Bottom">
+                                            <Button Background="{ThemeResource SelectBackgroundBrush}"
+                                                    BorderBrush="Transparent"
+                                                    Foreground="#ffffff"
+                                                    BorderThickness="2"
+                                                    CornerRadius="24"
+                                                    RequestedTheme="Dark"
+                                                    Command="{Binding ElementName=page, Path=DataContext.RemoveQuickAccessItemCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Height="28"
+                                                    Padding="0"
+                                                    HorizontalContentAlignment="Center"
+                                                    VerticalContentAlignment="Center"
+                                                    Width="28">
+                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8D9;" FontSize="16"/>
+                                            </Button>
+                                        </Grid>
+                                        <Grid Height="40" Width="40"
+                                              Margin="24"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center">
+                                            <muxc:ProgressRing IsActive="{Binding IsLoadingPreview}" 
+                                                               Height="40" Width="40"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"
+                                                               Foreground="WhiteSmoke"/>
+                                            <Button x:Name="quickAccessPlayBtn" BorderThickness="2" 
+                                                    Background="{x:Null}" Opacity="0"
+                                                    BorderBrush="WhiteSmoke"
+                                                    Foreground="WhiteSmoke"
+                                                    RequestedTheme="Dark"
+                                                    CornerRadius="48"
+                                                    Height="40" Width="40"
+                                                    Command="{Binding ElementName=page, Path=DataContext.PlayPlaylistCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Padding="0"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch">
+                                                <Interactivity:Interaction.Behaviors>
+                                                    <ToolkitBehaviors:Scale x:Name="quickAccessPlayBtnScaleUp" Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1.2" ScaleY="1.2" CenterX="16" CenterY="16" EasingMode="EaseOut"  EasingType="Cubic" />
+                                                    <ToolkitBehaviors:Scale x:Name="quickAccessPlayBtnScaleNormal"  Duration="250" Delay="0" AutomaticallyStart="False" ScaleX="1" ScaleY="1" CenterX="16" CenterY="16" EasingMode="EaseOut"   EasingType="Cubic"/>
+                                                    <ToolkitBehaviors:Fade x:Name="quickAccessPlayBtnFadeIn" Duration="300" Delay="0" AutomaticallyStart="False" Value="1" EasingMode="EaseOut" EasingType="Cubic" />
+                                                    <ToolkitBehaviors:Fade x:Name="quickAccessPlayBtnFadeOut"  Duration="150" Delay="0" AutomaticallyStart="False" Value="0" EasingMode="EaseOut"  EasingType="Cubic" />
+
+                                                    <Core:EventTriggerBehavior EventName="PointerEntered">
+                                                        <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessPlayBtnScaleUp}" MethodName="StartAnimation"/>
+                                                        <Core:InvokeCommandAction Command="{Binding ElementName=page, Path=DataContext.PlayPreviewCommand}" CommandParameter="{Binding}" />
+                                                    </Core:EventTriggerBehavior>
+                                                    <Core:EventTriggerBehavior EventName="PointerExited">
+                                                        <Core:CallMethodAction TargetObject="{Binding ElementName=quickAccessPlayBtnScaleNormal}" MethodName="StartAnimation"/>
+                                                        <Core:InvokeCommandAction Command="{Binding ElementName=page, Path=DataContext.StopPreviewCommand}" CommandParameter="{Binding}" />
+                                                    </Core:EventTriggerBehavior>
+                                                </Interactivity:Interaction.Behaviors>
+
+                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF5B0;" FontSize="14"/>
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                <StackPanel Grid.Row="1"
+                                            Margin="8 8 0 0">
+                                    <TextBlock Text="{Binding Title, FallbackValue=Unknown}"
+                                               FontSize="16"
+                                               FontWeight="Bold"
+                                               TextWrapping="NoWrap"
+                                               TextTrimming="CharacterEllipsis" 
+                                               ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Mode=Self}}">
+                                    </TextBlock>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel HorizontalAlignment="Center" Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                </ListView>
+                <Grid Grid.Row="0"
+                      Grid.ColumnSpan="10" 
+                      Margin="32 16"
+                      VerticalAlignment="Top">
+
+                    <TextBlock Text="Quick access" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right">
+                        <Button x:Name="ClearQuickAccessButton"
+                                Background="Transparent"
+                                Command="{Binding ClearQuickAccessCommand}"
+                                CornerRadius="10"
+                                Foreground="#ffffff"
+                                extensions:Mouse.Cursor="Hand"
+                                Grid.Column="0"
+                                Height="36"
+                                Width="36"
+                                Padding="0"
+                                HorizontalContentAlignment="Center"
+                                Margin="12 0 0 0"
+                                VerticalContentAlignment="Center"
+                                VerticalAlignment="Center"
+                                ToolTipService.ToolTip="Close"
+                                Visibility="{Binding ShowQuickAccessView, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=collapsedc}">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8E6;" FontSize="16"/>
+                        </Button>
+                        <Button x:Name="CloseQuickAccessButton"
+                                Background="{ThemeResource SelectBackgroundBrush}"
+                                Command="{Binding ToggleQuickAccessCommand}"
+                                CornerRadius="10"
+                                Foreground="#ffffff"
+                                extensions:Mouse.Cursor="Hand"
+                                Height="36"
+                                Width="36"
+                                Padding="0"
+                                HorizontalAlignment="Right"
+                                HorizontalContentAlignment="Center"
+                                Margin="12 0 0 0"
+                                VerticalContentAlignment="Center"
+                                VerticalAlignment="Center"
+                                ToolTipService.ToolTip="Close"
+                                Visibility="{Binding ShowQuickAccessView, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=collapsedc}">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE711;" FontSize="16"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+            <CheckBox Style="{StaticResource PopupDismissCheckBoxStyle}"
+                      Grid.ColumnSpan="10"
+                      IsChecked="{Binding ShowQuickAccessView, Mode=TwoWay}"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"/>
         </Grid>
         <Grid Height="32" VerticalAlignment="Top" Grid.ColumnSpan="10">
             <Grid.ColumnDefinitions>
@@ -4413,29 +5437,53 @@
 
             </Grid>
         </Grid>
-        <Button Background="Transparent" VerticalAlignment="Top" Grid.ColumnSpan="10">
-            <Button.Content>
-                <FontIcon Glyph="&#xE10C;" FontSize="16" Margin="2,4,2,2" />
-            </Button.Content>
-            <Button.Flyout>
-                <MenuFlyout>
-                    <MenuFlyoutItem Text="Refresh" Command="{Binding RefreshCommand}">
-                        <MenuFlyoutItem.Icon>
-                            <FontIcon Glyph="&#xE72C;"/>
-                        </MenuFlyoutItem.Icon>
-                    </MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Settings">
-                        <MenuFlyoutItem.Icon>
-                            <FontIcon Glyph="&#xE713;"/>
-                        </MenuFlyoutItem.Icon>
-                    </MenuFlyoutItem>
-                </MenuFlyout>
-            </Button.Flyout>
-        </Button>
+        <StackPanel x:Name="TopBarActions"  
+                    Orientation="Horizontal" 
+                    VerticalAlignment="Top" 
+                    Grid.ColumnSpan="10">
+            <Button Background="Transparent"
+                    extensions:Mouse.Cursor="Hand"
+                    Width="48">
+                <Button.Content>
+                    <FontIcon Glyph="&#xE10C;" FontSize="16" Margin="2,4,2,2" />
+                </Button.Content>
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="Refresh" Command="{Binding RefreshCommand}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE72C;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Settings">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE713;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+            <Button Background="Transparent"
+                    extensions:Mouse.Cursor="Hand"
+                    Command="{Binding RefreshCommand}"
+                    Width="48" 
+                    Padding="0"
+                    VerticalAlignment="Stretch">
+                <FontIcon Glyph="&#xE72C;" FontSize="16"/>
+            </Button>
+            <Button Background="Transparent"
+                    extensions:Mouse.Cursor="Hand"
+                    Command="{Binding ToggleQuickAccessCommand}"
+                    Width="48" 
+                    Padding="0"
+                    VerticalAlignment="Stretch"
+                    Visibility="{Binding ShowQuickAccessView, Converter={StaticResource BoolToVisibilityInverseConverter}, FallbackValue=collapsedc}">
+                <FontIcon Glyph="&#xE728;" FontSize="16"/>
+            </Button>
+        </StackPanel>
         <ProgressBar Grid.ColumnSpan="100"
                      IsIndeterminate="{Binding IsLoading}"
                      Foreground="{ThemeResource ItemPrimaryForeground}"
-                     Margin="48 0 172 0"
+                     Margin="164 0 172 0"
                      VerticalAlignment="Center"
             Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
 

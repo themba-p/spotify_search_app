@@ -17,13 +17,12 @@
                     <Color x:Key="Status-bar-foreground">#000</Color>
                     <SolidColorBrush x:Key="BorderThemeBrush" Color="#DCDCDC"/>
                     <SolidColorBrush x:Key="PrimaryThemeBrush" Color="#1DB954"/>
-                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush2" Color="#e9e9e9"/>
+                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#e9e9e9"/>
                     <Color x:Key="ApplicationPageBackgroundColor">#e9e9e9</Color>
-                    <AcrylicBrush x:Key="ApplicationPageBackgroundThemeBrush"
-                                        BackgroundSource="HostBackdrop"
-                                        TintColor="#FFEAEAEA"
-                                        TintOpacity="0.90" 
-                                        FallbackColor="#e9e9e9"/>
+                    <AcrylicBrush x:Key="PopupBackgroundThemeBrush"
+                                        BackgroundSource="Backdrop"
+                                        TintColor="#ffffff"  TintLuminosityOpacity="0.95"
+                                        FallbackColor="#ffffff"/>
                     <SolidColorBrush x:Key="PlaceHolderTextThemeBrush" Color="#FFC7C7C7"/>
                     <Color x:Key="TintColor">#FFEAEAEA</Color>
                     <SolidColorBrush x:Key="ItemBackgroundThemeBrush" Color="#FFFFFF"/>
@@ -47,13 +46,18 @@
                     <Color x:Key="Status-bar-foreground">#FFDDDDDD</Color>
                     <SolidColorBrush x:Key="BorderThemeBrush" Color="Transparent"/>
                     <SolidColorBrush x:Key="PrimaryThemeBrush" Color="#1DB954"/>
-                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush2" Color="#000000"/>
+                    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#000000"/>
                     <Color x:Key="ApplicationPageBackgroundColor">#000000</Color>
-                    <AcrylicBrush x:Key="ApplicationPageBackgroundThemeBrush"
-                                        BackgroundSource="HostBackdrop"
-                                        TintColor="#000000"
-                                        TintOpacity="0.90" 
-                                        FallbackColor="#000000"/>
+                    <AcrylicBrush x:Key="PopupBackgroundThemeBrush"
+                                  BackgroundSource="Backdrop"
+                                  TintColor="#000000" 
+                                  TintOpacity="0.5" TintLuminosityOpacity="0.5"
+                                  FallbackColor="#000000"/>
+                    <!--<AcrylicBrush x:Key="ThumbnailUnfocusAcrylicBrush"
+                                  BackgroundSource="Backdrop"
+                                  TintColor="#000000" 
+                                  TintOpacity="0.8" TintLuminosityOpacity="0.5"
+                                  FallbackColor="#000000"/>-->
                     <SolidColorBrush x:Key="PlaceHolderTextThemeBrush" Color="#FF444444"/>
                     <Color x:Key="TintColor">#000000</Color>
                     <SolidColorBrush x:Key="ItemBackgroundThemeBrush" Color="#161618"/>
@@ -77,6 +81,15 @@
             <SolidColorBrush x:Key="BrandColorThemeBrush" Color="#1f299c"/>
             <SolidColorBrush x:Key="SpotifyBrandThemeBrush" Color="#1ED761"/>
             <Color x:Key="BrandColorThemeColor">#1131fd</Color>
+            <Color x:Key="SelectBackgroundBrush2">#FFFFFF</Color>
+
+            <AcrylicBrush x:Key="SelectBackgroundBrush"
+                          BackgroundSource="Backdrop"
+                          TintColor="#FEFEFE"
+                          TintOpacity="0.1" 
+                          Opacity="0.2"
+                          FallbackColor="#FEFEFE"/>
+
             <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{ThemeResource BrandColorThemeColor}"/>
             <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="{ThemeResource BrandColorThemeColor}" Opacity="0.8"/>
             <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="{ThemeResource BrandColorThemeColor}" Opacity="0.8"/>

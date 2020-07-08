@@ -86,8 +86,8 @@ namespace Spotify_search_helper.Data
 
             Uri uri = request.ToUri();
 
-            System.Uri StartUri = uri;
-            System.Uri EndUri = new Uri("http://localhost:5000/callback");
+            Uri StartUri = uri;
+            Uri EndUri = new Uri("http://localhost:5000/callback");
 
             WebAuthenticationResult WebAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(
                                                     WebAuthenticationOptions.None,

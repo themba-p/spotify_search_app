@@ -17,6 +17,7 @@ namespace Spotify_search_helper.ViewModels
     public class MainPageViewModel : ViewModelBase
     {
         public static MainPageViewModel Current = null;
+        private bool _useConnectedAnimation = true;
 
         public MainPageViewModel()
         {
@@ -29,10 +30,13 @@ namespace Spotify_search_helper.ViewModels
         private async void Initialize()
         {
             IsLoading = true;
+            TracksMaxWidth = 700;
 
             var categories = Models.Category.GetCategoryItems();
             foreach (var item in categories)
                 CategoryList.Add(item);
+
+            LoadQuickAccess();
 
             var playlistCategories = PlaylistCategory.GetCategoryItems();
             foreach (var item in playlistCategories)
@@ -94,6 +98,7 @@ namespace Spotify_search_helper.ViewModels
         private void RegisterMessenger()
         {
             Messenger.Default.Register<DialogResult>(this, ManageDialogResult);
+            Messenger.Default.Register<SizeChangedEventArgs>(this, HandleSizeChanged);
         }
 
         private void ManageDialogResult(DialogResult result)
@@ -115,6 +120,131 @@ namespace Spotify_search_helper.ViewModels
                 }
             }
         }
+
+        private void HandleSizeChanged(SizeChangedEventArgs e)
+        {
+            try
+            {
+                //padding for TracksListView 24 0 24 12
+                if (e.NewSize.Width < TracksMaxWidth)
+                    TracksViewWidth = e.NewSize.Width;
+                else
+                    TracksViewWidth = TracksMaxWidth;
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        #region Quick Access
+
+        private async void LoadQuickAccess()
+        {
+            var items = await QuickAccessItem.Get();
+            if (items != null)
+            {
+                var playlists = await DataSource.Current.GetPlaylists(items.Select(c => c.Id));
+                if (playlists != null)
+                    QuickAccessCollectionView = new AdvancedCollectionView(playlists, true);
+                else
+                    QuickAccessCollectionView = new AdvancedCollectionView();
+            }
+            else
+                QuickAccessCollectionView = new AdvancedCollectionView();
+        }
+
+        private RelayCommand<Playlist> _quickAccessItemClickCommand;
+        public RelayCommand<Playlist> QuickAccessItemClickCommand
+        {
+            get
+            {
+                if (_quickAccessItemClickCommand == null)
+                {
+                    _quickAccessItemClickCommand = new RelayCommand<Playlist>((item) =>
+                    {
+                        ShowQuickAccessView = false;
+                        LoadPlaylistTracks(item);
+                    });
+                }
+                return _quickAccessItemClickCommand;
+            }
+        }
+
+        private RelayCommand _clearQuickAccessCommand;
+        public RelayCommand ClearQuickAccessCommand
+        {
+            get
+            {
+                if (_clearQuickAccessCommand == null)
+                {
+                    _clearQuickAccessCommand = new RelayCommand(async() =>
+                    {
+                        await QuickAccessItem.Clear();
+                    });
+                }
+                return _clearQuickAccessCommand;
+            }
+        }
+
+        private RelayCommand<Playlist> _removeQuickAccessItemCommand;
+        public RelayCommand<Playlist> RemoveQuickAccessItemCommand
+        {
+            get
+            {
+                if (_removeQuickAccessItemCommand == null)
+                {
+                    _removeQuickAccessItemCommand = new RelayCommand<Playlist>(async(item) =>
+                    {
+                        if (item != null && await QuickAccessItem.Remove(item.Id))
+                        {
+                            item.IsQuickAccessItem = false;
+                            using (QuickAccessCollectionView.DeferRefresh())
+                            {
+                                QuickAccessCollectionView.Remove(item);
+                            }
+                        }
+                    });
+                }
+                return _removeQuickAccessItemCommand;
+            }
+        }
+
+        private RelayCommand<Playlist> _addQuickAccessItemCommand;
+        public RelayCommand<Playlist> AddQuickAccessItemCommand
+        {
+            get
+            {
+                if (_addQuickAccessItemCommand == null)
+                {
+                    _addQuickAccessItemCommand = new RelayCommand<Playlist>(async (item) =>
+                    {
+                        if (item != null && await QuickAccessItem.Add(new QuickAccessItem(item.Id, item.Uri)))
+                        {
+                            item.IsQuickAccessItem = true;
+                            using (QuickAccessCollectionView.DeferRefresh())
+                            {
+                                QuickAccessCollectionView.Add(item);
+                            }
+                        }
+                    });
+                }
+                return _addQuickAccessItemCommand;
+            }
+        }
+
+        private AdvancedCollectionView _quickAccessCollectionView;
+        public AdvancedCollectionView QuickAccessCollectionView
+        {
+            get => _quickAccessCollectionView;
+            set
+            {
+                _quickAccessCollectionView = value;
+                RaisePropertyChanged("QuickAccessCollectionView");
+            }
+        }
+
+        #endregion
 
         #region PlaylistView
 
@@ -659,6 +789,7 @@ namespace Spotify_search_helper.ViewModels
                 {
                     _playlistItemClickCommand = new RelayCommand<Playlist>((item) =>
                     {
+                        if (ShowQuickAccessView) _useConnectedAnimation = false;
                         LoadPlaylistTracks(item);
                     });
                 }
@@ -1077,6 +1208,11 @@ namespace Spotify_search_helper.ViewModels
             if (TracksCollectionView == null)
                 return;
 
+            if (!string.IsNullOrEmpty(TrackSearchText))
+                IsTracksViewFilterActive = true;
+            else
+                IsTracksViewFilterActive = false;
+
             //make sure the filtered items are clear
             string searchStr = TrackSearchText;
             _filteredTracksCollection.Clear();
@@ -1127,6 +1263,7 @@ namespace Spotify_search_helper.ViewModels
         {
             IsLoading = true;
 
+           if(ShowQuickAccessView) ShowQuickAccessView = false;
             CurrentTrackSorting = TracksSortList.FirstOrDefault();
             TracksViewHasSelectedItems = false;
 
@@ -1144,7 +1281,8 @@ namespace Spotify_search_helper.ViewModels
                     IsPopupActive = true;
                     IsTracksView = true;
 
-                    Views.MainPage.Current.DoIt(item);
+                    if (_useConnectedAnimation)
+                        Views.MainPage.Current.DoIt(item);
 
                     var items = await DataSource.Current.GetSpotifyTracks(item.Id);
                     if (items != null)
@@ -1154,6 +1292,11 @@ namespace Spotify_search_helper.ViewModels
 
                         foreach (var track in items)
                         {
+                            if (item.CategoryType == PlaylistCategoryType.MyPlaylist)
+                                track.CanModify = true;
+                            else
+                                track.CanModify = false;
+
                             TracksCollectionView.Add(track);
                         }
                     }
@@ -1182,7 +1325,9 @@ namespace Spotify_search_helper.ViewModels
                 }
             }
 
-            UpdateTracksViewSubTitle();
+            //update duration
+            item.DurationStr = Helpers.MillisecondsToString(_tracksCollectionCopy.Sum(c => c.DurationMs));
+
             IsLoading = false;
         }
 
@@ -1196,7 +1341,7 @@ namespace Spotify_search_helper.ViewModels
                 var fullPlaylist = await DataSource.Current.CreateSpotifyPlaylist(NewPlaylistName, selected, _base64JpegData);
                 if (fullPlaylist != null)
                 {
-                    var playlist = DataSource.Current.ConvertPlaylists(new List<FullPlaylist> { fullPlaylist });
+                    var playlist = await DataSource.Current.ConvertPlaylists(new List<FullPlaylist> { fullPlaylist });
                     Messenger.Default.Send(new DialogManager
                     {
                         Type = DialogType.CreatePlaylist,
@@ -1542,6 +1687,17 @@ namespace Spotify_search_helper.ViewModels
             }
         }
 
+        private bool _isTracksViewFilterActive;
+        public bool IsTracksViewFilterActive
+        {
+            get => _isTracksViewFilterActive;
+            set
+            {
+                _isTracksViewFilterActive = value;
+                RaisePropertyChanged("IsTracksViewFilterActive");
+            }
+        }
+
         private string _tracksViewSubTitle = "Tracks (0)";
         public string TracksViewSubTitle
         {
@@ -1583,6 +1739,17 @@ namespace Spotify_search_helper.ViewModels
         readonly List<Track> _tracksCollectionCopy = new List<Track>();
         readonly List<Track> _filteredTracksCollection = new List<Track>();
 
+        private ObservableCollection<Track> _selectedTracks = new ObservableCollection<Track>();
+        public ObservableCollection<Track> SelectedTracks
+        {
+            get => _selectedTracks;
+            set
+            {
+                _selectedTracks = value;
+                RaisePropertyChanged("SelectedTracks");
+            }
+        }
+
         private AdvancedCollectionView _tracksCollectionView;
         public AdvancedCollectionView TracksCollectionView
         {
@@ -1609,7 +1776,38 @@ namespace Spotify_search_helper.ViewModels
 
         #region Properties
 
-        //private const int _searchSuggestionsLimit = 5;
+        private double _tracksMaxWidth = 700;
+        public double TracksMaxWidth
+        {
+            get => _tracksMaxWidth;
+            set
+            {
+                _tracksMaxWidth = value;
+                RaisePropertyChanged("TracksMaxWidth");
+            }
+        }
+
+        private double _tracksViewWidth;
+        public double TracksViewWidth
+        {
+            get => _tracksViewWidth;
+            set
+            {
+                _tracksViewWidth = value;
+                RaisePropertyChanged("TracksViewWidth");
+            }
+        }
+
+        private bool _showQuickAccessView;
+        public bool ShowQuickAccessView
+        {
+            get => _showQuickAccessView;
+            set
+            {
+                _showQuickAccessView = value;
+                RaisePropertyChanged("ShowQuickAccessView");
+            }
+        }
 
         private Uri _mediaElementSource;
         public Uri MediaElementSource
@@ -1899,7 +2097,7 @@ namespace Spotify_search_helper.ViewModels
 
                 string url = item.MediaPreviewUrl;
 
-                if(string.IsNullOrEmpty(url))
+                if (string.IsNullOrEmpty(url))
                 {
                     switch (item.MediaBaseType)
                     {
@@ -1909,8 +2107,6 @@ namespace Spotify_search_helper.ViewModels
                                 url = _track.MediaPreviewUrl;
                             break;
                         case ItemMediaBaseType.Track:
-                            break;
-                        default:
                             break;
                     }
 
@@ -2013,6 +2209,44 @@ namespace Spotify_search_helper.ViewModels
 
         #region Commands
 
+        private RelayCommand<ItemMediaBase> _addQuickAccessCommand;
+        public RelayCommand<ItemMediaBase> AddQuickAccessCommand
+        {
+            get
+            {
+                if (_addQuickAccessCommand == null)
+                {
+                    _addQuickAccessCommand = new RelayCommand<ItemMediaBase>(async(item) =>
+                    {
+                        IsLoading = true;
+                        if(item != null)
+                        {
+                            await QuickAccessItem.Add(new QuickAccessItem(item.Id, item.Uri));
+                        }
+
+                        IsLoading = false;
+                    });
+                }
+                return _addQuickAccessCommand;
+            }
+        }
+
+        private RelayCommand _toggleQuickAccessCommand;
+        public RelayCommand ToggleQuickAccessCommand
+        {
+            get
+            {
+                if (_toggleQuickAccessCommand == null)
+                {
+                    _toggleQuickAccessCommand = new RelayCommand(() =>
+                    {
+                        ShowQuickAccessView = !ShowQuickAccessView;
+                    });
+                }
+                return _toggleQuickAccessCommand;
+            }
+        }
+
         private RelayCommand _refreshCommand;
         public RelayCommand RefreshCommand
         {
@@ -2029,15 +2263,16 @@ namespace Spotify_search_helper.ViewModels
             }
         }
 
-        private RelayCommand _stopPreviewCommand;
-        public RelayCommand StopPreviewCommand
+        private RelayCommand<ItemMediaBase> _stopPreviewCommand;
+        public RelayCommand<ItemMediaBase> StopPreviewCommand
         {
             get
             {
                 if (_stopPreviewCommand == null)
                 {
-                    _stopPreviewCommand = new RelayCommand(() =>
+                    _stopPreviewCommand = new RelayCommand<ItemMediaBase>((item) =>
                     {
+                        if (item != null) item.IsLoadingPreview = false;
                         MediaElementSource = null;
                         Messenger.Default.Send(MediaControlType.Stop); //mediaElement.Stop();
                     });
@@ -2141,7 +2376,13 @@ namespace Spotify_search_helper.ViewModels
                 {
                     _closeTracksButtonCommand = new RelayCommand(() =>
                     {
-                        Views.MainPage.Current.UndoIt(CurrentPlaylist);
+                        if (_useConnectedAnimation)
+                            Views.MainPage.Current.UndoIt(CurrentPlaylist);
+                        else
+                            IsPopupActive = false;
+
+                        // reset
+                        _useConnectedAnimation = true;
                     });
                 }
                 return _closeTracksButtonCommand;

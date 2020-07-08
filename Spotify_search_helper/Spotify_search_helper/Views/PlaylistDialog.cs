@@ -4,10 +4,10 @@
 
 namespace Spotify_search_helper.Views
 {
-    public sealed partial class MergePlaylistDialog : ContentDialog
+    public sealed partial class PlaylistDialog : ContentDialog
     {
-        public static MergePlaylistDialog Current;
-        public MergePlaylistDialog()
+        public static PlaylistDialog Current;
+        public PlaylistDialog()
         {
             this.InitializeComponent();
             Current = this;

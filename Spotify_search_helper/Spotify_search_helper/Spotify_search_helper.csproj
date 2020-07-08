@@ -130,6 +130,7 @@
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\PlaylistCategory.cs" />
     <Compile Include="Models\ProfileUser.cs" />
+    <Compile Include="Models\QuickAccessItem.cs" />
     <Compile Include="Models\Sorting.cs" />
     <Compile Include="Models\Track.cs" />
     <Compile Include="Models\User.cs" />
@@ -145,8 +146,8 @@
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MergePlaylistDialog.xaml.cs">
-      <DependentUpon>MergePlaylistDialog.xaml</DependentUpon>
+    <Compile Include="Views\PlaylistDialog.cs">
+      <DependentUpon>PlaylistDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\StartPage.xaml.cs">
       <DependentUpon>StartPage.xaml</DependentUpon>
@@ -219,7 +220,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MergePlaylistDialog.xaml">
+    <Page Include="Views\PlaylistDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
