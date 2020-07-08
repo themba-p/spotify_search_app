@@ -17,6 +17,10 @@
     </Page.Resources>
     
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
         <Grid.Background>
             <media:AcrylicBrush
                       BackgroundSource="Backdrop"
@@ -59,9 +63,8 @@
 
         <ProgressBar Grid.ColumnSpan="100"
                      IsIndeterminate="{Binding IsLoading}"
-                     Foreground="{ThemeResource ItemPrimaryForeground}"
-                     Margin="0 48 0 0" 
-                     VerticalAlignment="Top"
+                     Foreground="{ThemeResource ItemPrimaryForeground}" 
+                     VerticalAlignment="Center"
             Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
     </Grid>

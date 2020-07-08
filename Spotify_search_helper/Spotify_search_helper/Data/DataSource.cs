@@ -93,14 +93,43 @@ namespace Spotify_search_helper.Data
             try
             {
                 var spotify = await Authentication.GetSpotifyClientAsync();
-                var fpl = await spotify.Playlists.Get(id);
-                _currentPlaylistPage = fpl.Tracks;
-                return ConvertTracks(new List<PlaylistTrack<IPlayableItem>> { fpl.Tracks.Items.FirstOrDefault() }).FirstOrDefault();
+                PlaylistGetItemsRequest rr = new PlaylistGetItemsRequest(PlaylistGetItemsRequest.AdditionalTypes.Track)
+                {
+                    Limit = 1
+                };
+                var fpl = await spotify.Playlists.GetItems(id, rr);
+                return ConvertTracks(new List<PlaylistTrack<IPlayableItem>> { fpl.Items.FirstOrDefault() }).FirstOrDefault();
             }
             catch (Exception)
             {
+                return null;
+            }
+        }
 
-                throw;
+        public async Task<List<Playlist>> GetPlaylists(IEnumerable<string> ids)
+        {
+            try
+            {
+                var spotify = await Authentication.GetSpotifyClientAsync();
+                List<FullPlaylist> items = new List<FullPlaylist>();
+
+                foreach (var id in ids)
+                {
+                    try
+                    {
+                        items.Add(await spotify.Playlists.Get(id));
+                    }
+                    catch (Exception)
+                    {
+                        //
+                    }
+                }
+
+                return await ConvertPlaylists(items);
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 
@@ -197,7 +226,8 @@ namespace Spotify_search_helper.Data
                             null,
                             item.Description,
                             categoryType,
-                            itemsCount));
+                            itemsCount,
+                            await QuickAccessItem.IsQuickAccessItem(item.Id)));
 
                         //reset
                         image = null;
@@ -319,7 +349,7 @@ namespace Spotify_search_helper.Data
             }
         }
 
-        public List<Playlist> ConvertPlaylists(IEnumerable<FullPlaylist> playlists)
+        public async Task<List<Playlist>> ConvertPlaylists(IEnumerable<FullPlaylist> playlists)
         {
             try
             {
@@ -351,7 +381,8 @@ namespace Spotify_search_helper.Data
                             "",
                             "",
                             PlaylistCategoryType.MyPlaylist,
-                            itemsCount));
+                            itemsCount,
+                            await QuickAccessItem.IsQuickAccessItem(item.Id)));
 
                     owner = null;
                     image = null;
@@ -452,7 +483,6 @@ namespace Spotify_search_helper.Data
         {
             try
             {
-
                 List<Track> results = new List<Track>();
                 var spotify = await Authentication.GetSpotifyClientAsync();
                 var fpl = await spotify.Playlists.Get(id);
@@ -634,7 +664,7 @@ namespace Spotify_search_helper.Data
 
                     if (item.Tracks != null) itemsCount = item.Tracks.Total;
 
-                    return (ConvertPlaylists(new List<FullPlaylist> { item })).FirstOrDefault();
+                    return (await ConvertPlaylists(new List<FullPlaylist> { item })).FirstOrDefault();
                 }
                 return null;
             }

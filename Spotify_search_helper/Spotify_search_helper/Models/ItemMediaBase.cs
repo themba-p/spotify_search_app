@@ -27,6 +27,7 @@ namespace Spotify_search_helper.Models
         public string MediaPreviewUrl { get; set; }
         public User Owner { get; set; }
         public ItemMediaBaseType MediaBaseType { get; set; }
+        public bool CanModify { get; set; }
 
         private bool _isSelected;
         public bool IsSelected

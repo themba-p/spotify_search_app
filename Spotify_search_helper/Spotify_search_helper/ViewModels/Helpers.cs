@@ -127,5 +127,29 @@ namespace Spotify_search_helper.ViewModels
                 return false;
             }
         }
+
+        public static string MillisecondsToString(int milliSeconds)
+        {
+            string result = "0min";
+            TimeSpan t = TimeSpan.FromMilliseconds(milliSeconds);
+            if (t.Hours > 0)
+            {
+                if (t.Minutes > 0)
+                    result = t.Hours + "h " + t.Minutes + "min";
+                else
+                    result = t.Hours + "h";
+            }
+            else if (t.Minutes > 0)
+            {
+                if (t.Seconds > 0)
+                    result = t.Minutes + "min " + t.Seconds + "sec";
+                else
+                    result = t.Minutes + "min";
+            }
+            else if (t.Seconds > 0)
+                result = t.Seconds + "sec";
+
+            return result;
+        }
     }
 }
