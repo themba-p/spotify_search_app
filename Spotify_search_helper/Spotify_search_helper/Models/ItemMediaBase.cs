@@ -11,14 +11,14 @@ namespace Spotify_search_helper.Models
     {
         public ItemMediaBase() { }
 
-        public ItemMediaBase(string id, string title, ImageSource image, string uri)
-            : base(id, title, image, uri)
+        public ItemMediaBase(string id, string title, ImageSource image, string uri, Dictionary<string, string> externalUrls)
+            : base(id, title, image, uri, externalUrls)
         {
 
         }
 
-        public ItemMediaBase(string id, string title, ImageSource image, string uri, User owner, string mediaPreviewUrl)
-            : base(id, title, image, uri)
+        public ItemMediaBase(string id, string title, ImageSource image, string uri, Dictionary<string, string> externalUrls, User owner, string mediaPreviewUrl)
+            : base(id, title, image, uri, externalUrls)
         {
             Owner = owner;
             MediaPreviewUrl = mediaPreviewUrl;
@@ -27,7 +27,13 @@ namespace Spotify_search_helper.Models
         public string MediaPreviewUrl { get; set; }
         public User Owner { get; set; }
         public ItemMediaBaseType MediaBaseType { get; set; }
-        public bool CanModify { get; set; }
+
+        private bool _canModify;
+        public bool CanModify
+        {
+            get { return _canModify; }
+            set { SetProperty(this._canModify, value, () => this._canModify = value); }
+        }
 
         private bool _isSelected;
         public bool IsSelected

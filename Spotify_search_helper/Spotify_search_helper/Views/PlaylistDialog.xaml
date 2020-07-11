@@ -7,6 +7,7 @@
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
                xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+               BorderBrush="Transparent"
                mc:Ignorable="d" RequestedTheme="Dark" CornerRadius="10"
                DataContext="{Binding MainPageInstance, Source={StaticResource Locator}}"
                Background="{ThemeResource ItemBackgroundThemeBrush}">
@@ -320,7 +321,7 @@
         </Style>
     </ContentDialog.Resources>
 
-    <Grid>
+    <Grid Width="432">
         <Grid Padding="24,18,24,24">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -332,35 +333,48 @@
                            FontWeight="Medium"
                            Style="{StaticResource TitleTextBlockStyle}"/>
                 <TextBox Style="{StaticResource PlaylistDialogTextBoxStyle}" x:Name="PlaylistNameTextBox"
-                     Text="{Binding NewPlaylistName, Mode=TwoWay}"
-                     CornerRadius="10"
-                     Height="36"  
-                     FontSize="14"
-                     Margin="0 0 0 12"
-                     Padding="12 7 0 0"
-                     PlaceholderText="Give your playlist a name"
-                     BorderThickness="0"
-                     Background="{ThemeResource SecondaryItemBackgroundThemeBrush}"
-                     IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}"/>
+                         Text="{Binding NewPlaylistName, Mode=TwoWay}"
+                         CornerRadius="10"
+                         Height="36"  
+                         FontSize="14"
+                         Margin="0 0 0 12"
+                         Padding="12 7 12 0"
+                         PlaceholderText="Give your playlist a name"
+                         BorderThickness="0"
+                         Background="{ThemeResource SecondaryItemBackgroundThemeBrush}"
+                         IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}"/>
+                <TextBox Style="{StaticResource PlaylistDialogTextBoxStyle}" x:Name="PlaylistDescriptionTextBox"
+                         Text="{Binding NewPlaylistDescription, Mode=TwoWay}"
+                         CornerRadius="10"
+                         Height="96"  
+                         FontSize="14"
+                         Margin="0 0 0 12"
+                         Padding="12 7 12 0"
+                         PlaceholderText="Description (Optional)"
+                         BorderThickness="0"
+                         TextWrapping="Wrap"
+                         Background="{ThemeResource SecondaryItemBackgroundThemeBrush}"
+                         IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}"/>
+
                 <TextBlock Text="Playlist thumbnail (Optional)"
                        FontSize="16"
                        FontWeight="Medium"
                        Style="{StaticResource CaptionTextBlockStyle}"/>
                 <TextBlock Text="Spotify automatically generates an image based on the playlist contents if no image is provided." 
-                       FontSize="14"
-                       MaxWidth="300"
-                       HorizontalAlignment="Left"
-                       Margin="0 0 0 8"
-                       Foreground="{ThemeResource ItemSecondaryForeground}"
-                       Style="{StaticResource SubtitleTextBlockStyle}"/>
+                           FontSize="14"
+                           MaxWidth="300"
+                           HorizontalAlignment="Left"
+                           Margin="0 0 0 8"
+                           Foreground="{ThemeResource ItemSecondaryForeground}"
+                           Style="{StaticResource SubtitleTextBlockStyle}"/>
                 <Button Height="36"
-                    Command="{Binding MergeImagePickerCommand}"
-                    CornerRadius="10"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    FontSize="12"
-                    Background="{ThemeResource SecondaryItemBackgroundThemeBrush}"
-                    IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
+                        Command="{Binding MergeImagePickerCommand}"
+                        CornerRadius="10"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        FontSize="12"
+                        Background="{ThemeResource SecondaryItemBackgroundThemeBrush}"
+                        IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -379,6 +393,13 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid>
+                    <Button Content="Update playlist"
+                            Command="{Binding UpdatePlaylistCommand}"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Style="{StaticResource PrimaryDialogButtonStyle1}"
+                            IsEnabled="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}"
+                            Visibility="{Binding IsEditPlaylistMode, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <Button Content="Save and merge"
                             Command="{Binding MergeSelectedPlaylistCommand}"
                             HorizontalAlignment="Stretch"

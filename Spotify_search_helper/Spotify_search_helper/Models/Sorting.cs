@@ -27,10 +27,12 @@ namespace Spotify_search_helper.Models
             new Sorting("Default", "", SortType.Default, SortDirection.Ascending),
             new Sorting("Track name (A to Z)", "Title", SortType.Name, SortDirection.Ascending),
             new Sorting("Track name (Z to A)", "Title", SortType.Name, SortDirection.Descending),
-            new Sorting("Album name (A to Z)", "Album", SortType.Album, SortDirection.Ascending),
-            new Sorting("Album name (Z to A)", "Album", SortType.Album, SortDirection.Descending),
-            new Sorting("Artist name (A to Z)", "ArtistStr", SortType.Artist, SortDirection.Ascending),
-            new Sorting("Artist name (Z to A)", "ArtistStr", SortType.Artist, SortDirection.Descending),
+            new Sorting("Album name (A to Z)", "Album", SortType.Album, SortDirection.Descending),
+            new Sorting("Album name (Z to A)", "Album", SortType.Album, SortDirection.Ascending),
+            new Sorting("Artist name (A to Z)", "Artist", SortType.Artist, SortDirection.Ascending),
+            new Sorting("Artist name (Z to A)", "Artist", SortType.Artist, SortDirection.Descending),
+            new Sorting("Duration (Long to short)", "Duration", SortType.Artist, SortDirection.Descending),
+            new Sorting("Duration (Short to long)", "Duration", SortType.Artist, SortDirection.Descending),
         };
 
         public string Title { get; set; }
@@ -45,7 +47,8 @@ namespace Spotify_search_helper.Models
             Album,
             Name,
             Date,
-            Size
+            Size,
+            Duration
         }
     }
 }

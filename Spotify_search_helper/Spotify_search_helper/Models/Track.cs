@@ -12,19 +12,26 @@ namespace Spotify_search_helper.Models
     {
         public Track() { }
 
-        public Track(string id, string title, ImageSource image, string uri, User owner, string mediaPreviewUrl, string artist, string album, int trackNumber, int durationMs)
-            : base(id, title, image, uri, owner, mediaPreviewUrl)
+        public Track(string id, string title, ImageSource image, string uri, Dictionary<string, string> externalUrls, User owner, string mediaPreviewUrl, string artist, string album, int trackNumber, int duration)
+            : base(id, title, image, uri, externalUrls, owner, mediaPreviewUrl)
         {
             Artist = artist;
             Album = album;
             TrackNumber = trackNumber;
-            DurationMs = durationMs;
+            Duration = duration;
             MediaBaseType = ItemMediaBaseType.Playlist;
         }
 
         public string Artist { get; set; }
         public string Album { get; set; }
         public int TrackNumber { get; set; }
-        public int DurationMs { get; set; }
+        public int Duration { get; set; }
+        public string DurationFormated
+        {
+            get
+            {
+                return Helpers.MillisecondsToStringAlt(Duration);
+            }
+        }
     }
 }

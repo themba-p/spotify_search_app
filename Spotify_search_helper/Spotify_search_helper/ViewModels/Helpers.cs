@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.System;
 using Windows.UI.Xaml.Controls;
 
 namespace Spotify_search_helper.ViewModels
@@ -37,29 +38,6 @@ namespace Spotify_search_helper.ViewModels
             string newStr = Regex.Replace(str, @"<[^>]+>| ", " ").Trim();
             newStr = Regex.Replace(newStr, "&(?!amp;)", "&");
             return newStr;
-        }
-
-        private static async Task<bool> LaunchUri(string url)
-        {
-            //"packageFamilyName": "SpotifyAB.SpotifyMusic_zpdnekdrzrea0",
-            //"packageIdentityName": "SpotifyAB.SpotifyMusic",
-            //"windowsPhoneLegacyId": "caac1b9d-621b-4f96-b143-e10e1397740a",
-            //"publisherCertificateName": "CN=453637B3-4E12-4CDF-B0D3-2A3C863BF6EF"
-            if (!string.IsNullOrEmpty(url))
-            {
-                var uri = new Uri(url);
-                // Set the recommended app
-                var options = new Windows.System.LauncherOptions
-                {
-                    PreferredApplicationPackageFamilyName = "SpotifyAB.SpotifyMusic_zpdnekdrzrea0",
-                    PreferredApplicationDisplayName = "Spotify Music"
-                };
-
-                // Launch the URI and pass in the recommended app
-                // in case the user has no apps installed to handle the URI
-                return await Windows.System.Launcher.LaunchUriAsync(uri, options);
-            }
-            return false;
         }
 
         public static async Task<StorageFile> ImageFileDialogPicker()
@@ -103,27 +81,44 @@ namespace Spotify_search_helper.ViewModels
             }
         }
 
-        public static async Task<bool> OpenSpotifyAppAsync(string url)
+        public static async Task<bool> OpenSpotifyAppAsync(string url, string webUrl)
         {
+            //"packageFamilyName": "SpotifyAB.SpotifyMusic_zpdnekdrzrea0",
+            //"packageIdentityName": "SpotifyAB.SpotifyMusic",
+            //"windowsPhoneLegacyId": "caac1b9d-621b-4f96-b143-e10e1397740a",
+            //"publisherCertificateName": "CN=453637B3-4E12-4CDF-B0D3-2A3C863BF6EF"
             try
             {
                 ContentDialog dialog = new ContentDialog()
                 {
-                    Title = "Open Spotify app",
-                    Content = "There are currently no active devices, open spotify app?",
+                    Title = "No active devices",
+                    Content = "There are currently no active devices, open on spotify?",
                     CloseButtonText = "Cancel",
-                    PrimaryButtonText = "Open Spotify"
+                    PrimaryButtonText = "Open Spotify App",
+                    SecondaryButtonText = "Open Web player"
                 };
 
                 var result = await dialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
                 {
-                    return await LaunchUri(url);
+                    var uri = new Uri(url);
+                    //Set the recommended app
+                    var options = new LauncherOptions
+                    {
+                        PreferredApplicationPackageFamilyName = "SpotifyAB.SpotifyMusic_zpdnekdrzrea0",
+                        PreferredApplicationDisplayName = "Spotify Music"
+                    };
+                    return await Launcher.LaunchUriAsync(uri, options);
+                }
+                else if(result == ContentDialogResult.Secondary && !string.IsNullOrEmpty(webUrl))
+                {
+                    return await Launcher.LaunchUriAsync(new Uri(webUrl));
                 }
                 return false;
             }
             catch (Exception)
             {
+                DisplayDialog("Error eccured", "Could not open link, please try again");
                 return false;
             }
         }
@@ -148,6 +143,45 @@ namespace Spotify_search_helper.ViewModels
             }
             else if (t.Seconds > 0)
                 result = t.Seconds + "sec";
+
+            return result;
+        }
+
+        public static string MillisecondsToStringAlt(int milliSeconds)
+        {
+            string result = "0";
+            TimeSpan t = TimeSpan.FromMilliseconds(milliSeconds);
+            if (t.Hours > 0)
+            {
+                if (t.Minutes > 0)
+                {
+                    if (t.Minutes > 9)
+                        result = t.Hours + ":" + t.Minutes;
+                    else
+                        result = t.Hours + ":0" + t.Minutes;
+                }
+                else
+                    result = t.Hours + ":00";
+            }
+            else if (t.Minutes > 0)
+            {
+                if (t.Seconds > 0)
+                {
+                    if (t.Seconds > 9)
+                        result = t.Minutes + ":" + t.Seconds;
+                    else
+                        result = t.Minutes + ":0" + t.Seconds;
+                }
+                else
+                    result = t.Minutes + ":00";
+            }
+            else if (t.Seconds > 0)
+            {
+                if (t.Seconds > 9)
+                    result = "0:" + t.Seconds; //3s > 0:03, 12s 0:12
+                else
+                    result = "0:0" + t.Seconds;
+            }
 
             return result;
         }

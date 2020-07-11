@@ -21,6 +21,7 @@ namespace Spotify_search_helper.Models
             Action = action;
         }
 
+        public object Item { get; set; }
         public string Title { get; set; }
         public string Message { get; set; }
         public string PrimaryButtonText { get; set; }
@@ -37,6 +38,14 @@ namespace Spotify_search_helper.Models
             ResultType = resultType;
         }
 
+        public DialogResult(DialogType type, ContentDialogResult resultType, object item)
+        {
+            Type = type;
+            ResultType = resultType;
+            Item = item;
+        }
+
+        public object Item { get; set; }
         public DialogType Type { get; set; }
         public ContentDialogResult ResultType { get; set; }
     }
@@ -53,6 +62,7 @@ namespace Spotify_search_helper.Models
         CreatePlaylist,
         Default,
         Unfollow,
-        AddToPlaylist
+        AddToPlaylist,
+        EditPlaylist
     }
 }

@@ -11,8 +11,8 @@ namespace Spotify_search_helper.Models
     {
         public User() { }
 
-        public User(string id, string title, ImageSource image, string uri) 
-            :base(id, title, image, uri)
+        public User(string id, string title, ImageSource image, string uri, Dictionary<string, string> externalUrls) 
+            :base(id, title, image, uri, externalUrls)
         {
 
         }
