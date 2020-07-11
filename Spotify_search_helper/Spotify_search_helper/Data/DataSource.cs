@@ -215,13 +215,14 @@ namespace Spotify_search_helper.Data
                             BitmapImage ownerImg = null;
                             if (item.Owner.Images != null && item.Owner.Images.Count > 0)
                                 ownerImg = new BitmapImage(new Uri(item.Owner.Images.FirstOrDefault().Url));
-                            owner = new User(item.Owner.Id, item.Owner.DisplayName, ownerImg, item.Owner.Uri);
+                            owner = new User(item.Owner.Id, item.Owner.DisplayName, ownerImg, item.Owner.Uri, item.Owner.ExternalUrls);
                         }
 
                         results.Add(new Playlist(item.Id,
                             item.Name,
                             image,
                             item.Uri,
+                            item.ExternalUrls,
                             owner,
                             null,
                             item.Description,
@@ -244,6 +245,53 @@ namespace Spotify_search_helper.Data
             {
                 ViewModels.Helpers.DisplayDialog("Unable to load playlists", "An error occured, could not load items. Please give it another shot and make sure your internet connection is working"); ;
                 return null;
+            }
+        }
+
+        public async Task<bool> PlaybackMediaItem(ItemMediaBase item, int index = 0, bool shuffle = false)
+        {
+            try
+            {
+                var spotify = await Authentication.GetSpotifyClientAsync();
+                if (spotify == null) return false;
+                PlayerResumePlaybackRequest request = new PlayerResumePlaybackRequest
+                {
+                    ContextUri = item.Uri,
+                    OffsetParam = new PlayerResumePlaybackRequest.Offset { Position = index },
+                };
+
+                if (await spotify.Player.ResumePlayback(request))
+                {
+                    if (shuffle) await spotify.Player.SetShuffle(new PlayerShuffleRequest(true));
+                    return true;
+                }
+                else
+                {
+                    string webUrl = null;
+                    try
+                    {
+                        webUrl = item.ExternalUrls.Where(c => c.Key.Equals("spotify", StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault().Value;
+                    }
+                    catch (Exception)
+                    {
+                        //
+                    }
+                    return await ViewModels.Helpers.OpenSpotifyAppAsync(item.Uri, webUrl);
+                }
+            }
+            catch (Exception)
+            {
+                string webUrl = null;
+                try
+                {
+                    webUrl = item.ExternalUrls.Where(c => c.Key.Equals("spotify", StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault().Value;
+                }
+                catch (Exception)
+                {
+                    if (webUrl == null && item.ExternalUrls.Count > 0)
+                        webUrl = item.ExternalUrls.FirstOrDefault().Value;
+                }
+                return await ViewModels.Helpers.OpenSpotifyAppAsync(item.Uri, webUrl);
             }
         }
 
@@ -333,7 +381,7 @@ namespace Spotify_search_helper.Data
                     }
                     else
                     {
-                        return await ViewModels.Helpers.OpenSpotifyAppAsync(uris[index]);
+                        return await ViewModels.Helpers.OpenSpotifyAppAsync(uris[index], null);
                     }
 
                 }
@@ -345,7 +393,7 @@ namespace Spotify_search_helper.Data
             }
             catch (Exception)
             {
-                return await ViewModels.Helpers.OpenSpotifyAppAsync(uris[index]);
+                return await ViewModels.Helpers.OpenSpotifyAppAsync(uris[index], null);
             }
         }
 
@@ -365,7 +413,7 @@ namespace Spotify_search_helper.Data
                         BitmapImage ownerImg = null;
                         if (item.Owner.Images != null && item.Owner.Images.Count > 0)
                             ownerImg = new BitmapImage(new Uri(item.Owner.Images.FirstOrDefault().Url));
-                        owner = new User(item.Owner.Id, item.Owner.DisplayName, ownerImg, item.Owner.Uri);
+                        owner = new User(item.Owner.Id, item.Owner.DisplayName, ownerImg, item.Owner.Uri, item.Owner.ExternalUrls);
                     }
 
                     if (item.Images != null && item.Images.Count > 0)
@@ -377,6 +425,7 @@ namespace Spotify_search_helper.Data
                             item.Name,
                             image,
                             item.Uri,
+                            item.ExternalUrls,
                             owner,
                             "",
                             "",
@@ -448,6 +497,7 @@ namespace Spotify_search_helper.Data
                             track.Name,
                             image,
                             track.Uri,
+                            track.ExternalUrls,
                             null,
                             track.PreviewUrl,
                             artist,
@@ -550,12 +600,13 @@ namespace Spotify_search_helper.Data
         /// The tracks to add to the newly created playlist (Optional).
         /// </param>
         /// <returns></returns>
-        public async Task<FullPlaylist> CreateSpotifyPlaylist(string name, IEnumerable<Track> tracks = null, string base64Jpg = null)
+        public async Task<FullPlaylist> CreateSpotifyPlaylist(string name, string description, IEnumerable<Track> tracks = null, string base64Jpg = null)
         {
             try
             {
                 var spotify = await Authentication.GetSpotifyClientAsync();
                 PlaylistCreateRequest request = new PlaylistCreateRequest(name);
+                if(!string.IsNullOrEmpty(description)) request.Description = description;
                 var playlist = await spotify.Playlists.Create(Profile.Id, request);
 
                 if (tracks != null && tracks.Count() > 0)
@@ -578,6 +629,60 @@ namespace Spotify_search_helper.Data
             catch (Exception)
             {
                 ViewModels.Helpers.DisplayDialog("Error", "An error occured while creating your playlist");
+                return null;
+            }
+        }
+
+        public async Task<FullPlaylist> UpdateSpotifyPlaylist(string id, string name, string description, string base64Jpg = null)
+        {
+            try
+            {
+                var spotify = await Authentication.GetSpotifyClientAsync();
+                PlaylistChangeDetailsRequest request = new PlaylistChangeDetailsRequest();
+
+                if (!string.IsNullOrEmpty(name))
+                    request.Name = name;
+
+                if (!string.IsNullOrEmpty(description))
+                    request.Description = description;
+
+                var playlist = await spotify.Playlists.ChangeDetails(id, request);
+
+                try
+                {
+                    if (!string.IsNullOrEmpty(base64Jpg))
+                        await spotify.Playlists.UploadCover(id, base64Jpg); //how to handle image data thats > 256kb?
+                }
+                catch (Exception)
+                {
+
+                }
+                return await spotify.Playlists.Get(id);
+            }
+            catch (Exception)
+            {
+                //ViewModels.Helpers.DisplayDialog("Error", "An error occured while updating your playlist");
+                return null;
+            }
+        }
+
+        public async Task<List<string>> AddToSpotifyQueue(IEnumerable<string> uris)
+        {
+            try
+            {
+                var spotify = await Authentication.GetSpotifyClientAsync();
+                List<string> success = new List<string>();
+                PlayerAddToQueueRequest request;
+                foreach (var uri in uris)
+                {
+                    request = new PlayerAddToQueueRequest(uri);
+                    if (await spotify.Player.AddToQueue(request))
+                        success.Add(uri);
+                }
+                return success;
+            }
+            catch (Exception)
+            {
                 return null;
             }
         }
@@ -616,7 +721,7 @@ namespace Spotify_search_helper.Data
         /// <returns>
         /// The newly create playlist.
         /// </returns>
-        public async Task<Playlist> MergeSpotifyPlaylists(string name, IEnumerable<Playlist> playlists, string base64Jpg = null, BitmapImage img = null)
+        public async Task<Playlist> MergeSpotifyPlaylists(string name, string description, IEnumerable<Playlist> playlists, string base64Jpg = null, BitmapImage img = null)
         {
             try
             {
@@ -654,7 +759,7 @@ namespace Spotify_search_helper.Data
 
                 int itemsCount = 0;
                 Windows.UI.Xaml.Media.ImageSource image = null;
-                var item = await CreateSpotifyPlaylist(name, tracks, base64Jpg);
+                var item = await CreateSpotifyPlaylist(name, description, tracks, base64Jpg);
                 if (item != null)
                 {                 
                     if (item.Images != null && item.Images.Count > 0)

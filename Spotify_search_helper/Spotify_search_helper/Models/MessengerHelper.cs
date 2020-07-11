@@ -9,7 +9,8 @@
 
     public enum MessengerAction
     {
-        ScrollToItem
+        ScrollToItem, 
+        RightTapped
     }
 
     public enum TargetView

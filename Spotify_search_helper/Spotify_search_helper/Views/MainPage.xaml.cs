@@ -10,6 +10,11 @@ using Spotify_search_helper.Data;
 using GalaSoft.MvvmLight.Messaging;
 using Spotify_search_helper.ViewModels;
 using Windows.UI.Popups;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Composition;
+using Windows.UI.Xaml.Input;
+using System.Numerics;
+using muxc = Microsoft.UI.Xaml.Controls;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -40,8 +45,7 @@ namespace Spotify_search_helper.Views
 
         private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Messenger.Default.Send(e);
-            
+            Messenger.Default.Send(e);           
         }
 
         private void Initialize()
@@ -99,7 +103,7 @@ namespace Spotify_search_helper.Views
                                 PlaylistContentView.ScrollIntoView(messenger.Item, ScrollIntoViewAlignment.Leading);
                                 break;
                         }
-                        break;
+                        break;                        
                 }
             }
             catch (Exception)
@@ -120,6 +124,7 @@ namespace Spotify_search_helper.Views
                     break;
                 case DialogType.Merge:
                 case DialogType.CreatePlaylist:
+                case DialogType.EditPlaylist:
                     if (manager.Action == DialogAction.Show)
                         await _createPlaylistDialog.ShowAsync();
                     else
@@ -133,9 +138,10 @@ namespace Spotify_search_helper.Views
                         Content = manager.Message,
                         PrimaryButtonText = manager.PrimaryButtonText,
                         SecondaryButtonText = manager.SecondaryButtonText,
+                        DefaultButton = ContentDialogButton.Primary
                     };
                     
-                    Messenger.Default.Send(new DialogResult(DialogType.Unfollow, await _dialog.ShowAsync()));
+                    Messenger.Default.Send(new DialogResult(DialogType.Unfollow, await _dialog.ShowAsync(), manager.Item));
                     break;
             }
         }
@@ -193,6 +199,64 @@ namespace Spotify_search_helper.Views
             {
 
             }
+        }
+
+        private void PlaylistItem_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
+        {
+            FrameworkElement senderElement = sender as FrameworkElement;
+            FlyoutBase flyoutBase = FlyoutBase.GetAttachedFlyout(senderElement);
+            FlyoutShowOptions options = new FlyoutShowOptions
+            {
+                Placement = FlyoutPlacementMode.RightEdgeAlignedTop,
+                Position = e.GetPosition(senderElement),
+                ShowMode = FlyoutShowMode.Standard
+            };
+            flyoutBase.ShowAt(senderElement, options);
+            //update focus state
+            Messenger.Default.Send(new MessengerHelper
+            {
+                Action = MessengerAction.RightTapped,
+                Target = TargetView.Playlist,
+                Item = senderElement.DataContext as ItemBase
+            });
+            //MainPageViewModel.Current.UpdatePlaylistFocusState(senderElement.DataContext as ItemBase);
+            e.Handled = true;
+
+            flyoutBase.Closed += FlyoutBase_Closed;
+        }
+
+        private void FlyoutBase_Closed(object sender, object e)
+        {
+            MainPageViewModel.Current.ResetPlaylistFocusState();
+        }
+
+        private void TrackItem_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
+        {
+            FrameworkElement senderElement = sender as FrameworkElement;
+            FlyoutBase flyoutBase = FlyoutBase.GetAttachedFlyout(senderElement);
+            FlyoutShowOptions options = new FlyoutShowOptions
+            {
+                Placement = FlyoutPlacementMode.RightEdgeAlignedTop,
+                Position = e.GetPosition(senderElement),
+                ShowMode = FlyoutShowMode.Standard
+            };
+            flyoutBase.ShowAt(senderElement, options);
+            //update focus state
+            Messenger.Default.Send(new MessengerHelper
+            {
+                Action = MessengerAction.RightTapped,
+                Target = TargetView.Tracks,
+                Item = senderElement.DataContext as ItemBase
+            });
+            
+            e.Handled = true;
+
+            flyoutBase.Closed += TracksFlyoutBase_Closed;
+        }
+
+        private void TracksFlyoutBase_Closed(object sender, object e)
+        {
+            MainPageViewModel.Current.ResetTracksFocusState();
         }
     }
 
